@@ -8,22 +8,23 @@
 
 \pard\sl240\slmult1 The original tools are described here: {{\field{\*\fldinst{HYPERLINK https://maps.eq2interface.com/index.php?action=maptutorial&page=2 }}{\fldrslt{https://maps.eq2interface.com/index.php?action=maptutorial&page=2\ul0\cf0}}}}\f0\fs22\par
 \par
-This project's home page is here: {{\field{\*\fldinst{HYPERLINK https://github.com/jeffjl74/ACT_Notes }}{\fldrslt{https://github.com/jeffjl74/ACT_Notes\ul0\cf0}}}}\f0\fs22\par
+This project's home page is here: {{\field{\*\fldinst{HYPERLINK https://github.com/jeffjl74/Eq2MapTools }}{\fldrslt{https://github.com/jeffjl74/Eq2MapTools\ul0\cf0}}}}\f0\fs22\par
 
 \pard\sl276\slmult1\par
 \ul\b\fs24 Mapper2 Tab\ulnone\b0\fs22\par
 The mapper2 and log_cleaner functions are practically line-for-line conversions of the original Perl scripts to C#.\par
 
 \pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720\sl276\slmult1  C# is fixed so it properly recognizes color commands (fixed to only processes occurrences of the word "color" if it's an emote. And to recognize \i /em color\i0  as "set to black", which didn't work in the Perl script).\par
-{\pntext\f1\'B7\tab}The splitting by elevation into Inkscape groups works differently even though the C# looks like it should do the same thing the Perl script does. But the C# code result is logical (e.g. if you provide 2 numbers, you get 3 groups: -infinity to #1, #1 to #2, #2 to +infinity). So, I'm going with that.\par
+{\pntext\f1\'B7\tab}The splitting by elevation into Inkscape groups works differently even though the C# looks like it should do the same thing the Perl script does. But the C# code result is logical (e.g. if you provide 2 numbers, you get 3 groups: -infinity to #1, #1 to #2, #2 to +infinity). So, I'm going with that. Fitting a line to an elevation is based on the average elevation of the line.\par
 
 \pard\sl276\slmult1\par
 The tool adds some extra features:\par
 
-\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720\sl276\slmult1 The \i Build new mapper file from Input Log File\i0  option is the same functionality as the old Mapper2 batch file (mapper2 and log_cleaner) except that the SVG file is built from the "clean" mapper file instead of direclty from the EQII log file.\par
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720\sl276\slmult1 The button at the end of the \i Base map name\i0  box scans the \i Input Log File\i0  for map style names. If any are found, choosing one from the menu sets that as the \i Base map name\i0 .\par
+{\pntext\f1\'B7\tab}The \i Build new mapper file from Input Log File\i0  option is the same functionality as the old Mapper2 batch file (mapper2 and log_cleaner) except that the SVG file is built from the "clean" mapper file instead of directly from the EQII log file.\par
 {\pntext\f1\'B7\tab}The \i Append Input Log File mapping lines to existing mapper file\i0  option provides a means to gather mapping lines from different EQII log files into one mapper file. For example, if you collected some /loc data for the same map on more than one character. Or you collected some last week, and some more this week, and they are in different EQII log files.\par
 {\pntext\f1\'B7\tab}The \i Use existing mapper file as is\i0  option does not modify the mapper file when the [Run] button is pressed. Useful if you have hand-edited the mapper file.\par
-{\pntext\f1\'B7\tab}Two launch options are provided. I find it more quicker to use a browser to view the SVG file while I'm still collecting and checking /loc data. Then use Inkscape when I'm ready to start editing.\par
+{\pntext\f1\'B7\tab}Two launch options are provided. I find it quicker to use a browser to view the SVG file while I'm still collecting and checking /loc data. Then use Inkscape when I'm ready to start editing.\par
 
 \pard\sl276\slmult1\par
 \ul\b\fs24 Zone Rect Tab\ulnone\b0\fs22\par
@@ -45,6 +46,8 @@ The [Calculate] button is just like Tacoman's [Calculate] button. The informatio
 \pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li1080\sl240\slmult1 Whether you use the suggested scale, or set your own, you should verify the crosshair locations in your image processing software and recalculate the zone rect if necessary.\par
 
 \pard\sl240\slmult1 Or you could hand enter the appropriate values and use the [Calculate] button.\par
+\par
+The ZoneRect copy is also a bit differnt from Tacoman's copy in that the entire XML attribute for the MapStyles file is copied to the clipboard by the [Copy] button. The dropdown arrow on the [Copy] button also allows adding the "heightmin" and "heightmax" attributes to the copy if they were obtained from the SVG file.\par
 \par
 \ul\b\fs24 Map Loc Tab\ulnone\b0\fs22\par
 Pressing the [Paste] button on the Map Location Calculator will paste the \i In Game /loc coordinates\i0  from the clipboard when set by the \i /loc clipboard\i0  command in game.\par

@@ -297,7 +297,9 @@ namespace EQ2MapTools
             // otherwise, merge the incoming with the default document
 
             //get the empty document already in the RichTextBox
-            string rtf = richTextBox1.Rtf;
+            string? rtf = richTextBox1.Rtf;
+            if (rtf == null)
+                rtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil Segoe UI;}}\r\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \r\n\\pard\\f0\\fs18\\par\r\n}\r\n";
 
             //if txt contains a font table, need to merge it with the existing one
             if (txt.Contains(@"{\fonttbl"))

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http.Headers;
@@ -30,7 +31,8 @@ namespace EQ2MapTools
         string zonerectTabStatus = needInput;
         string maplocTabStatus = needInput;
         string indexTabStatus = "Run Mapper to build an index.";
-        Dictionary<string, int> tabIndexes = new Dictionary<string, int>(); // consolodate tab nickname & number
+        // consolodate tab nickname & number
+        Dictionary<string, int> tabIndexes = new Dictionary<string, int>();
 
         // github update
         const string githubProject = "EQ2MapTools";
@@ -76,7 +78,7 @@ namespace EQ2MapTools
                 if (defaultSvgExe != null)
                     textBoxDefaultSvgName.Text = defaultSvgExe;
             }
-            if(Properties.Settings.Default.MapStyleFile.Length > 0
+            if (Properties.Settings.Default.MapStyleFile.Length > 0
                 && Properties.Settings.Default.AutoLoadStyles)
             {
                 OpenMapStyles(Properties.Settings.Default.MapStyleFile);
@@ -131,7 +133,7 @@ namespace EQ2MapTools
             Properties.Settings.Default.Elevations = textBoxElevations.Text;
             Properties.Settings.Default.SvgViewer1 = textBoxInkscapeName.Text;
             Properties.Settings.Default.SvgViewer2 = textBoxDefaultSvgName.Text;
-            if(!string.IsNullOrEmpty(openFileDialogXml.FileName))
+            if (!string.IsNullOrEmpty(openFileDialogXml.FileName))
                 Properties.Settings.Default.MapStyleFile = openFileDialogXml.FileName;
             Properties.Settings.Default.AutoLoadStyles = checkBoxLoadMapstyles.Checked;
 
@@ -141,6 +143,15 @@ namespace EQ2MapTools
         private void FixButtons()
         {
             buttonRunMapper.Enabled = false;    // until we figure out if we're ready
+
+            buttonFindMapName.Enabled = false;
+            bool logFileExists = false;
+            if (textBoxLogFile.Text.Length > 0)
+            {
+                logFileExists = File.Exists(textBoxLogFile.Text);
+                if (logFileExists)
+                    buttonFindMapName.Enabled = true;
+            }
 
             bool mapperExists = false;
             if (textBoxMapName.ForeColor == Color.Black)
@@ -163,7 +174,7 @@ namespace EQ2MapTools
             if (Directory.Exists(textBoxOutputFolder.Text))
             {
                 if ((radioButtonBuildMapper.Checked || radioButtonAppendMapper.Checked)
-                    && File.Exists(textBoxLogFile.Text) && !string.IsNullOrEmpty(textBoxMapName.Text))
+                    && logFileExists && !string.IsNullOrEmpty(textBoxMapName.Text))
                 {
                     buttonRunMapper.Enabled = true;
                     mapperTabStatus = ready;
@@ -236,13 +247,13 @@ namespace EQ2MapTools
                 string Rver = $"{remoteVersion.Major}.{remoteVersion.Minor}.{remoteVersion.Build}";
                 if (remoteVersion > localVersion)
                 {
-                    string msg = $"Version {Rver} is available. Update and restart?\\par\\par (You are running version {Lver})";
+                    string msg = $"Version {Rver} is available. Update and restart?\\line\\line (You are running version {Lver})";
                     if (SimpleMessageBox.Show(this, msg,
                         "Update Available",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                     {
                         UseWaitCursor = true;
-                        SimpleMessageBox.ShowDialog(this,"Downloading and updating", "Updating");
+                        SimpleMessageBox.ShowDialog(this, "Downloading and updating", "Updating");
                         Task<FileInfo?> ftask = Task.Run(() => { return GetRemoteFileAsync(); });
                         ftask.Wait();
                         if (ftask.Result != null)
@@ -298,7 +309,7 @@ namespace EQ2MapTools
                             }
                         }
                     }
-                    return new Version(0,0,0,0);
+                    return new Version(0, 0, 0, 0);
                 }
             }
             catch { return new Version(0, 0, 0, 0); }
@@ -334,6 +345,14 @@ namespace EQ2MapTools
 
         private void buttonLogBrowse_Click(object sender, EventArgs e)
         {
+            if(textBoxLogFile.Text.Length > 0)
+            {
+                string? path = Path.GetDirectoryName(textBoxLogFile.Text);
+                if (path != null)
+                {
+                    openFileDialogTxt.InitialDirectory = path;
+                }
+            }
             if (openFileDialogTxt.ShowDialog(this) == DialogResult.OK)
             {
                 textBoxLogFile.Text = openFileDialogTxt.FileName;
@@ -342,8 +361,71 @@ namespace EQ2MapTools
             }
         }
 
+        private void buttonFindMapName_Click(object sender, EventArgs e)
+        {
+            string fileName = textBoxLogFile.Text;
+            if (fileName.Length > 0 && File.Exists(fileName))
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                List<string> mapNames = new List<string>();
+                Match match;
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    using (StreamReader sr = new StreamReader(fs))
+                    {
+                        while (!sr.EndOfStream)
+                        {
+                            string? line = sr.ReadLine();
+                            if(line != null)
+                            {
+                                match = Mapper2.reStyle.Match(line);
+                                if(match.Success)
+                                {
+                                    string style = match.Groups["style"].Value;
+                                    if(!mapNames.Contains(style))
+                                        mapNames.Add(style);
+                                }
+                            }
+                        }
+                    }
+                }
+                Cursor.Current = Cursors.Default;
+
+                contextMenuStripStyles.Items.Clear();
+                foreach (string mapName in mapNames)
+                {
+                    ToolStripItem item = contextMenuStripStyles.Items.Add(mapName);
+                    item.Click += MapStyleItem_Click;
+                }
+                if(contextMenuStripStyles.Items.Count == 0)
+                {
+                    contextMenuStripStyles.Items.Add("None found");
+                }
+                Point loc = PointToScreen(textBoxMapName.Location);
+                loc.Y += textBoxMapName.Height * 2;
+                contextMenuStripStyles.Show(loc);
+            }
+        }
+
+        private void MapStyleItem_Click(object? sender, EventArgs e)
+        {
+            ToolStripItem? item = sender as ToolStripItem;
+            if (item != null)
+            {
+                textBoxMapName.Text = item.Text;
+            }
+        }
+
         private void buttonOutputFolder_Click(object sender, EventArgs e)
         {
+            if (textBoxOutputFolder.Text.Length > 0)
+            {
+                string? path = Path.GetDirectoryName(textBoxOutputFolder.Text);
+                if (path != null)
+                {
+                    folderBrowserDialog1.InitialDirectory = path;
+                }
+            }
             if (folderBrowserDialog1.ShowDialog(this) == DialogResult.OK)
             {
                 textBoxOutputFolder.Text = folderBrowserDialog1.SelectedPath;
@@ -559,11 +641,11 @@ namespace EQ2MapTools
                                 mapData.LR = tnode.NextSibling.Value;
                                 break;
                             case "Max Ele:":
-                                mapData.MaxEl = tnode.NextSibling.Value;
+                                mapData.MaxEl = tnode.NextSibling.Value.Replace("\n", "").Replace("\r", "").Trim();
                                 textBoxMaxEl.Text = mapData.MaxEl.ToString();
                                 break;
                             case "Min Ele:":
-                                mapData.MinEl = tnode.NextSibling.Value;
+                                mapData.MinEl = tnode.NextSibling.Value.Replace("\n", "").Replace("\r", "").Trim();
                                 textBoxMinEl.Text = mapData.MinEl.ToString();
                                 break;
                         }
@@ -615,18 +697,53 @@ namespace EQ2MapTools
 
         private void buttonCopyZoneRect_Click(object sender, EventArgs e)
         {
+        }
+
+        private void menuButtonCopyZonerect_Click(object sender, EventArgs e)
+        {
             if (string.IsNullOrEmpty(mapData.zonerect))
                 SimpleMessageBox.Show(this, "Calculate a zonerect first.");
             else
             {
                 try
                 {
-                    Clipboard.SetText(mapData.zonerect);
+                    string copy = mapData.zonerect;
+                    if (includeElevationsToolStripMenuItem.Checked)
+                    {
+                        if (!string.IsNullOrEmpty(textBoxMinEl.Text))
+                            copy += $" heightmin=\"{textBoxMinEl.Text}\"";
+                        if (!string.IsNullOrEmpty(textBoxMaxEl.Text))
+                            copy += $" heightmax=\"{textBoxMaxEl.Text}\"";
+                    }
+                    Clipboard.SetText(copy);
                 }
                 catch (Exception)
                 {
                     SimpleMessageBox.Show(this, "Clipboard copy failed. Please try again.");
                 }
+            }
+        }
+
+        private void contextMenuStripElev_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(textBoxMinEl.Text)
+                && !string.IsNullOrEmpty(textBoxMaxEl.Text))
+            {
+                includeElevationsToolStripMenuItem.Enabled = true;
+            }
+            else
+                includeElevationsToolStripMenuItem.Enabled = false;
+        }
+
+        private void includeElevationsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (includeElevationsToolStripMenuItem.Checked)
+            {
+                includeElevationsToolStripMenuItem.Checked = false;
+            }
+            else
+            {
+                includeElevationsToolStripMenuItem.Checked = true;
             }
         }
 
@@ -743,15 +860,15 @@ namespace EQ2MapTools
             try
             {
                 bool ok = false;
-                string clip = Clipboard.GetText(TextDataFormat.Text);
+                string clip = Clipboard.GetText(TextDataFormat.Text).Trim();
                 if (!string.IsNullOrEmpty(clip))
                 {
                     string[] loc = clip.Split(' ');
                     if (loc.Length == 6)
                     {
                         ok = true;
-                        textBoxMapLocX.Text = loc[0];
-                        textBoxMapLocY.Text = loc[2];
+                        textBoxMapLocX.Text = loc[0].Trim();
+                        textBoxMapLocY.Text = loc[2].Trim();
                     }
                 }
                 if (!ok)
@@ -831,25 +948,25 @@ namespace EQ2MapTools
                 }
 
                 double locx;
-                if (!double.TryParse(textBoxMapLocX.Text, out locx))
+                if (!double.TryParse(textBoxMapLocX.Text.Trim(), out locx))
                 {
                     SimpleMessageBox.Show(this, "In game /loc coordinate X is invalid.");
                     return;
                 }
                 double locy;
-                if (!double.TryParse(textBoxMapLocY.Text, out locy))
+                if (!double.TryParse(textBoxMapLocY.Text.Trim(), out locy))
                 {
                     SimpleMessageBox.Show(this, "In game /loc coordinate Y is invalid.");
                     return;
                 }
                 double imWidth;
-                if (!double.TryParse(textBoxMapLocWidth.Text, out imWidth))
+                if (!double.TryParse(textBoxMapLocWidth.Text.Trim(), out imWidth))
                 {
                     SimpleMessageBox.Show(this, "Image width is invalid.");
                     return;
                 }
                 double imHeight;
-                if (!double.TryParse(textBoxMapLocHeight.Text, out imHeight))
+                if (!double.TryParse(textBoxMapLocHeight.Text.Trim(), out imHeight))
                 {
                     SimpleMessageBox.Show(this, "Image height is invalid.");
                     return;

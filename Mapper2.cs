@@ -6,7 +6,7 @@ namespace EQ2MapTools
     internal class Mapper2
     {
         public static readonly Regex reLoc = new Regex(@"Your location is (?<lon>[0-9,.+-]+), (?<alt>[0-9,.+-]+), (?<lat>[0-9,.+-]+).  Your");
-        static readonly Regex reStyle = new Regex("Map style name: (.+)", RegexOptions.Compiled);
+        public static readonly Regex reStyle = new Regex("Map style name: (?<style>.+)", RegexOptions.Compiled);
         static readonly Regex reColor = new Regex(@"\\/a color (\w+)", RegexOptions.Compiled);
         static readonly Regex reColorBlack = new Regex(@"\\/a color\.$", RegexOptions.Compiled);
 
@@ -49,24 +49,27 @@ namespace EQ2MapTools
                 if (exists != null && !string.IsNullOrEmpty(exists))
                     sb.Append(exists);
             }
-            using (StreamReader sr = File.OpenText(inputFile))
+            using (FileStream fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                string? line = String.Empty;
-                while ((line = sr.ReadLine()) != null)
+                using (StreamReader sr = new StreamReader(fs))
                 {
-                    Match match = reLoc.Match(line);
-                    if (match.Success)
-                        sb.AppendLine(line);
-                    else if (line.Contains("\\/a start new map line"))
-                        sb.AppendLine(line);
-                    else if (reColor.Match(line).Success)
-                        sb.AppendLine(line);
-                    else if (reColorBlack.Match(line).Success)
-                        sb.AppendLine(line);
-                    else if (line.Contains("\\/a mapgroup"))
-                        sb.AppendLine(line);
-                    else if (reStyle.Match(line).Success)
-                        sb.AppendLine(line);
+                    string? line = String.Empty;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        Match match = reLoc.Match(line);
+                        if (match.Success)
+                            sb.AppendLine(line);
+                        else if (line.Contains("\\/a start new map line"))
+                            sb.AppendLine(line);
+                        else if (reColor.Match(line).Success)
+                            sb.AppendLine(line);
+                        else if (reColorBlack.Match(line).Success)
+                            sb.AppendLine(line);
+                        else if (line.Contains("\\/a mapgroup"))
+                            sb.AppendLine(line);
+                        else if (reStyle.Match(line).Success)
+                            sb.AppendLine(line);
+                    }
                 }
             }
             File.WriteAllText(outputFile, sb.ToString());
