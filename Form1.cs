@@ -13,7 +13,7 @@ namespace EQ2MapTools
     public partial class Form1 : Form
     {
 
-        MapData mapData = new MapData();        // nost of the zone rect calculations
+        MapData mapData = new MapData();        // most of the zone rect calculations
         Mapper2 mapper2 = new Mapper2();        // most of the Perl script translations
         LineIndex lineIndex = new LineIndex();  // the line index data
         MapStyles mapStyles = new MapStyles();  // map sytles combo box data
@@ -31,7 +31,7 @@ namespace EQ2MapTools
         string zonerectTabStatus = needInput;
         string maplocTabStatus = needInput;
         string indexTabStatus = "Run Mapper to build an index.";
-        // consolodate tab nickname & number
+        // consolodate tab nickname & index
         Dictionary<string, int> tabIndexes = new Dictionary<string, int>();
 
         // github update
@@ -985,67 +985,71 @@ namespace EQ2MapTools
         private void OpenMapStyles(string fileName)
         {
             mapStyles.Clear();
-            doc = new XmlDocument();
-            try
+            if(!string.IsNullOrEmpty(fileName))
             {
-                // the mapstyles files do not have a root element
-                // but it's required by XmlDocument
-                // so add one
-                string fragment = File.ReadAllText(fileName);
-                int firstBracket = fragment.IndexOf('>');
-                if (firstBracket != -1)
+                doc = new XmlDocument();
+                try
                 {
-                    string xml = fragment.Insert(firstBracket + 1, "<root>") + "</root>";
-                    doc.LoadXml(xml);
-                }
-                else
-                {
-                    SimpleMessageBox.Show(this, "Invalid xml file format");
-                    return;
-                }
-            }
-            catch (Exception dex)
-            {
-                string rtfok = dex.Message.Replace("\\", "\\\\");
-                SimpleMessageBox.Show(this, "Invalid xml file format. " + rtfok);
-                return;
-            }
-
-            // collect the file items
-            XmlNodeList? nodes = doc.GetElementsByTagName("ImageStyle");
-            if (nodes != null)
-            {
-                string longestName = string.Empty;
-                foreach (XmlNode node in nodes)
-                {
-                    string? name = node.Attributes?["displayname"]?.Value;
-                    string? rect = node.Attributes?["zonerect"]?.Value;
-                    if (name != null && rect != null)
+                    // the mapstyles files do not have a root element
+                    // but it's required by XmlDocument
+                    // so add one
+                    string fragment = File.ReadAllText(fileName);
+                    int firstBracket = fragment.IndexOf('>');
+                    if (firstBracket != -1)
                     {
-                        StyleZoneRect szr = new StyleZoneRect { DisplayName = name, ZoneRect = rect };
-                        mapStyles.Add(szr);
-                        if (szr.DisplayName.Length > longestName.Length)
-                            longestName = szr.DisplayName;
+                        string xml = fragment.Insert(firstBracket + 1, "<root>") + "</root>";
+                        doc.LoadXml(xml);
+                    }
+                    else
+                    {
+                        SimpleMessageBox.Show(this, "Invalid xml file format");
+                        return;
                     }
                 }
-                mapStyles.Sort();
+                catch (Exception dex)
+                {
+                    string rtfok = dex.Message.Replace("\\", "\\\\");
+                    SimpleMessageBox.Show(this, "Invalid xml file format. " + rtfok);
+                    return;
+                }
 
-                // add an empty item at the top
-                mapStyles.Insert(0, new StyleZoneRect { DisplayName = String.Empty, ZoneRect = String.Empty });
+                // collect the file items
+                XmlNodeList? nodes = doc.GetElementsByTagName("ImageStyle");
+                if (nodes != null)
+                {
+                    string longestName = string.Empty;
+                    foreach (XmlNode node in nodes)
+                    {
+                        string? name = node.Attributes?["displayname"]?.Value;
+                        string? zonerect = node.Attributes?["zonerect"]?.Value;
+                        string? sourcerect = node.ChildNodes[0]?.Attributes?["SourceRect"]?.Value;
+                        if (name != null && zonerect != null && sourcerect != null)
+                        {
+                            StyleZoneRect szr = new StyleZoneRect { DisplayName = name, ZoneRect = zonerect, SourceRect = sourcerect };
+                            mapStyles.Add(szr);
+                            if (szr.DisplayName.Length > longestName.Length)
+                                longestName = szr.DisplayName;
+                        }
+                    }
+                    mapStyles.Sort();
 
-                // update the combo box
-                mapStylesBindingSource.ResetBindings(false);
+                    // add an empty item at the top
+                    mapStyles.Insert(0, new StyleZoneRect { DisplayName = String.Empty, ZoneRect = String.Empty });
 
-                int width = TextRenderer.MeasureText(longestName, comboBoxMapStyles.Font).Width + SystemInformation.VerticalScrollBarWidth;
-                if (comboBoxMapStyles.DropDownWidth < width)
-                    comboBoxMapStyles.DropDownWidth = width;
+                    // update the combo box
+                    mapStylesBindingSource.ResetBindings(false);
+
+                    int width = TextRenderer.MeasureText(longestName, comboBoxMapStyles.Font).Width + SystemInformation.VerticalScrollBarWidth;
+                    if (comboBoxMapStyles.DropDownWidth < width)
+                        comboBoxMapStyles.DropDownWidth = width;
+                }
             }
         }
 
         private void buttonOpenMapStyle_Click(object sender, EventArgs e)
         {
             string? UiDir = Path.GetDirectoryName(Properties.Settings.Default.MapStyleFile);
-            if (UiDir == null)
+            if (UiDir != null)
                 openFileDialogXml.InitialDirectory = UiDir;
             if (openFileDialogXml.ShowDialog() == DialogResult.OK)
             {
@@ -1057,7 +1061,27 @@ namespace EQ2MapTools
         {
             int index = comboBoxMapStyles.SelectedIndex;
             if (index >= 0 && mapStyles.Count > index)
+            {
                 textBoxMapLocZoneRect.Text = mapStyles[index].ZoneRect;
+                string? sourceRect = mapStyles[index].SourceRect;
+                if(sourceRect != null)
+                {
+                    Match match = reZoneRect.Match(sourceRect);
+                    if (match.Success)
+                    {
+                        string lrx = match.Groups["lrx"].Value;
+                        string lry = match.Groups["lry"].Value;
+                        if(textBoxMapLocWidth.Text != lrx)
+                            textBoxMapLocWidth.Text = lrx;
+                        if (textBoxMapLocHeight.Text != lry)
+                            textBoxMapLocHeight.Text = lry;
+                        if (lrx != DefaultMapWidth.ToString() || lry != DefaultMapHeight.ToString())
+                            checkBoxCustomMapLocMapSize.Checked = true;
+                        else
+                            checkBoxCustomMapLocMapSize.Checked = false;
+                    }
+                }
+            }        
         }
 
         private void textBoxMapLoc_TextChanged(object sender, EventArgs e)
