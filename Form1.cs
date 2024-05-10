@@ -21,6 +21,8 @@ namespace EQ2MapTools
         bool userChange = false;                // whether a UI element is updated programtically or by the user
         public const int DefaultMapWidth = 436;
         public const int DefaultMapHeight = 506;
+        Int64 startUnixSeconds = -1;                   // time filter for the log file
+        Int64 endUnixSeconds = Int64.MaxValue;         // time filter for the log file
         // extract the 4 numbers from a zone rect
         Regex reZoneRect = new Regex(@"(?<ulx>[0-9.+-]+)[, ]+(?<uly>[0-9.+-]+)[, ]+(?<lrx>[0-9.+-]+)[, ]+(?<lry>[0-9.+-]+)", RegexOptions.Compiled);
 
@@ -145,12 +147,16 @@ namespace EQ2MapTools
             buttonRunMapper.Enabled = false;    // until we figure out if we're ready
 
             buttonFindMapName.Enabled = false;
+            buttonScanDates.Enabled = false;
             bool logFileExists = false;
             if (textBoxLogFile.Text.Length > 0)
             {
                 logFileExists = File.Exists(textBoxLogFile.Text);
                 if (logFileExists)
+                {
                     buttonFindMapName.Enabled = true;
+                    buttonScanDates.Enabled = true;
+                }
             }
 
             bool mapperExists = false;
@@ -345,7 +351,7 @@ namespace EQ2MapTools
 
         private void buttonLogBrowse_Click(object sender, EventArgs e)
         {
-            if(textBoxLogFile.Text.Length > 0)
+            if (textBoxLogFile.Text.Length > 0)
             {
                 string? path = Path.GetDirectoryName(textBoxLogFile.Text);
                 if (path != null)
@@ -376,13 +382,13 @@ namespace EQ2MapTools
                         while (!sr.EndOfStream)
                         {
                             string? line = sr.ReadLine();
-                            if(line != null)
+                            if (line != null)
                             {
                                 match = Mapper2.reStyle.Match(line);
-                                if(match.Success)
+                                if (match.Success)
                                 {
                                     string style = match.Groups["style"].Value;
-                                    if(!mapNames.Contains(style))
+                                    if (!mapNames.Contains(style))
                                         mapNames.Add(style);
                                 }
                             }
@@ -395,9 +401,10 @@ namespace EQ2MapTools
                 foreach (string mapName in mapNames)
                 {
                     ToolStripItem item = contextMenuStripStyles.Items.Add(mapName);
+                    item.ToolTipText = "Click to set as Base map name";
                     item.Click += MapStyleItem_Click;
                 }
-                if(contextMenuStripStyles.Items.Count == 0)
+                if (contextMenuStripStyles.Items.Count == 0)
                 {
                     contextMenuStripStyles.Items.Add("None found");
                 }
@@ -431,6 +438,86 @@ namespace EQ2MapTools
                 textBoxOutputFolder.Text = folderBrowserDialog1.SelectedPath;
                 textBoxOutputFolder.SelectionStart = textBoxOutputFolder.TextLength;
                 textBoxOutputFolder.ScrollToCaret();
+            }
+        }
+
+        private void dateTimePickerStart_ValueChanged(object sender, EventArgs e)
+        {
+            if (userChange)
+            {
+                if (dateTimePickerStart.Checked)
+                    startUnixSeconds = (Int64)dateTimePickerStart.Value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+                else
+                    startUnixSeconds = -1;
+            }
+        }
+
+        private void dateTimePickerEnd_ValueChanged(object sender, EventArgs e)
+        {
+            if (userChange)
+            {
+                if (dateTimePickerEnd.Checked)
+                    endUnixSeconds = (Int64)dateTimePickerEnd.Value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+                else
+                    endUnixSeconds = Int64.MaxValue;
+            }
+        }
+
+        private void buttonScanDates_Click(object sender, EventArgs e)
+        {
+            string fileName = textBoxLogFile.Text;
+            if (fileName.Length > 0 && File.Exists(fileName))
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                bool needStart = true;
+                Int64 lineTime;
+                Int64 fileStartTime = -1;
+                Int64 fileEndTime = Int64.MaxValue;
+                // non-exclusive file read
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    using (StreamReader sr = new StreamReader(fs))
+                    {
+                        while (!sr.EndOfStream)
+                        {
+                            string? line = sr.ReadLine();
+                            if (line != null)
+                            {
+                                if (line.Length < 39) // EQII time stamp length
+                                    continue;
+                                if (!Int64.TryParse(line.Substring(1, 10), out lineTime))
+                                    continue;
+                                if (needStart)
+                                {
+                                    needStart = false;
+                                    fileStartTime = lineTime;
+                                }
+                                fileEndTime = lineTime;
+                            }
+                        }
+                    }
+                }
+                Cursor.Current = Cursors.Default;
+
+                DateTime baseDate = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                userChange = false;
+                if (fileStartTime > -1)
+                {
+                    bool wasChecked = dateTimePickerStart.Checked;
+                    dateTimePickerStart.Value = baseDate.AddSeconds(fileStartTime).ToLocalTime();
+                    dateTimePickerStart.Checked = wasChecked;
+                    if (wasChecked)
+                        startUnixSeconds = fileStartTime;
+                }
+                if (fileEndTime < Int64.MaxValue)
+                {
+                    bool wasChecked = dateTimePickerEnd.Checked;
+                    dateTimePickerEnd.Value = baseDate.AddSeconds(fileEndTime).ToLocalTime();
+                    dateTimePickerEnd.Checked = wasChecked;
+                    if (wasChecked)
+                        endUnixSeconds = fileEndTime;
+                }
+                userChange = true;
             }
         }
 
@@ -510,7 +597,7 @@ namespace EQ2MapTools
             {
                 string inputFile = textBoxLogFile.Text;
                 string outputFile = BuildOutputName("txt");
-                Mapper2.GenerateCleanLog(inputFile, outputFile, radioButtonAppendMapper.Checked);
+                Mapper2.GenerateCleanLog(inputFile, outputFile, radioButtonAppendMapper.Checked, startUnixSeconds, endUnixSeconds);
             }
         }
 
@@ -985,7 +1072,7 @@ namespace EQ2MapTools
         private void OpenMapStyles(string fileName)
         {
             mapStyles.Clear();
-            if(!string.IsNullOrEmpty(fileName))
+            if (!string.IsNullOrEmpty(fileName))
             {
                 doc = new XmlDocument();
                 try
@@ -1064,14 +1151,14 @@ namespace EQ2MapTools
             {
                 textBoxMapLocZoneRect.Text = mapStyles[index].ZoneRect;
                 string? sourceRect = mapStyles[index].SourceRect;
-                if(sourceRect != null)
+                if (sourceRect != null)
                 {
                     Match match = reZoneRect.Match(sourceRect);
                     if (match.Success)
                     {
                         string lrx = match.Groups["lrx"].Value;
                         string lry = match.Groups["lry"].Value;
-                        if(textBoxMapLocWidth.Text != lrx)
+                        if (textBoxMapLocWidth.Text != lrx)
                             textBoxMapLocWidth.Text = lrx;
                         if (textBoxMapLocHeight.Text != lry)
                             textBoxMapLocHeight.Text = lry;
@@ -1081,7 +1168,7 @@ namespace EQ2MapTools
                             checkBoxCustomMapLocMapSize.Checked = false;
                     }
                 }
-            }        
+            }
         }
 
         private void textBoxMapLoc_TextChanged(object sender, EventArgs e)

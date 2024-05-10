@@ -33,6 +33,11 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tabControl1 = new TabControl();
             tabPageMapper = new TabPage();
+            buttonScanDates = new Button();
+            label36 = new Label();
+            label35 = new Label();
+            dateTimePickerEnd = new DateTimePicker();
+            dateTimePickerStart = new DateTimePicker();
             buttonFindMapName = new Button();
             groupBoxSvg = new GroupBox();
             textBoxDefaultSvgName = new TextBox();
@@ -173,13 +178,18 @@
             tabControl1.Location = new Point(0, 0);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(477, 495);
+            tabControl1.Size = new Size(476, 495);
             tabControl1.TabIndex = 0;
             tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
             // tabPageMapper
             // 
             tabPageMapper.BackColor = SystemColors.Control;
+            tabPageMapper.Controls.Add(buttonScanDates);
+            tabPageMapper.Controls.Add(label36);
+            tabPageMapper.Controls.Add(label35);
+            tabPageMapper.Controls.Add(dateTimePickerEnd);
+            tabPageMapper.Controls.Add(dateTimePickerStart);
             tabPageMapper.Controls.Add(buttonFindMapName);
             tabPageMapper.Controls.Add(groupBoxSvg);
             tabPageMapper.Controls.Add(label24);
@@ -199,18 +209,76 @@
             tabPageMapper.Location = new Point(4, 24);
             tabPageMapper.Name = "tabPageMapper";
             tabPageMapper.Padding = new Padding(3);
-            tabPageMapper.Size = new Size(469, 467);
+            tabPageMapper.Size = new Size(468, 467);
             tabPageMapper.TabIndex = 3;
             tabPageMapper.Text = "Mapper2";
+            // 
+            // buttonScanDates
+            // 
+            buttonScanDates.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonScanDates.Image = (Image)resources.GetObject("buttonScanDates.Image");
+            buttonScanDates.Location = new Point(435, 208);
+            buttonScanDates.Name = "buttonScanDates";
+            buttonScanDates.Size = new Size(26, 25);
+            buttonScanDates.TabIndex = 17;
+            toolTip1.SetToolTip(buttonScanDates, "Scan the Input Log File for its start and end times");
+            buttonScanDates.UseVisualStyleBackColor = true;
+            buttonScanDates.Click += buttonScanDates_Click;
+            // 
+            // label36
+            // 
+            label36.AutoSize = true;
+            label36.Location = new Point(228, 192);
+            label36.Name = "label36";
+            label36.Size = new Size(111, 15);
+            label36.TabIndex = 15;
+            label36.Text = "Log Filter End Time:";
+            // 
+            // label35
+            // 
+            label35.AutoSize = true;
+            label35.Location = new Point(11, 192);
+            label35.Name = "label35";
+            label35.Size = new Size(115, 15);
+            label35.TabIndex = 13;
+            label35.Text = "Log Filter Start Time:";
+            // 
+            // dateTimePickerEnd
+            // 
+            dateTimePickerEnd.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dateTimePickerEnd.Checked = false;
+            dateTimePickerEnd.CustomFormat = "ddMMMyy HH:mm:ss";
+            dateTimePickerEnd.Format = DateTimePickerFormat.Custom;
+            dateTimePickerEnd.Location = new Point(228, 210);
+            dateTimePickerEnd.Name = "dateTimePickerEnd";
+            dateTimePickerEnd.ShowCheckBox = true;
+            dateTimePickerEnd.Size = new Size(200, 23);
+            dateTimePickerEnd.TabIndex = 16;
+            toolTip1.SetToolTip(dateTimePickerEnd, "Stop extracting lines newer than this (military) time.");
+            dateTimePickerEnd.ValueChanged += dateTimePickerEnd_ValueChanged;
+            // 
+            // dateTimePickerStart
+            // 
+            dateTimePickerStart.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dateTimePickerStart.Checked = false;
+            dateTimePickerStart.CustomFormat = "ddMMMyy HH:mm:ss";
+            dateTimePickerStart.Format = DateTimePickerFormat.Custom;
+            dateTimePickerStart.Location = new Point(11, 210);
+            dateTimePickerStart.Name = "dateTimePickerStart";
+            dateTimePickerStart.ShowCheckBox = true;
+            dateTimePickerStart.Size = new Size(200, 23);
+            dateTimePickerStart.TabIndex = 14;
+            toolTip1.SetToolTip(dateTimePickerStart, "Extract log file lines starting at this (military) time.");
+            dateTimePickerStart.ValueChanged += dateTimePickerStart_ValueChanged;
             // 
             // buttonFindMapName
             // 
             buttonFindMapName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonFindMapName.Image = (Image)resources.GetObject("buttonFindMapName.Image");
-            buttonFindMapName.Location = new Point(436, 118);
+            buttonFindMapName.Location = new Point(435, 117);
             buttonFindMapName.Name = "buttonFindMapName";
             buttonFindMapName.Size = new Size(26, 25);
-            buttonFindMapName.TabIndex = 24;
+            buttonFindMapName.TabIndex = 8;
             toolTip1.SetToolTip(buttonFindMapName, "Find map style names in the Input Log File");
             buttonFindMapName.UseVisualStyleBackColor = true;
             buttonFindMapName.Click += buttonFindMapName_Click;
@@ -225,8 +293,8 @@
             groupBoxSvg.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             groupBoxSvg.Location = new Point(11, 352);
             groupBoxSvg.Name = "groupBoxSvg";
-            groupBoxSvg.Size = new Size(418, 78);
-            groupBoxSvg.TabIndex = 23;
+            groupBoxSvg.Size = new Size(417, 78);
+            groupBoxSvg.TabIndex = 19;
             groupBoxSvg.TabStop = false;
             groupBoxSvg.Text = "SVG file";
             toolTip1.SetToolTip(groupBoxSvg, "Vector file representing the map.");
@@ -237,7 +305,7 @@
             textBoxDefaultSvgName.Location = new Point(159, 47);
             textBoxDefaultSvgName.Name = "textBoxDefaultSvgName";
             textBoxDefaultSvgName.Size = new Size(141, 23);
-            textBoxDefaultSvgName.TabIndex = 20;
+            textBoxDefaultSvgName.TabIndex = 3;
             // 
             // textBoxInkscapeName
             // 
@@ -245,7 +313,7 @@
             textBoxInkscapeName.Location = new Point(159, 20);
             textBoxInkscapeName.Name = "textBoxInkscapeName";
             textBoxInkscapeName.Size = new Size(141, 23);
-            textBoxInkscapeName.TabIndex = 19;
+            textBoxInkscapeName.TabIndex = 1;
             textBoxInkscapeName.Text = "Inkscape.exe";
             // 
             // checkBoxLaunchInkscape
@@ -255,7 +323,7 @@
             checkBoxLaunchInkscape.Location = new Point(6, 24);
             checkBoxLaunchInkscape.Name = "checkBoxLaunchInkscape";
             checkBoxLaunchInkscape.Size = new Size(147, 19);
-            checkBoxLaunchInkscape.TabIndex = 18;
+            checkBoxLaunchInkscape.TabIndex = 0;
             checkBoxLaunchInkscape.Text = "Launch editor / viewer:";
             toolTip1.SetToolTip(checkBoxLaunchInkscape, "Open the SVG in the spcified editor / viewer.\r\nInkscape is good for editing the file.");
             checkBoxLaunchInkscape.UseVisualStyleBackColor = true;
@@ -269,7 +337,7 @@
             checkBoxLaunchDefault.Location = new Point(6, 51);
             checkBoxLaunchDefault.Name = "checkBoxLaunchDefault";
             checkBoxLaunchDefault.Size = new Size(147, 19);
-            checkBoxLaunchDefault.TabIndex = 17;
+            checkBoxLaunchDefault.TabIndex = 2;
             checkBoxLaunchDefault.Text = "Launch editor / viewer:";
             toolTip1.SetToolTip(checkBoxLaunchDefault, "Open the SVG file in the specified editor / viewer.\r\nA browser is good for a quick view while collecting /loc data.\r\nDefaults to the default program for SVG files set in Windows.");
             checkBoxLaunchDefault.UseVisualStyleBackColor = true;
@@ -277,29 +345,30 @@
             // label24
             // 
             label24.AutoSize = true;
-            label24.Location = new Point(11, 191);
+            label24.Location = new Point(228, 146);
             label24.Name = "label24";
-            label24.Size = new Size(166, 15);
-            label24.TabIndex = 14;
-            label24.Text = "Optional: group by elevations:";
+            label24.Size = new Size(115, 15);
+            label24.TabIndex = 11;
+            label24.Text = "Group by elevations:";
             toolTip1.SetToolTip(label24, resources.GetString("label24.ToolTip"));
             // 
             // textBoxElevations
             // 
             textBoxElevations.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBoxElevations.ForeColor = SystemColors.ControlText;
-            textBoxElevations.Location = new Point(11, 209);
+            textBoxElevations.Location = new Point(228, 164);
             textBoxElevations.Name = "textBoxElevations";
-            textBoxElevations.Size = new Size(418, 23);
-            textBoxElevations.TabIndex = 13;
+            textBoxElevations.Size = new Size(200, 23);
+            textBoxElevations.TabIndex = 12;
+            toolTip1.SetToolTip(textBoxElevations, resources.GetString("textBoxElevations.ToolTip"));
             // 
             // buttonRunMapper
             // 
-            buttonRunMapper.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonRunMapper.Anchor = AnchorStyles.Bottom;
             buttonRunMapper.Location = new Point(177, 435);
             buttonRunMapper.Name = "buttonRunMapper";
             buttonRunMapper.Size = new Size(114, 25);
-            buttonRunMapper.TabIndex = 10;
+            buttonRunMapper.TabIndex = 20;
             buttonRunMapper.Text = "Run";
             toolTip1.SetToolTip(buttonRunMapper, "Build specified files.");
             buttonRunMapper.UseVisualStyleBackColor = true;
@@ -309,8 +378,9 @@
             // 
             textBoxMapLevel.Location = new Point(11, 164);
             textBoxMapLevel.Name = "textBoxMapLevel";
-            textBoxMapLevel.Size = new Size(64, 23);
-            textBoxMapLevel.TabIndex = 9;
+            textBoxMapLevel.Size = new Size(200, 23);
+            textBoxMapLevel.TabIndex = 10;
+            toolTip1.SetToolTip(textBoxMapLevel, "This field is appended to the Base Map Name\r\nto create the final file name. It can be blank.\r\n");
             textBoxMapLevel.TextChanged += textBoxMapName_TextChanged;
             // 
             // label23
@@ -319,7 +389,7 @@
             label23.Location = new Point(11, 146);
             label23.Name = "label23";
             label23.Size = new Size(64, 15);
-            label23.TabIndex = 8;
+            label23.TabIndex = 9;
             label23.Text = "Map Level:";
             toolTip1.SetToolTip(label23, "This field is appended to the Base Map Name\r\nto create the final file name. It can be blank.");
             // 
@@ -327,18 +397,19 @@
             // 
             textBoxMapName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBoxMapName.ForeColor = Color.Silver;
-            textBoxMapName.Location = new Point(11, 119);
+            textBoxMapName.Location = new Point(11, 118);
             textBoxMapName.Name = "textBoxMapName";
-            textBoxMapName.Size = new Size(418, 23);
+            textBoxMapName.Size = new Size(417, 23);
             textBoxMapName.TabIndex = 7;
             textBoxMapName.Text = "e.g. map_expXX_zone";
+            toolTip1.SetToolTip(textBoxMapName, "Base file name for the .txt and .svg files.\r\n");
             textBoxMapName.TextChanged += textBoxMapName_TextChanged;
             textBoxMapName.Enter += textBoxGrey_Enter;
             // 
             // label20
             // 
             label20.AutoSize = true;
-            label20.Location = new Point(11, 101);
+            label20.Location = new Point(11, 100);
             label20.Name = "label20";
             label20.Size = new Size(94, 15);
             label20.TabIndex = 6;
@@ -350,7 +421,7 @@
             buttonOutputFolder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonOutputFolder.AutoSize = true;
             buttonOutputFolder.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            buttonOutputFolder.Location = new Point(436, 73);
+            buttonOutputFolder.Location = new Point(435, 71);
             buttonOutputFolder.Name = "buttonOutputFolder";
             buttonOutputFolder.Size = new Size(26, 25);
             buttonOutputFolder.TabIndex = 5;
@@ -362,16 +433,17 @@
             // textBoxOutputFolder
             // 
             textBoxOutputFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxOutputFolder.Location = new Point(11, 74);
+            textBoxOutputFolder.Location = new Point(11, 72);
             textBoxOutputFolder.Name = "textBoxOutputFolder";
-            textBoxOutputFolder.Size = new Size(418, 23);
+            textBoxOutputFolder.Size = new Size(417, 23);
             textBoxOutputFolder.TabIndex = 4;
+            toolTip1.SetToolTip(textBoxOutputFolder, "Destination folder for the .txt and .svg files.");
             textBoxOutputFolder.TextChanged += textBoxFileInputs_TextChanged;
             // 
             // label19
             // 
             label19.AutoSize = true;
-            label19.Location = new Point(8, 56);
+            label19.Location = new Point(8, 54);
             label19.Name = "label19";
             label19.Size = new Size(84, 15);
             label19.TabIndex = 3;
@@ -383,7 +455,7 @@
             buttonLogBrowse.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonLogBrowse.AutoSize = true;
             buttonLogBrowse.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            buttonLogBrowse.Location = new Point(436, 27);
+            buttonLogBrowse.Location = new Point(435, 24);
             buttonLogBrowse.Name = "buttonLogBrowse";
             buttonLogBrowse.Size = new Size(26, 25);
             buttonLogBrowse.TabIndex = 2;
@@ -395,16 +467,17 @@
             // textBoxLogFile
             // 
             textBoxLogFile.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxLogFile.Location = new Point(11, 29);
+            textBoxLogFile.Location = new Point(11, 26);
             textBoxLogFile.Name = "textBoxLogFile";
-            textBoxLogFile.Size = new Size(418, 23);
+            textBoxLogFile.Size = new Size(417, 23);
             textBoxLogFile.TabIndex = 1;
+            toolTip1.SetToolTip(textBoxLogFile, "EQII generated log file containing the map making emotes.\r\n");
             textBoxLogFile.TextChanged += textBoxFileInputs_TextChanged;
             // 
             // label18
             // 
             label18.AutoSize = true;
-            label18.Location = new Point(11, 11);
+            label18.Location = new Point(11, 8);
             label18.Name = "label18";
             label18.Size = new Size(82, 15);
             label18.TabIndex = 0;
@@ -420,8 +493,8 @@
             groupBoxMapper.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             groupBoxMapper.Location = new Point(11, 245);
             groupBoxMapper.Name = "groupBoxMapper";
-            groupBoxMapper.Size = new Size(418, 98);
-            groupBoxMapper.TabIndex = 22;
+            groupBoxMapper.Size = new Size(417, 98);
+            groupBoxMapper.TabIndex = 18;
             groupBoxMapper.TabStop = false;
             groupBoxMapper.Text = "Mapper file";
             toolTip1.SetToolTip(groupBoxMapper, "File containing just the log lines pertaining to making a map.");
@@ -434,7 +507,7 @@
             radioButtonBuildMapper.Location = new Point(6, 22);
             radioButtonBuildMapper.Name = "radioButtonBuildMapper";
             radioButtonBuildMapper.Size = new Size(244, 19);
-            radioButtonBuildMapper.TabIndex = 19;
+            radioButtonBuildMapper.TabIndex = 0;
             radioButtonBuildMapper.TabStop = true;
             radioButtonBuildMapper.Text = "Build new mapper file from Input Log File";
             toolTip1.SetToolTip(radioButtonBuildMapper, "Extract relevent lines from the Input Log File into a new mapper file.");
@@ -448,7 +521,7 @@
             radioButtonAppendMapper.Location = new Point(6, 47);
             radioButtonAppendMapper.Name = "radioButtonAppendMapper";
             radioButtonAppendMapper.Size = new Size(341, 19);
-            radioButtonAppendMapper.TabIndex = 20;
+            radioButtonAppendMapper.TabIndex = 1;
             radioButtonAppendMapper.Text = "Append Input Log File mapping lines to existing mapper file";
             toolTip1.SetToolTip(radioButtonAppendMapper, "Useful if adding lines to an exsting map from a new Input Log File");
             radioButtonAppendMapper.UseVisualStyleBackColor = true;
@@ -461,7 +534,7 @@
             radioButtonExistingMapper.Location = new Point(6, 72);
             radioButtonExistingMapper.Name = "radioButtonExistingMapper";
             radioButtonExistingMapper.Size = new Size(319, 19);
-            radioButtonExistingMapper.TabIndex = 21;
+            radioButtonExistingMapper.TabIndex = 2;
             radioButtonExistingMapper.Text = "Use existing mapper file as is (Input Log File is not used)";
             toolTip1.SetToolTip(radioButtonExistingMapper, "Useful if you have edited the mapper file by hand and want to keep the changes.");
             radioButtonExistingMapper.UseVisualStyleBackColor = true;
@@ -498,13 +571,14 @@
             tabPageZoneRect.Location = new Point(4, 24);
             tabPageZoneRect.Name = "tabPageZoneRect";
             tabPageZoneRect.Padding = new Padding(3);
-            tabPageZoneRect.Size = new Size(469, 467);
+            tabPageZoneRect.Size = new Size(468, 467);
             tabPageZoneRect.TabIndex = 0;
             tabPageZoneRect.Text = "Zone Rect";
             // 
             // menuButtonCopyZonerect
             // 
-            menuButtonCopyZonerect.Location = new Point(382, 350);
+            menuButtonCopyZonerect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            menuButtonCopyZonerect.Location = new Point(385, 350);
             menuButtonCopyZonerect.Menu = contextMenuStripElev;
             menuButtonCopyZonerect.Name = "menuButtonCopyZonerect";
             menuButtonCopyZonerect.Size = new Size(75, 23);
@@ -553,7 +627,7 @@
             textBoxFileName.Location = new Point(79, 394);
             textBoxFileName.Name = "textBoxFileName";
             textBoxFileName.ReadOnly = true;
-            textBoxFileName.Size = new Size(378, 23);
+            textBoxFileName.Size = new Size(381, 23);
             textBoxFileName.TabIndex = 20;
             // 
             // label17
@@ -569,7 +643,7 @@
             // 
             // buttonCalculate
             // 
-            buttonCalculate.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonCalculate.Anchor = AnchorStyles.Bottom;
             buttonCalculate.Location = new Point(257, 433);
             buttonCalculate.Name = "buttonCalculate";
             buttonCalculate.Size = new Size(75, 23);
@@ -581,7 +655,7 @@
             // 
             // buttonOpenSVG
             // 
-            buttonOpenSVG.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonOpenSVG.Anchor = AnchorStyles.Bottom;
             buttonOpenSVG.Location = new Point(153, 433);
             buttonOpenSVG.Name = "buttonOpenSVG";
             buttonOpenSVG.Size = new Size(81, 23);
@@ -597,7 +671,7 @@
             textBoxZoneRect.DataBindings.Add(new Binding("Text", mapDataBindingSource, "zonerect", true, DataSourceUpdateMode.OnPropertyChanged));
             textBoxZoneRect.Location = new Point(79, 350);
             textBoxZoneRect.Name = "textBoxZoneRect";
-            textBoxZoneRect.Size = new Size(297, 23);
+            textBoxZoneRect.Size = new Size(296, 23);
             textBoxZoneRect.TabIndex = 16;
             // 
             // mapDataBindingSource
@@ -621,7 +695,7 @@
             label14.BorderStyle = BorderStyle.Fixed3D;
             label14.Location = new Point(12, 331);
             label14.Name = "label14";
-            label14.Size = new Size(449, 2);
+            label14.Size = new Size(448, 2);
             label14.TabIndex = 14;
             // 
             // label12
@@ -984,7 +1058,7 @@
             tabPageMapLoc.Location = new Point(4, 24);
             tabPageMapLoc.Name = "tabPageMapLoc";
             tabPageMapLoc.Padding = new Padding(3);
-            tabPageMapLoc.Size = new Size(469, 467);
+            tabPageMapLoc.Size = new Size(468, 467);
             tabPageMapLoc.TabIndex = 5;
             tabPageMapLoc.Text = "Map Loc";
             // 
@@ -999,9 +1073,9 @@
             // 
             // checkBoxLoadMapstyles
             // 
-            checkBoxLoadMapstyles.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            checkBoxLoadMapstyles.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             checkBoxLoadMapstyles.AutoSize = true;
-            checkBoxLoadMapstyles.Location = new Point(360, 211);
+            checkBoxLoadMapstyles.Location = new Point(352, 211);
             checkBoxLoadMapstyles.Name = "checkBoxLoadMapstyles";
             checkBoxLoadMapstyles.Size = new Size(105, 19);
             checkBoxLoadMapstyles.TabIndex = 7;
@@ -1013,7 +1087,7 @@
             buttonOpenMapStyle.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonOpenMapStyle.AutoSize = true;
             buttonOpenMapStyle.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            buttonOpenMapStyle.Location = new Point(318, 207);
+            buttonOpenMapStyle.Location = new Point(317, 207);
             buttonOpenMapStyle.Name = "buttonOpenMapStyle";
             buttonOpenMapStyle.Size = new Size(26, 25);
             buttonOpenMapStyle.TabIndex = 6;
@@ -1040,12 +1114,13 @@
             comboBoxMapStyles.FormattingEnabled = true;
             comboBoxMapStyles.Location = new Point(100, 209);
             comboBoxMapStyles.Name = "comboBoxMapStyles";
-            comboBoxMapStyles.Size = new Size(212, 23);
+            comboBoxMapStyles.Size = new Size(211, 23);
             comboBoxMapStyles.TabIndex = 5;
             comboBoxMapStyles.SelectedIndexChanged += comboBoxMapStyles_SelectedIndexChanged;
             // 
             // buttonMapLocCalc
             // 
+            buttonMapLocCalc.Anchor = AnchorStyles.Bottom;
             buttonMapLocCalc.Location = new Point(193, 424);
             buttonMapLocCalc.Name = "buttonMapLocCalc";
             buttonMapLocCalc.Size = new Size(75, 23);
@@ -1057,6 +1132,7 @@
             // 
             // textBoxMapLocation
             // 
+            textBoxMapLocation.Anchor = AnchorStyles.Top;
             textBoxMapLocation.Location = new Point(186, 358);
             textBoxMapLocation.Name = "textBoxMapLocation";
             textBoxMapLocation.Size = new Size(100, 23);
@@ -1065,6 +1141,7 @@
             // 
             // label32
             // 
+            label32.Anchor = AnchorStyles.Top;
             label32.AutoSize = true;
             label32.Location = new Point(100, 361);
             label32.Name = "label32";
@@ -1078,11 +1155,12 @@
             label29.BorderStyle = BorderStyle.Fixed3D;
             label29.Location = new Point(10, 331);
             label29.Name = "label29";
-            label29.Size = new Size(449, 2);
+            label29.Size = new Size(448, 2);
             label29.TabIndex = 15;
             // 
             // buttonPasteMapSize
             // 
+            buttonPasteMapSize.Anchor = AnchorStyles.Top;
             buttonPasteMapSize.Image = (Image)resources.GetObject("buttonPasteMapSize.Image");
             buttonPasteMapSize.Location = new Point(293, 289);
             buttonPasteMapSize.Name = "buttonPasteMapSize";
@@ -1094,6 +1172,7 @@
             // 
             // checkBoxCustomMapLocMapSize
             // 
+            checkBoxCustomMapLocMapSize.Anchor = AnchorStyles.Top;
             checkBoxCustomMapLocMapSize.AutoSize = true;
             checkBoxCustomMapLocMapSize.Location = new Point(46, 282);
             checkBoxCustomMapLocMapSize.Name = "checkBoxCustomMapLocMapSize";
@@ -1106,6 +1185,7 @@
             // 
             // label26
             // 
+            label26.Anchor = AnchorStyles.Top;
             label26.AutoSize = true;
             label26.Location = new Point(226, 271);
             label26.Name = "label26";
@@ -1115,6 +1195,7 @@
             // 
             // label27
             // 
+            label27.Anchor = AnchorStyles.Top;
             label27.AutoSize = true;
             label27.Location = new Point(160, 271);
             label27.Name = "label27";
@@ -1124,6 +1205,7 @@
             // 
             // textBoxMapLocHeight
             // 
+            textBoxMapLocHeight.Anchor = AnchorStyles.Top;
             textBoxMapLocHeight.Location = new Point(227, 290);
             textBoxMapLocHeight.Name = "textBoxMapLocHeight";
             textBoxMapLocHeight.ReadOnly = true;
@@ -1135,6 +1217,7 @@
             // 
             // textBoxMapLocWidth
             // 
+            textBoxMapLocWidth.Anchor = AnchorStyles.Top;
             textBoxMapLocWidth.Location = new Point(158, 290);
             textBoxMapLocWidth.Name = "textBoxMapLocWidth";
             textBoxMapLocWidth.ReadOnly = true;
@@ -1146,6 +1229,7 @@
             // 
             // label28
             // 
+            label28.Anchor = AnchorStyles.Top;
             label28.AutoSize = true;
             label28.Location = new Point(62, 300);
             label28.Name = "label28";
@@ -1158,7 +1242,7 @@
             // 
             buttonPasteZoneRect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonPasteZoneRect.Image = (Image)resources.GetObject("buttonPasteZoneRect.Image");
-            buttonPasteZoneRect.Location = new Point(318, 167);
+            buttonPasteZoneRect.Location = new Point(317, 167);
             buttonPasteZoneRect.Name = "buttonPasteZoneRect";
             buttonPasteZoneRect.Size = new Size(26, 25);
             buttonPasteZoneRect.TabIndex = 3;
@@ -1171,7 +1255,7 @@
             textBoxMapLocZoneRect.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBoxMapLocZoneRect.Location = new Point(100, 168);
             textBoxMapLocZoneRect.Name = "textBoxMapLocZoneRect";
-            textBoxMapLocZoneRect.Size = new Size(212, 23);
+            textBoxMapLocZoneRect.Size = new Size(211, 23);
             textBoxMapLocZoneRect.TabIndex = 2;
             textBoxMapLocZoneRect.TextChanged += textBoxMapLoc_TextChanged;
             // 
@@ -1187,6 +1271,7 @@
             // 
             // groupBox3
             // 
+            groupBox3.Anchor = AnchorStyles.Top;
             groupBox3.Controls.Add(buttonPasteLoc);
             groupBox3.Controls.Add(label30);
             groupBox3.Controls.Add(textBoxMapLocY);
@@ -1253,7 +1338,7 @@
             tabPageLines.Location = new Point(4, 24);
             tabPageLines.Name = "tabPageLines";
             tabPageLines.Padding = new Padding(3);
-            tabPageLines.Size = new Size(469, 467);
+            tabPageLines.Size = new Size(468, 467);
             tabPageLines.TabIndex = 4;
             tabPageLines.Text = "Line Index";
             tabPageLines.UseVisualStyleBackColor = true;
@@ -1270,7 +1355,7 @@
             dataGridView1.Location = new Point(3, 3);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(463, 461);
+            dataGridView1.Size = new Size(462, 461);
             dataGridView1.TabIndex = 0;
             dataGridView1.RowHeaderMouseDoubleClick += dataGridView1_RowHeaderMouseDoubleClick;
             // 
@@ -1302,7 +1387,7 @@
             tabPageHelp.Location = new Point(4, 24);
             tabPageHelp.Name = "tabPageHelp";
             tabPageHelp.Padding = new Padding(3);
-            tabPageHelp.Size = new Size(469, 467);
+            tabPageHelp.Size = new Size(468, 467);
             tabPageHelp.TabIndex = 2;
             tabPageHelp.Text = "Help / Description";
             tabPageHelp.UseVisualStyleBackColor = true;
@@ -1312,7 +1397,7 @@
             richTextBox2.Dock = DockStyle.Fill;
             richTextBox2.Location = new Point(3, 3);
             richTextBox2.Name = "richTextBox2";
-            richTextBox2.Size = new Size(463, 461);
+            richTextBox2.Size = new Size(462, 461);
             richTextBox2.TabIndex = 0;
             richTextBox2.Text = "";
             richTextBox2.LinkClicked += richTextBox2_LinkClicked;
@@ -1343,7 +1428,7 @@
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
             statusStrip1.Location = new Point(0, 495);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(477, 22);
+            statusStrip1.Size = new Size(476, 22);
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -1362,7 +1447,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Control;
-            ClientSize = new Size(477, 517);
+            ClientSize = new Size(476, 517);
             Controls.Add(tabControl1);
             Controls.Add(statusStrip1);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -1515,5 +1600,10 @@
         private ToolStripMenuItem includeElevationsToolStripMenuItem;
         private Button buttonFindMapName;
         private ContextMenuStrip contextMenuStripStyles;
+        private DateTimePicker dateTimePickerStart;
+        private DateTimePicker dateTimePickerEnd;
+        private Label label36;
+        private Label label35;
+        private Button buttonScanDates;
     }
 }

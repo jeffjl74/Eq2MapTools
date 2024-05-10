@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="buttonFindMapName.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="buttonScanDates.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
         JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA68AAAOvAGVvHJJAAABIklE
@@ -133,6 +133,18 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>157, 17</value>
   </metadata>
+  <data name="buttonFindMapName.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6
+        JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAA68AAAOvAGVvHJJAAABIklE
+        QVQ4T2OgGlBUVFwBxPtxYQUFha3y8vIGUOWYAKRISkpKGBeGGrRDRUXFEKoFFRBpAG5DSDAA7B2oNgQg
+        ZAAyBqmFakMAdANEjN0l+c1SFJHFYBivAUL6odKMUZtWMsTs+gvCjFFb9/C41GgSbQBj5Ma5jDFb97P7
+        TXUEYcbobQcZY7ahuA6vAQwxO9+BNPI4VWqBMHvgNCeG2J3/eO3yVIkzIHbHa2wG8JvHKxAyYB9IkjFy
+        wxyQs8FeAGoGeucQY/TmzTDNOA0AJtMI9sDprgwxO14xRm1ZDvIKEH9ljNy8VMAySp6gAWwBMz0Zone8
+        YQpcFI2sGBvGNCB2tw3IZmb/OcFASR9gStsDUoQHr4DqhILYnaVA5zpBeSQABgYAUdGX+WuQLU4AAAAA
+        SUVORK5CYII=
+</value>
+  </data>
   <data name="label24.ToolTip" xml:space="preserve">
     <value>Make Inkscape svg groups based on the average elevation of a line.
 e.g. two numbers will generate three groups (depending on the data):
@@ -140,6 +152,15 @@ e.g. two numbers will generate three groups (depending on the data):
 #1 to #2
 #2 to +infinity
 (the program first sorts the numbers from lowest to highest)</value>
+  </data>
+  <data name="textBoxElevations.ToolTip" xml:space="preserve">
+    <value>Make Inkscape svg groups based on the average elevation of a line.
+e.g. two numbers will generate three groups (depending on the data):
+-infinity to #1
+#1 to #2
+#2 to +infinity
+(the program first sorts the numbers from lowest to highest)
+</value>
   </data>
   <metadata name="contextMenuStripElev.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>171, 56</value>

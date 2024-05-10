@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace EQ2MapTools
@@ -40,14 +41,23 @@ namespace EQ2MapTools
         string map_style_name = "No Map Style Name Found";
 
 
-        public static void GenerateCleanLog(string inputFile, string outputFile, bool append)
+        public static void GenerateCleanLog(string inputFile, string outputFile, bool append, Int64 startTime, Int64 endTime)
         {
             StringBuilder sb = new StringBuilder();
             if (append)
             {
-                string exists = ReadAllLinesNonBlocking(outputFile);
-                if (exists != null && !string.IsNullOrEmpty(exists))
-                    sb.Append(exists);
+                using (FileStream fs = new FileStream(outputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    using (StreamReader sr = new StreamReader(fs))
+                    {
+                        while (!sr.EndOfStream)
+                        {
+                            string? line = sr.ReadLine();
+                            if (line != null)
+                                sb.AppendLine(line);
+                        }
+                    }
+                }
             }
             using (FileStream fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
@@ -56,6 +66,15 @@ namespace EQ2MapTools
                     string? line = String.Empty;
                     while ((line = sr.ReadLine()) != null)
                     {
+                        // timestamp filter
+                        if(line.Length < 12)
+                            continue;
+                        Int64 lineTime;
+                        if (!Int64.TryParse(line.Substring(1, 10), out lineTime))
+                            continue;
+                        if(lineTime < startTime || lineTime > endTime)
+                            continue;
+
                         Match match = reLoc.Match(line);
                         if (match.Success)
                             sb.AppendLine(line);
