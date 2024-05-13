@@ -23,8 +23,23 @@ namespace EQ2MapTools
         public const int DefaultMapHeight = 506;
         Int64 startUnixSeconds = -1;                   // time filter for the log file
         Int64 endUnixSeconds = Int64.MaxValue;         // time filter for the log file
+        
         // extract the 4 numbers from a zone rect
         Regex reZoneRect = new Regex(@"(?<ulx>[0-9.+-]+)[, ]+(?<uly>[0-9.+-]+)[, ]+(?<lrx>[0-9.+-]+)[, ]+(?<lry>[0-9.+-]+)", RegexOptions.Compiled);
+
+        // keep a dictionary of map style name and (hopefully) corresponding zone name
+        Dictionary<string, string> zoneNames = new Dictionary<string, string>();
+
+        // MayStyles element format
+        // {0} = stylename
+        // {1} = displayname
+        // {2} = zonerect
+        // {3} = heightmin
+        // {4} = heightmax
+        // {5} = DDS file
+        // {6} = sourcerect
+        string formatMapStyle = "<ImageStyle Name=\"{0}\" displayname=\"{1}\" {2}{3}{4} >\r\n"
+            + "<ImageFrame Source=\"{5}\" {6} />\r\n</ImageStyle>\r\n";
 
         // keep a status line for each tab
         const string needInput = "Please provide necessary inputs.";
@@ -122,6 +137,7 @@ namespace EQ2MapTools
         private void Form1_Shown(object sender, EventArgs e)
         {
             CheckForProgramUpdate();
+            userChange = true;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -367,38 +383,37 @@ namespace EQ2MapTools
             }
         }
 
+        private void buttonOutputFolder_Click(object sender, EventArgs e)
+        {
+            if (textBoxOutputFolder.Text.Length > 0)
+            {
+                string? path = Path.GetDirectoryName(textBoxOutputFolder.Text);
+                if (path != null)
+                {
+                    folderBrowserDialog1.InitialDirectory = path;
+                }
+            }
+            if (folderBrowserDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                textBoxOutputFolder.Text = folderBrowserDialog1.SelectedPath;
+                textBoxOutputFolder.SelectionStart = textBoxOutputFolder.TextLength;
+                textBoxOutputFolder.ScrollToCaret();
+            }
+        }
+
         private void buttonFindMapName_Click(object sender, EventArgs e)
         {
             string fileName = textBoxLogFile.Text;
             if (fileName.Length > 0 && File.Exists(fileName))
             {
                 Cursor.Current = Cursors.WaitCursor;
-                List<string> mapNames = new List<string>();
-                Match match;
-                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    using (StreamReader sr = new StreamReader(fs))
-                    {
-                        while (!sr.EndOfStream)
-                        {
-                            string? line = sr.ReadLine();
-                            if (line != null)
-                            {
-                                match = Mapper2.reStyle.Match(line);
-                                if (match.Success)
-                                {
-                                    string style = match.Groups["style"].Value;
-                                    if (!mapNames.Contains(style))
-                                        mapNames.Add(style);
-                                }
-                            }
-                        }
-                    }
-                }
+                Task t3 = new Task(() => GenerateZoneDict(fileName));
+                t3.Start();
+                t3.Wait();
                 Cursor.Current = Cursors.Default;
 
                 contextMenuStripStyles.Items.Clear();
-                foreach (string mapName in mapNames)
+                foreach (string mapName in zoneNames.Keys)
                 {
                     ToolStripItem item = contextMenuStripStyles.Items.Add(mapName);
                     item.ToolTipText = "Click to set as Base map name";
@@ -420,24 +435,6 @@ namespace EQ2MapTools
             if (item != null)
             {
                 textBoxMapName.Text = item.Text;
-            }
-        }
-
-        private void buttonOutputFolder_Click(object sender, EventArgs e)
-        {
-            if (textBoxOutputFolder.Text.Length > 0)
-            {
-                string? path = Path.GetDirectoryName(textBoxOutputFolder.Text);
-                if (path != null)
-                {
-                    folderBrowserDialog1.InitialDirectory = path;
-                }
-            }
-            if (folderBrowserDialog1.ShowDialog(this) == DialogResult.OK)
-            {
-                textBoxOutputFolder.Text = folderBrowserDialog1.SelectedPath;
-                textBoxOutputFolder.SelectionStart = textBoxOutputFolder.TextLength;
-                textBoxOutputFolder.ScrollToCaret();
             }
         }
 
@@ -613,6 +610,7 @@ namespace EQ2MapTools
 
             // using tasks so the UI updates
             // but we need them to finish before we continue
+            Cursor.Current = Cursors.WaitCursor;
             mapper2 = new Mapper2();
             Task t1 = new Task(() => mapper2.GenerateSvg(inputFile, outputFile, textBoxElevations.Text));
             t1.Start();
@@ -621,6 +619,10 @@ namespace EQ2MapTools
             Task t2 = new Task(() => GenerateIndex(inputFile));
             t2.Start();
             t2.Wait();
+
+            Task t3 = new Task(() => GenerateZoneDict(inputFile));
+            t3.Start();
+            t3.Wait();
 
             lineIndexBindingSource.ResetBindings(false);
 
@@ -635,7 +637,42 @@ namespace EQ2MapTools
             ScrollToEnd(textBoxFileName);
             ZoneRectFromSvg(outputFile);
             userChange = true;
+            
+            Cursor.Current = Cursors.Default;
 
+        }
+
+        private void GenerateZoneDict(string inputFile)
+        {
+            zoneNames.Clear();
+
+            using (FileStream fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                Match match;
+                string zoneName = string.Empty;
+                using (StreamReader sr = new StreamReader(fs))
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        string? line = sr.ReadLine();
+                        if (line != null)
+                        {
+                            match = Mapper2.reZoned.Match(line);
+                            if (match.Success)
+                            {
+                                zoneName = match.Groups["zone"].Value;
+                            }
+                            else if ((match = Mapper2.reStyle.Match(line)).Success)
+                            {
+                                string styleName = match.Groups["style"].Value;
+                                if (!zoneNames.ContainsKey(styleName) && !string.IsNullOrEmpty(zoneName))
+                                    zoneNames.Add(styleName, zoneName);
+                            }
+                        }
+                    }
+                }
+            }
+            Debug.WriteLine("zone names done");
         }
 
         private void LaunchProgram(string pgmName, string outputFile)
@@ -742,7 +779,7 @@ namespace EQ2MapTools
                 // scales are not bound, manually update them
                 textBoxScaleWidth.Text = $"{mapData.inputScaleWidth:F0}";
                 textBoxScaleHeight.Text = $"{mapData.inputScaleHeight:F0}";
-                CalcRect();
+                CalcZoneRect();
                 if (mapData.adjustedX)
                 {
                     textBoxScaleWidth.BackColor = Color.LightGreen;
@@ -772,14 +809,14 @@ namespace EQ2MapTools
 
         private void buttonCalculate_Click(object sender, EventArgs e)
         {
-            CalcRect();
+            CalcZoneRect();
             zonerectTabStatus = $"Zone Rect calculated @ {DateTime.Now.ToShortTimeString()}";
             toolStripStatusLabel1.Text = zonerectTabStatus;
         }
 
-        private void CalcRect()
+        private void CalcZoneRect()
         {
-            mapData.CalcRect();
+            mapData.CalcZoneRect();
         }
 
         private void buttonCopyZoneRect_Click(object sender, EventArgs e)
@@ -794,13 +831,47 @@ namespace EQ2MapTools
             {
                 try
                 {
-                    string copy = mapData.zonerect;
-                    if (includeElevationsToolStripMenuItem.Checked)
+                    string copy = mapData.zonerect; // start with just the zonerect
+
+                    string heightmin = string.Empty;
+                    string heightmax = string.Empty;
+                    if (!string.IsNullOrEmpty(textBoxMaxEl.Text) && includeElevationsToolStripMenuItem.Checked)
+                        heightmax = $" heightmax=\"{textBoxMaxEl.Text}\"";
+                    if (!string.IsNullOrEmpty(textBoxMinEl.Text) && includeElevationsToolStripMenuItem.Checked)
+                        heightmin = $" heightmin=\"{textBoxMinEl.Text}\"";
+
+                    string sourcerect = $"SourceRect=\"0,0,{mapData.imageWidth},{mapData.imageHeight}\"";
+
+                    // try to build reasonable Name= and displayname= entries
+                    string mapname = textBoxMapName.Text.Trim('_');
+                    if (textBoxMapLevel.Text.Length > 0)
+                        mapname += "_" + textBoxMapLevel.Text;
+                    // do we have a zone name for this map name?
+                    string? displayname;
+                    if(!zoneNames.TryGetValue(textBoxMapName.Text, out displayname))
+                        displayname = mapname; // just use the map name
+                    if(displayname.StartsWith("exp"))
                     {
-                        if (!string.IsNullOrEmpty(textBoxMinEl.Text))
-                            copy += $" heightmin=\"{textBoxMinEl.Text}\"";
-                        if (!string.IsNullOrEmpty(textBoxMaxEl.Text))
-                            copy += $" heightmax=\"{textBoxMaxEl.Text}\"";
+                        // if we didn't have a zone name, let's at least take off the "expXX_"
+                        int underline = displayname.IndexOf('_');
+                        displayname = displayname.Substring(underline+1);
+                    }
+
+                    if (mapStyleEntryToolStripMenuItem.Checked)
+                    {
+                        copy = string.Format(formatMapStyle,
+                            mapname,
+                            displayname,
+                            mapData.zonerect,
+                            heightmin,
+                            heightmax,
+                            $"images/maps/map_{mapname}.dds",
+                            sourcerect);
+                    }
+                    else
+                    {
+                        copy += heightmin;
+                        copy += heightmax;
                     }
                     Clipboard.SetText(copy);
                 }
@@ -811,15 +882,22 @@ namespace EQ2MapTools
             }
         }
 
-        private void contextMenuStripElev_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        private void contextMenuStripCopy_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBoxMinEl.Text)
-                && !string.IsNullOrEmpty(textBoxMaxEl.Text))
+            if (!string.IsNullOrEmpty(textBoxZoneRect.Text))
             {
-                includeElevationsToolStripMenuItem.Enabled = true;
+                mapStyleEntryToolStripMenuItem.Enabled = true;
+                if (!string.IsNullOrEmpty(textBoxMinEl.Text)
+                    && !string.IsNullOrEmpty(textBoxMaxEl.Text))
+                    includeElevationsToolStripMenuItem.Enabled = true;
+                else
+                    includeElevationsToolStripMenuItem.Enabled = false;
             }
             else
+            {
+                mapStyleEntryToolStripMenuItem.Enabled = false;
                 includeElevationsToolStripMenuItem.Enabled = false;
+            }
         }
 
         private void includeElevationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -832,6 +910,14 @@ namespace EQ2MapTools
             {
                 includeElevationsToolStripMenuItem.Checked = true;
             }
+        }
+
+        private void mapStyleEntryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (mapStyleEntryToolStripMenuItem.Checked)
+                mapStyleEntryToolStripMenuItem.Checked = false;
+            else
+                mapStyleEntryToolStripMenuItem.Checked = true;
         }
 
         private void ScrollToEnd(TextBox tb)
@@ -1250,7 +1336,6 @@ namespace EQ2MapTools
                 }
             }
         }
-
 
         #endregion Line Index
 

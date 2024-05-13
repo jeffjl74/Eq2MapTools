@@ -63,8 +63,9 @@
             radioButtonExistingMapper = new RadioButton();
             tabPageZoneRect = new TabPage();
             menuButtonCopyZonerect = new MenuButton();
-            contextMenuStripElev = new ContextMenuStrip(components);
+            contextMenuStripCopy = new ContextMenuStrip(components);
             includeElevationsToolStripMenuItem = new ToolStripMenuItem();
+            mapStyleEntryToolStripMenuItem = new ToolStripMenuItem();
             label22 = new Label();
             label16 = new Label();
             textBoxFileName = new TextBox();
@@ -153,7 +154,7 @@
             groupBoxSvg.SuspendLayout();
             groupBoxMapper.SuspendLayout();
             tabPageZoneRect.SuspendLayout();
-            contextMenuStripElev.SuspendLayout();
+            contextMenuStripCopy.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mapDataBindingSource).BeginInit();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -259,7 +260,6 @@
             // 
             // dateTimePickerStart
             // 
-            dateTimePickerStart.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dateTimePickerStart.Checked = false;
             dateTimePickerStart.CustomFormat = "ddMMMyy HH:mm:ss";
             dateTimePickerStart.Format = DateTimePickerFormat.Custom;
@@ -279,7 +279,7 @@
             buttonFindMapName.Name = "buttonFindMapName";
             buttonFindMapName.Size = new Size(26, 25);
             buttonFindMapName.TabIndex = 8;
-            toolTip1.SetToolTip(buttonFindMapName, "Find map style names in the Input Log File");
+            toolTip1.SetToolTip(buttonFindMapName, "Find map style names in the\r\nentire (not filtered) Input Log File");
             buttonFindMapName.UseVisualStyleBackColor = true;
             buttonFindMapName.Click += buttonFindMapName_Click;
             // 
@@ -401,7 +401,7 @@
             textBoxMapName.Name = "textBoxMapName";
             textBoxMapName.Size = new Size(417, 23);
             textBoxMapName.TabIndex = 7;
-            textBoxMapName.Text = "e.g. map_expXX_zone";
+            textBoxMapName.Text = "e.g. exp20_type_zone_";
             toolTip1.SetToolTip(textBoxMapName, "Base file name for the .txt and .svg files.\r\n");
             textBoxMapName.TextChanged += textBoxMapName_TextChanged;
             textBoxMapName.Enter += textBoxGrey_Enter;
@@ -579,21 +579,21 @@
             // 
             menuButtonCopyZonerect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             menuButtonCopyZonerect.Location = new Point(385, 350);
-            menuButtonCopyZonerect.Menu = contextMenuStripElev;
+            menuButtonCopyZonerect.Menu = contextMenuStripCopy;
             menuButtonCopyZonerect.Name = "menuButtonCopyZonerect";
             menuButtonCopyZonerect.Size = new Size(75, 23);
             menuButtonCopyZonerect.TabIndex = 30;
             menuButtonCopyZonerect.Text = "Copy     ";
-            toolTip1.SetToolTip(menuButtonCopyZonerect, "Copy zonerect, and optionally the elevations, to the clipboard");
+            toolTip1.SetToolTip(menuButtonCopyZonerect, "Copy zonerect, and optionally the elevations\r\nand/or the entire ImageStyle element to the clipboard");
             menuButtonCopyZonerect.UseVisualStyleBackColor = true;
             menuButtonCopyZonerect.Click += menuButtonCopyZonerect_Click;
             // 
-            // contextMenuStripElev
+            // contextMenuStripCopy
             // 
-            contextMenuStripElev.Items.AddRange(new ToolStripItem[] { includeElevationsToolStripMenuItem });
-            contextMenuStripElev.Name = "contextMenuStrip1";
-            contextMenuStripElev.Size = new Size(170, 26);
-            contextMenuStripElev.Opening += contextMenuStripElev_Opening;
+            contextMenuStripCopy.Items.AddRange(new ToolStripItem[] { includeElevationsToolStripMenuItem, mapStyleEntryToolStripMenuItem });
+            contextMenuStripCopy.Name = "contextMenuStrip1";
+            contextMenuStripCopy.Size = new Size(170, 48);
+            contextMenuStripCopy.Opening += contextMenuStripCopy_Opening;
             // 
             // includeElevationsToolStripMenuItem
             // 
@@ -601,6 +601,13 @@
             includeElevationsToolStripMenuItem.Size = new Size(169, 22);
             includeElevationsToolStripMenuItem.Text = "Include elevations";
             includeElevationsToolStripMenuItem.Click += includeElevationsToolStripMenuItem_Click;
+            // 
+            // mapStyleEntryToolStripMenuItem
+            // 
+            mapStyleEntryToolStripMenuItem.Name = "mapStyleEntryToolStripMenuItem";
+            mapStyleEntryToolStripMenuItem.Size = new Size(169, 22);
+            mapStyleEntryToolStripMenuItem.Text = "MapStyles entry";
+            mapStyleEntryToolStripMenuItem.Click += mapStyleEntryToolStripMenuItem_Click;
             // 
             // label22
             // 
@@ -724,6 +731,7 @@
             textBoxScaleHeight.TabIndex = 13;
             textBoxScaleHeight.Text = "506";
             textBoxScaleHeight.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxScaleHeight, "Actual height of the SVG lines image after fitting to the map size");
             textBoxScaleHeight.Enter += textBox_Enter;
             textBoxScaleHeight.Validated += textBoxScaleHeight_Validated;
             // 
@@ -735,6 +743,7 @@
             textBoxScaleWidth.TabIndex = 11;
             textBoxScaleWidth.Text = "436";
             textBoxScaleWidth.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxScaleWidth, "Actual width of the SVG lines image after fitting to the map size");
             textBoxScaleWidth.Enter += textBox_Enter;
             textBoxScaleWidth.Validated += textBoxScaleWidth_Validated;
             // 
@@ -756,7 +765,7 @@
             checkBoxCustomMapSize.Size = new Size(104, 19);
             checkBoxCustomMapSize.TabIndex = 3;
             checkBoxCustomMapSize.Text = "Enable custom";
-            toolTip1.SetToolTip(checkBoxCustomMapSize, "Check to edit Map Image Size");
+            toolTip1.SetToolTip(checkBoxCustomMapSize, "Check to edit Map Image Size.\r\nEach dimension should be divisible by 4.");
             checkBoxCustomMapSize.UseVisualStyleBackColor = true;
             checkBoxCustomMapSize.CheckedChanged += checkBoxCustomMapSize_CheckedChanged;
             // 
@@ -768,6 +777,7 @@
             label10.Size = new Size(61, 15);
             label10.TabIndex = 7;
             label10.Text = "Height (Y)";
+            toolTip1.SetToolTip(label10, "DDS image height should be (must be?) divisible by 4");
             // 
             // label9
             // 
@@ -777,6 +787,7 @@
             label9.Size = new Size(57, 15);
             label9.TabIndex = 5;
             label9.Text = "Width (X)";
+            toolTip1.SetToolTip(label9, "DDS image width should be (must be?) divisible by 4");
             // 
             // textBoxImageHeight
             // 
@@ -788,6 +799,7 @@
             textBoxImageHeight.TabIndex = 8;
             textBoxImageHeight.Text = "506";
             textBoxImageHeight.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxImageHeight, "DDS image height should be (must be?) divisible by 4");
             textBoxImageHeight.TextChanged += textBoxZRInput_TextChanged;
             textBoxImageHeight.Enter += textBox_Enter;
             // 
@@ -801,6 +813,7 @@
             textBoxImageWidth.TabIndex = 6;
             textBoxImageWidth.Text = "436";
             textBoxImageWidth.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxImageWidth, "DDS image width should be (must be?) divisible by 4");
             textBoxImageWidth.TextChanged += textBoxZRInput_TextChanged;
             textBoxImageWidth.Enter += textBox_Enter;
             // 
@@ -828,7 +841,7 @@
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Map crosshair coordinates";
-            toolTip1.SetToolTip(groupBox2, "The locations of the crosshairs\r\nafter the lines have been scaled\r\nto fit the map size.");
+            toolTip1.SetToolTip(groupBox2, "The locations of the blue crosshairs\r\nafter the lines have been scaled\r\nto fit the map size.");
             // 
             // textBoxMapBY
             // 
@@ -838,6 +851,7 @@
             textBoxMapBY.Size = new Size(59, 23);
             textBoxMapBY.TabIndex = 5;
             textBoxMapBY.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxMapBY, "Lower right Y");
             textBoxMapBY.TextChanged += textBoxZRInput_TextChanged;
             textBoxMapBY.Enter += textBox_Enter;
             // 
@@ -858,6 +872,7 @@
             textBoxMapAY.Size = new Size(59, 23);
             textBoxMapAY.TabIndex = 3;
             textBoxMapAY.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxMapAY, "Upper left Y");
             textBoxMapAY.TextChanged += textBoxZRInput_TextChanged;
             textBoxMapAY.Enter += textBox_Enter;
             // 
@@ -869,6 +884,7 @@
             textBoxMapBX.Size = new Size(59, 23);
             textBoxMapBX.TabIndex = 4;
             textBoxMapBX.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxMapBX, "Lower right X");
             textBoxMapBX.TextChanged += textBoxZRInput_TextChanged;
             textBoxMapBX.Enter += textBox_Enter;
             // 
@@ -889,6 +905,7 @@
             textBoxMapAX.Size = new Size(59, 23);
             textBoxMapAX.TabIndex = 1;
             textBoxMapAX.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxMapAX, "Upper left X");
             textBoxMapAX.TextChanged += textBoxZRInput_TextChanged;
             textBoxMapAX.Enter += textBox_Enter;
             // 
@@ -949,6 +966,7 @@
             textBoxGameBY.Size = new Size(59, 23);
             textBoxGameBY.TabIndex = 5;
             textBoxGameBY.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxGameBY, "Lower right Y");
             textBoxGameBY.TextChanged += textBoxZRInput_TextChanged;
             textBoxGameBY.Enter += textBox_Enter;
             // 
@@ -970,6 +988,7 @@
             textBoxMaxEl.TabIndex = 9;
             textBoxMaxEl.TabStop = false;
             textBoxMaxEl.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxMaxEl, "\"Max Ele\" from the SVG file");
             // 
             // label4
             // 
@@ -988,6 +1007,7 @@
             textBoxGameAY.Size = new Size(59, 23);
             textBoxGameAY.TabIndex = 3;
             textBoxGameAY.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxGameAY, "Upper left Y");
             textBoxGameAY.TextChanged += textBoxZRInput_TextChanged;
             textBoxGameAY.Enter += textBox_Enter;
             // 
@@ -1000,6 +1020,7 @@
             textBoxMinEl.TabIndex = 7;
             textBoxMinEl.TabStop = false;
             textBoxMinEl.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxMinEl, "\"Min Ele\" from the SVG file");
             // 
             // textBoxGameBX
             // 
@@ -1009,6 +1030,7 @@
             textBoxGameBX.Size = new Size(59, 23);
             textBoxGameBX.TabIndex = 4;
             textBoxGameBX.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxGameBX, "Lower right X");
             textBoxGameBX.TextChanged += textBoxZRInput_TextChanged;
             textBoxGameBX.Enter += textBox_Enter;
             // 
@@ -1029,6 +1051,7 @@
             textBoxGameAX.Size = new Size(59, 23);
             textBoxGameAX.TabIndex = 1;
             textBoxGameAX.TextAlign = HorizontalAlignment.Right;
+            toolTip1.SetToolTip(textBoxGameAX, "Upper left X");
             textBoxGameAX.TextChanged += textBoxZRInput_TextChanged;
             textBoxGameAX.Enter += textBox_Enter;
             // 
@@ -1451,6 +1474,7 @@
             Controls.Add(tabControl1);
             Controls.Add(statusStrip1);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
             Name = "Form1";
             Text = "EQ2MAP Tools";
             FormClosing += Form1_FormClosing;
@@ -1465,7 +1489,7 @@
             groupBoxMapper.PerformLayout();
             tabPageZoneRect.ResumeLayout(false);
             tabPageZoneRect.PerformLayout();
-            contextMenuStripElev.ResumeLayout(false);
+            contextMenuStripCopy.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)mapDataBindingSource).EndInit();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
@@ -1596,7 +1620,7 @@
         private CheckBox checkBoxLoadMapstyles;
         private Label label34;
         private MenuButton menuButtonCopyZonerect;
-        private ContextMenuStrip contextMenuStripElev;
+        private ContextMenuStrip contextMenuStripCopy;
         private ToolStripMenuItem includeElevationsToolStripMenuItem;
         private Button buttonFindMapName;
         private ContextMenuStrip contextMenuStripStyles;
@@ -1605,5 +1629,6 @@
         private Label label36;
         private Label label35;
         private Button buttonScanDates;
+        private ToolStripMenuItem mapStyleEntryToolStripMenuItem;
     }
 }

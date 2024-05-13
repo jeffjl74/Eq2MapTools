@@ -8,6 +8,7 @@ namespace EQ2MapTools
     {
         public static readonly Regex reLoc = new Regex(@"Your location is (?<lon>[0-9,.+-]+), (?<alt>[0-9,.+-]+), (?<lat>[0-9,.+-]+).  Your");
         public static readonly Regex reStyle = new Regex("Map style name: (?<style>.+)", RegexOptions.Compiled);
+        public static readonly Regex reZoned = new Regex(@"] You have entered (?<zone>.+)\.$", RegexOptions.Compiled);
         static readonly Regex reColor = new Regex(@"\\/a color (\w+)", RegexOptions.Compiled);
         static readonly Regex reColorBlack = new Regex(@"\\/a color\.$", RegexOptions.Compiled);
 
@@ -64,10 +65,11 @@ namespace EQ2MapTools
                 using (StreamReader sr = new StreamReader(fs))
                 {
                     string? line = String.Empty;
+                    string? lastZoneName = string.Empty;
                     while ((line = sr.ReadLine()) != null)
                     {
                         // timestamp filter
-                        if(line.Length < 12)
+                        if(line.Length < 39)
                             continue;
                         Int64 lineTime;
                         if (!Int64.TryParse(line.Substring(1, 10), out lineTime))
@@ -81,13 +83,18 @@ namespace EQ2MapTools
                         else if (line.Contains("\\/a start new map line"))
                             sb.AppendLine(line);
                         else if (reColor.Match(line).Success)
-                            sb.AppendLine(line);
+                            sb.AppendLine(line); // the original Perl script would accept any two words if the first one was "color"
                         else if (reColorBlack.Match(line).Success)
-                            sb.AppendLine(line);
+                            sb.AppendLine(line); // this line was not properly recognized by the original Perl script
                         else if (line.Contains("\\/a mapgroup"))
                             sb.AppendLine(line);
                         else if (reStyle.Match(line).Success)
+                        {
+                            sb.AppendLine(lastZoneName); // so we can set the "displayname=" when building a mapstyles.xml element
                             sb.AppendLine(line);
+                        }
+                        else if (reZoned.Match(line).Success)
+                            lastZoneName = line; // this line was not part of the original Perl script
                     }
                 }
             }

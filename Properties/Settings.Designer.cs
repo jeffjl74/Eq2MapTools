@@ -12,7 +12,7 @@ namespace EQ2MapTools.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.2.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,109 +25,23 @@ namespace EQ2MapTools.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
-            "Calibri;}{\\f1\\fnil\\fcharset2 Symbol;}}\r\n{\\colortbl ;\\red0\\green0\\blue255;}\r\n{\\*\\" +
-            "generator Riched20 10.0.19041}\\viewkind4\\uc1 \r\n\\pard\\sl240\\slmult1\\f0\\fs22\\lang9" +
-            " This program is an update to:\\par\r\n\r\n\\pard{\\pntext\\f1\\\'B7\\tab}{\\*\\pn\\pnlvlblt\\p" +
-            "nf1\\pnindent0{\\pntxtb\\\'B7}}\\fi-360\\li720\\sl240\\slmult1 Rex \'SaintPeter\' Schrader" +
-            "\'s mapper2 and log_cleaner Perl scripts\\par\r\n{\\pntext\\f1\\\'B7\\tab}Tacoman\'s ZoneR" +
-            "ect Calculator.\\par\r\n\r\n\\pard\\sl240\\slmult1 The original tools are described here" +
-            ": {{\\field{\\*\\fldinst{HYPERLINK https://maps.eq2interface.com/index.php?action=m" +
-            "aptutorial&page=2 }}{\\fldrslt{https://maps.eq2interface.com/index.php?action=map" +
-            "tutorial&page=2\\ul0\\cf0}}}}\\f0\\fs22\\par\r\n\\par\r\nThis project\'s home page is here:" +
-            " {{\\field{\\*\\fldinst{HYPERLINK https://github.com/jeffjl74/ACT_Notes }}{\\fldrslt" +
-            "{https://github.com/jeffjl74/ACT_Notes\\ul0\\cf0}}}}\\f0\\fs22\\par\r\n\r\n\\pard\\sl276\\sl" +
-            "mult1\\par\r\n\\ul\\b\\fs24 Mapper2 Tab\\ulnone\\b0\\fs22\\par\r\nThe mapper2 and log_cleane" +
-            "r functions are practically line-for-line conversions of the original Perl scrip" +
-            "ts to C#.\\par\r\n\r\n\\pard{\\pntext\\f1\\\'B7\\tab}{\\*\\pn\\pnlvlblt\\pnf1\\pnindent0{\\pntxtb" +
-            "\\\'B7}}\\fi-360\\li720\\sl276\\slmult1  C# is fixed so it properly recognizes color c" +
-            "ommands (fixed to only processes occurrences of the word \"color\" if it\'s an emot" +
-            "e. And to recognize \\i /em color\\i0  as \"set to black\", which didn\'t work in the" +
-            " Perl script).\\par\r\n{\\pntext\\f1\\\'B7\\tab}The splitting by elevation into Inkscape" +
-            " groups works differently even though the C# looks like it should do the same th" +
-            "ing the Perl script does. But the C# code result is logical (e.g. if you provide" +
-            " 2 numbers, you get 3 groups: -infinity to #1, #1 to #2, #2 to +infinity). So, I" +
-            "\'m going with that.\\par\r\n\r\n\\pard\\sl276\\slmult1\\par\r\nThe tool adds some extra fea" +
-            "tures:\\par\r\n\r\n\\pard{\\pntext\\f1\\\'B7\\tab}{\\*\\pn\\pnlvlblt\\pnf1\\pnindent0{\\pntxtb\\\'B" +
-            "7}}\\fi-360\\li720\\sl276\\slmult1 The \\i Build new mapper file from Input Log File\\" +
-            "i0  option is the same functionality as the old Mapper2 batch file (mapper2 and " +
-            "log_cleaner) except that the SVG file is built from the \"clean\" mapper file inst" +
-            "ead of direclty from the EQII log file.\\par\r\n{\\pntext\\f1\\\'B7\\tab}The \\i Append I" +
-            "nput Log File mapping lines to existing mapper file\\i0  option provides a means " +
-            "to gather mapping lines from different EQII log files into one mapper file. For " +
-            "example, if you collected some /loc data for the same map on more than one chara" +
-            "cter. Or you collected some last week, and some more this week, and they are in " +
-            "different EQII log files.\\par\r\n{\\pntext\\f1\\\'B7\\tab}The \\i Use existing mapper fi" +
-            "le as is\\i0  option does not modify the mapper file when the [Run] button is pre" +
-            "ssed. Useful if you have hand-edited the mapper file.\\par\r\n{\\pntext\\f1\\\'B7\\tab}T" +
-            "wo launch options are provided. I find it more quicker to use a browser to view " +
-            "the SVG file while I\'m still collecting and checking /loc data. Then use Inkscap" +
-            "e when I\'m ready to start editing.\\par\r\n\r\n\\pard\\sl276\\slmult1\\par\r\n\\ul\\b\\fs24 Zo" +
-            "ne Rect Tab\\ulnone\\b0\\fs22\\par\r\n\r\n\\pard\\sa200\\sl276\\slmult1 The major difference" +
-            " in the Zone Rect calculator is that this version can read the SVG file to extra" +
-            "ct and calculate the data for all the boxes. Pressing the Mapper2 tab [Run] butt" +
-            "on automatically calculates a zone rect from the generated SVG file. The [Open S" +
-            "VG...] button can also open a file generated by Mapper2 or an Inkscape-edited Ma" +
-            "pper2 file.\\par\r\nThe [Calculate] button is just like Tacoman\'s [Calculate] butto" +
-            "n. The information in the edit boxes is used to create the zonerect.\\par\r\n\r\n\\par" +
-            "d\\sl240\\slmult1 To calculate a zone rect directly from an SVG via the [Run] or [" +
-            "Open SVG...] button:\\par\r\n\r\n\\pard{\\pntext\\f1\\\'B7\\tab}{\\*\\pn\\pnlvlblt\\pnf1\\pninde" +
-            "nt0{\\pntxtb\\\'B7}}\\fi-360\\li720\\sl240\\slmult1 Set the \\b Map Image Size\\b0  prior" +
-            " to using the [Run] or [Open SVG...] button.\\par\r\n{\\pntext\\f1\\\'B7\\tab}The \\b In " +
-            "Game /loc Coordinates\\b0  are extracted directly from the \\b UL:\\b0  and \\b LR:\\" +
-            "b0  values in the SVG file.\\par\r\n{\\pntext\\f1\\\'B7\\tab}The \\b Map crosshair coordi" +
-            "nates\\b0  are calculated:\\par\r\n\r\n\\pard{\\pntext\\f1\\\'B7\\tab}{\\*\\pn\\pnlvlblt\\pnf1\\p" +
-            "nindent0{\\pntxtb\\\'B7}}\\fi-360\\li1080\\sl240\\slmult1 They are frequently off by a " +
-            "pixel or so (I can\'t figure out why).\\par\r\n{\\pntext\\f1\\\'B7\\tab}The program picks" +
-            " a scaling factor to fit the SVG crosshairs into the \\b Map Image Size\\b0  and c" +
-            "alculate the crosshair locations.  This is a suggestion as to how to scale the i" +
-            "mage to the map size when importing it into your image processing software.\\par\r" +
-            "\n\r\n\\pard{\\pntext\\f1\\\'B7\\tab}{\\*\\pn\\pnlvlblt\\pnf1\\pnindent0{\\pntxtb\\\'B7}}\\fi-360\\" +
-            "li1440\\sl240\\slmult1 It adjusts the width so that the height is the map height. " +
-            "Or it adjusts the height so the width is the map width. The \"less than the map s" +
-            "ize\" dimension is displayed with a green background. Entering either of the numb" +
-            "ers in your image processing software scaling factors should result in both numb" +
-            "ers matching the tool\'s numbers.\\par\r\n\r\n\\pard{\\pntext\\f1\\\'B7\\tab}{\\*\\pn\\pnlvlblt" +
-            "\\pnf1\\pnindent0{\\pntxtb\\\'B7}}\\fi-360\\li1080\\sl240\\slmult1 Whether you use the su" +
-            "ggested scale, or set your own, you should verify the crosshair locations in you" +
-            "r image processing software and recalculate the zone rect if necessary.\\par\r\n\r\n\\" +
-            "pard\\sl240\\slmult1 Or you could hand enter the appropriate values and use the [C" +
-            "alculate] button.\\par\r\n\\par\r\n\\ul\\b\\fs24 Map Loc Tab\\ulnone\\b0\\fs22\\par\r\nPressing" +
-            " the [Paste] button on the Map Location Calculator will paste the \\i In Game /lo" +
-            "c coordinates\\i0  from the clipboard when set by the \\i /loc clipboard\\i0  comma" +
-            "nd in game.\\par\r\n\\par\r\nThe \\i ZoneRect\\i0  can be\\par\r\n\r\n\\pard{\\pntext\\f1\\\'B7\\ta" +
-            "b}{\\*\\pn\\pnlvlblt\\pnf1\\pnindent0{\\pntxtb\\\'B7}}\\fi-360\\li720\\sl240\\slmult1 manual" +
-            "ly entered (4 numbers separated by space and or comma)\\par\r\n{\\pntext\\f1\\\'B7\\tab}" +
-            "copied from the Zone Rect tab by pressing the little clipboard button at the end" +
-            "\\par\r\n{\\pntext\\f1\\\'B7\\tab}set from a mapstyles file\\par\r\n\r\n\\pard\\sl240\\slmult1\\p" +
-            "ar\r\nTo use a mapstyles file, browse to it in your game UI folder using the 3 dot" +
-            "s button. You would typically pick the \\i core_mapstyles.xml\\i0  or \\i _User_Map" +
-            "Styles.xml\\i0  file. Then choose a map name from the dropdown list. Check the bo" +
-            "x to automatically load the file when the program starts.\\par\r\n\\par\r\nAuto-comple" +
-            "te is on for the combobox, but a match has to start matching with the first char" +
-            "acter (e.g. if looking for \"Darkpaw Dugout\", you have to start typing \"darK\", no" +
-            "t \"dug\" to get a match). And the auto-complete dropdown will probably be too nar" +
-            "row. It can be resized by grabbing the resize handle at the lower right.\\par\r\n\r\n" +
-            "\\pard\\sl240\\slmult1\\par\r\n\\ul\\b\\fs24 Line Index Tab\\ulnone\\b0\\fs22\\par\r\nThe [Run]" +
-            " button on the Mapper2 tab also generates a cross reference between the mapper t" +
-            "ext file and the SVG file. The index is displayed on the Line Index tab. Double-" +
-            "clicking a line header (the leftmost column) opens the mapper text file in Notep" +
-            "ad++ ({{\\field{\\*\\fldinst{HYPERLINK https://notepad-plus-plus.org/ }}{\\fldrslt{h" +
-            "ttps://notepad-plus-plus.org/\\ul0\\cf0}}}}\\f0\\fs22 ) and positions the file at th" +
-            "e \"start new map line\" for that SVG path.\\par\r\n\\par\r\nWhen editing the file in In" +
-            "kscape, the path names will match the \\i SVG line id\\i0  in the index. So if you" +
-            " wanted to, for example, remove a duplicate line from the mapper file, or change" +
-            " its color, you can identify the path name in Inkscape, jump to it in Notepad++ " +
-            "via the EQ2MAP Tool, and edit the mapper file. You would then want to select \\i " +
-            "the Use existing mapper file as is\\i0  on the Mapper2 tab to keep from overwriti" +
-            "ng your change with lines from the EQII log file. \\par\r\n\\par\r\nOf course, if you " +
-            "do add or delete something in the mapper file, all of the index entries below th" +
-            "at change will be out of date until you [Run] again. So if you\'re making several" +
-            " changes it\'s probably quickest to start at the highest line number and work you" +
-            "r way up the list.\\par\r\n\\par\r\nThe index is not generated if the \"group by elevat" +
-            "ions\" option is used because the SVG lines are rearranged out of order from the " +
-            "log file. Should be easy enough to make a run without grouping by elevation if y" +
-            "ou want an index.\\par\r\n\\par\r\n\\par\r\n}\r\n ")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil\fcharset2 Symbol;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sl240\slmult1\f0\fs22\lang9 This utility is intended to streamline the process of creating maps for the EQ2MAP add-on for the EverQuest 2 game.\par
+\par
+This program is an update to:\par
+
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720\sl240\slmult1 Rex 'SaintPeter' Schrader's mapper2 and log_cleaner Perl scripts\par
+{\pntext\f1\'B7\tab}Tacoman's ZoneRect Calculator.\par
+
+\pard\sl240\slmult1\par
+The original tools are described here: {{\field{\*\fldinst{HYPERLINK https://maps.eq2interface.com/index.php?action=maptutorial&page=2 }}{\fldrslt{https://maps.eq2interface.com/index.php?action=maptutorial&page=2\ul0\cf0}}}}\f0\fs22\par
+\par
+This project's home page with additional notes and help is here: {{\field{\*\fldinst{HYPERLINK https://github.com/jeffjl74/Eq2MapTools#EQ2Map-Tools }}{\fldrslt{https://github.com/jeffjl74/Eq2MapTools#EQ2Map-Tools\ul0\cf0}}}}\f0\fs22\par
+\par
+}
+ ")]
         public string Help {
             get {
                 return ((string)(this["Help"]));

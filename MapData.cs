@@ -237,7 +237,7 @@ namespace EQ2MapTools
             }
         }
 
-        public void CalcRect()
+        public void CalcZoneRect()
         {
             // zonerect
             double svgWidth = LRX - ULX;
@@ -261,7 +261,7 @@ namespace EQ2MapTools
             inputScaleHeight = svgFactor * svgYextent;
             Debug.WriteLine($"New ratio:{svgFactor}; New Y for entered X:{inputScaleHeight}");
             PositionCrosshairs(imageWidth - inputScaleWidth, imageHeight - inputScaleHeight);
-            CalcRect();
+            CalcZoneRect();
         }
 
         public void FixAspectForNewY()
@@ -270,7 +270,7 @@ namespace EQ2MapTools
             inputScaleWidth = svgFactor * svgXextent;
             Debug.WriteLine($"New ratio:{svgFactor}; New X for entered Y:{inputScaleWidth}");
             PositionCrosshairs(imageWidth - inputScaleWidth, imageHeight - inputScaleHeight);
-            CalcRect();
+            CalcZoneRect();
         }
 
         double ExtractX1(string? svg)
