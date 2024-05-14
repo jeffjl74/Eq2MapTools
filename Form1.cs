@@ -23,7 +23,7 @@ namespace EQ2MapTools
         public const int DefaultMapHeight = 506;
         Int64 startUnixSeconds = -1;                   // time filter for the log file
         Int64 endUnixSeconds = Int64.MaxValue;         // time filter for the log file
-        
+
         // extract the 4 numbers from a zone rect
         Regex reZoneRect = new Regex(@"(?<ulx>[0-9.+-]+)[, ]+(?<uly>[0-9.+-]+)[, ]+(?<lrx>[0-9.+-]+)[, ]+(?<lry>[0-9.+-]+)", RegexOptions.Compiled);
 
@@ -34,12 +34,13 @@ namespace EQ2MapTools
         // {0} = stylename
         // {1} = displayname
         // {2} = zonerect
-        // {3} = heightmin
-        // {4} = heightmax
-        // {5} = DDS file
-        // {6} = sourcerect
-        string formatMapStyle = "<ImageStyle Name=\"{0}\" displayname=\"{1}\" {2}{3}{4} >\r\n"
-            + "<ImageFrame Source=\"{5}\" {6} />\r\n</ImageStyle>\r\n";
+        // {3} = availablerect
+        // {4} = heightmin
+        // {5} = heightmax
+        // {6} = DDS file
+        // {7} = sourcerect
+        string formatMapStyle = "<ImageStyle Name=\"{0}\" displayname=\"{1}\" {2}{3}{4}{5} >\r\n"
+            + "<ImageFrame Source=\"{6}\" {7} />\r\n</ImageStyle>\r\n";
 
         // keep a status line for each tab
         const string needInput = "Please provide necessary inputs.";
@@ -637,7 +638,7 @@ namespace EQ2MapTools
             ScrollToEnd(textBoxFileName);
             ZoneRectFromSvg(outputFile);
             userChange = true;
-            
+
             Cursor.Current = Cursors.Default;
 
         }
@@ -831,49 +832,7 @@ namespace EQ2MapTools
             {
                 try
                 {
-                    string copy = mapData.zonerect; // start with just the zonerect
-
-                    string heightmin = string.Empty;
-                    string heightmax = string.Empty;
-                    if (!string.IsNullOrEmpty(textBoxMaxEl.Text) && includeElevationsToolStripMenuItem.Checked)
-                        heightmax = $" heightmax=\"{textBoxMaxEl.Text}\"";
-                    if (!string.IsNullOrEmpty(textBoxMinEl.Text) && includeElevationsToolStripMenuItem.Checked)
-                        heightmin = $" heightmin=\"{textBoxMinEl.Text}\"";
-
-                    string sourcerect = $"SourceRect=\"0,0,{mapData.imageWidth},{mapData.imageHeight}\"";
-
-                    // try to build reasonable Name= and displayname= entries
-                    string mapname = textBoxMapName.Text.Trim('_');
-                    if (textBoxMapLevel.Text.Length > 0)
-                        mapname += "_" + textBoxMapLevel.Text;
-                    // do we have a zone name for this map name?
-                    string? displayname;
-                    if(!zoneNames.TryGetValue(textBoxMapName.Text, out displayname))
-                        displayname = mapname; // just use the map name
-                    if(displayname.StartsWith("exp"))
-                    {
-                        // if we didn't have a zone name, let's at least take off the "expXX_"
-                        int underline = displayname.IndexOf('_');
-                        displayname = displayname.Substring(underline+1);
-                    }
-
-                    if (mapStyleEntryToolStripMenuItem.Checked)
-                    {
-                        copy = string.Format(formatMapStyle,
-                            mapname,
-                            displayname,
-                            mapData.zonerect,
-                            heightmin,
-                            heightmax,
-                            $"images/maps/map_{mapname}.dds",
-                            sourcerect);
-                    }
-                    else
-                    {
-                        copy += heightmin;
-                        copy += heightmax;
-                    }
-                    Clipboard.SetText(copy);
+                    Clipboard.SetText(BuildImageStyle());
                 }
                 catch (Exception)
                 {
@@ -882,11 +841,68 @@ namespace EQ2MapTools
             }
         }
 
+        private string BuildImageStyle()
+        {
+            // start with just the zonerect
+            string result = mapData.zonerect;
+
+            string availablerect = string.Empty;
+            if (includeAvailablerectToolStripMenuItem.Checked)
+            {
+                mapData.CalcAvailableRect();
+                availablerect = " " + mapData.availableRect;
+                result += availablerect;
+            }
+
+            string heightmin = string.Empty;
+            string heightmax = string.Empty;
+            if (!string.IsNullOrEmpty(textBoxMaxEl.Text) && includeElevationsToolStripMenuItem.Checked)
+                heightmax = $" heightmax=\"{textBoxMaxEl.Text}\"";
+            if (!string.IsNullOrEmpty(textBoxMinEl.Text) && includeElevationsToolStripMenuItem.Checked)
+                heightmin = $" heightmin=\"{textBoxMinEl.Text}\"";
+            result += heightmin;
+            result += heightmax;
+
+            if (mapStyleEntryToolStripMenuItem.Checked)
+            {
+                // try to build reasonable Name= and displayname= entries
+                string mapname = textBoxMapName.Text.Trim('_');
+                if (textBoxMapLevel.Text.Length > 0)
+                    mapname += "_" + textBoxMapLevel.Text;
+                // do we have a zone name for this map name?
+                string? displayname;
+                if (!zoneNames.TryGetValue(textBoxMapName.Text, out displayname))
+                    displayname = mapname; // just use the map name
+                if (displayname.StartsWith("exp"))
+                {
+                    // if we didn't have a zone name, let's at least take off the "expXX_"
+                    int underline = displayname.IndexOf('_');
+                    displayname = displayname.Substring(underline + 1);
+                }
+
+                string sourcerect = $"SourceRect=\"0,0,{mapData.imageWidth},{mapData.imageHeight}\"";
+
+                result = string.Format(formatMapStyle,
+                    mapname,
+                    displayname,
+                    mapData.zonerect,
+                    availablerect,
+                    heightmin,
+                    heightmax,
+                    $"images/maps/map_{mapname}.dds",
+                    sourcerect);
+            }
+
+            return result;
+        }
+
         private void contextMenuStripCopy_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!string.IsNullOrEmpty(textBoxZoneRect.Text))
             {
                 mapStyleEntryToolStripMenuItem.Enabled = true;
+                includeAvailablerectToolStripMenuItem.Enabled = true;
+
                 if (!string.IsNullOrEmpty(textBoxMinEl.Text)
                     && !string.IsNullOrEmpty(textBoxMaxEl.Text))
                     includeElevationsToolStripMenuItem.Enabled = true;
@@ -897,6 +913,7 @@ namespace EQ2MapTools
             {
                 mapStyleEntryToolStripMenuItem.Enabled = false;
                 includeElevationsToolStripMenuItem.Enabled = false;
+                includeAvailablerectToolStripMenuItem.Enabled = false;
             }
         }
 
@@ -910,6 +927,14 @@ namespace EQ2MapTools
             {
                 includeElevationsToolStripMenuItem.Checked = true;
             }
+        }
+
+        private void includeAvailablerectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (includeAvailablerectToolStripMenuItem.Checked)
+                includeAvailablerectToolStripMenuItem.Checked = false;
+            else
+                includeAvailablerectToolStripMenuItem.Checked = true;
         }
 
         private void mapStyleEntryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1028,6 +1053,38 @@ namespace EQ2MapTools
 
         #region Map Loc
 
+        private void radioButtonGameLoc_CheckedChanged(object sender, EventArgs e)
+        {
+            FixMapLocLables();
+        }
+
+        private void radioButtonMapLoc_CheckedChanged(object sender, EventArgs e)
+        {
+            FixMapLocLables();
+        }
+
+        private void FixMapLocLables()
+        {
+            if (radioButtonGameLoc.Checked)
+            {
+                groupBoxCoord.Text = "In Game /loc coordinate";
+                buttonPasteLoc.Enabled = true;
+                labelMapResult.Text = "Map location";
+            }
+            else
+            {
+                groupBoxCoord.Text = "Map location";
+                buttonPasteLoc.Enabled = false;
+                labelMapResult.Text = "Game /loc";
+            }
+            textBoxMapLocation.Text = string.Empty;
+            if (maplocTabStatus.Contains("calculated"))
+            {
+                maplocTabStatus = ready;
+                UpdateStatusLine();
+            }
+        }
+
         private void buttonPasteLoc_Click(object sender, EventArgs e)
         {
             try
@@ -1120,16 +1177,16 @@ namespace EQ2MapTools
                     return;
                 }
 
-                double locx;
-                if (!double.TryParse(textBoxMapLocX.Text.Trim(), out locx))
+                double inputX;
+                if (!double.TryParse(textBoxMapLocX.Text.Trim(), out inputX))
                 {
-                    SimpleMessageBox.Show(this, "In game /loc coordinate X is invalid.");
+                    SimpleMessageBox.Show(this, "Coordinate X is invalid.");
                     return;
                 }
-                double locy;
-                if (!double.TryParse(textBoxMapLocY.Text.Trim(), out locy))
+                double inputY;
+                if (!double.TryParse(textBoxMapLocY.Text.Trim(), out inputY))
                 {
-                    SimpleMessageBox.Show(this, "In game /loc coordinate Y is invalid.");
+                    SimpleMessageBox.Show(this, "Coordinate Y is invalid.");
                     return;
                 }
                 double imWidth;
@@ -1147,11 +1204,22 @@ namespace EQ2MapTools
 
                 double zoneRectWidth = lrx - ulx;
                 double zoneRectHeight = lry - uly;
-                double mapX = (((locx * -1) - ulx) / zoneRectWidth) * imWidth;
-                double mapY = ((locy - uly) / zoneRectHeight) * imHeight;
-                textBoxMapLocation.Text = $"{mapX:F0},{mapY:F0}";
-                maplocTabStatus = $"Map Loc calculated at {DateTime.Now.ToShortTimeString()}";
-                toolStripStatusLabel1.Text = maplocTabStatus;
+                if (radioButtonGameLoc.Checked)
+                {
+                    double mapX = (((inputX * -1) - ulx) / zoneRectWidth) * imWidth;
+                    double mapY = ((inputY - uly) / zoneRectHeight) * imHeight;
+                    textBoxMapLocation.Text = $"{mapX:F0},{mapY:F0}";
+                    maplocTabStatus = $"Map coordinate calculated at {DateTime.Now.ToShortTimeString()}";
+                    toolStripStatusLabel1.Text = maplocTabStatus;
+                }
+                else
+                {
+                    double locx = -1 * (((inputX / imWidth) * zoneRectWidth) + ulx);
+                    double locy = (inputY / imHeight) * zoneRectHeight + uly;
+                    textBoxMapLocation.Text = $"{locx:F0},{locy:F0}";
+                    maplocTabStatus = $"Game Loc calculated at {DateTime.Now.ToShortTimeString()}";
+                    toolStripStatusLabel1.Text = maplocTabStatus;
+                }
             }
         }
 

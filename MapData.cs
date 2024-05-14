@@ -132,6 +132,7 @@ namespace EQ2MapTools
         public bool adjustedY;                  // scaling factor if we scale for Y
         public string MaxEl = string.Empty;     // elevation svg string
         public string MinEl = string.Empty;     // elevation svg string
+        public string availableRect = string.Empty; // calculated avaialblerect
 
         // intermediate calculations
         private double LOC0x, LOC0y, LOC1x, LOC1y, wdppx, wdppy;
@@ -246,13 +247,22 @@ namespace EQ2MapTools
             double crosshairHeight = crosshairBY - crosshairAY;
             wdppx = svgWidth / crosshairWidth;
             wdppy = svgHeight / crosshairHeight;
-            Debug.WriteLine($"wdppx={wdppx} wdppy={wdppy}");
             LOC0x = (ULX - wdppx * (crosshairAX - 0)) * -1;
             LOC1x = (wdppx * (imageWidth - crosshairBX) + LRX) * -1;
             LOC0y = ULY - wdppy * (crosshairAY - 0);
             LOC1y = wdppy * (imageHeight - crosshairBY) + LRY;
-            zonerect = $"zonerect=\"{LOC0x:N0}, {LOC0y:N0}, {LOC1x:N0}, {LOC1y:N0}\"";
-            Debug.WriteLine($"{zonerect}");
+            zonerect = $"zonerect=\"{LOC0x:F0}, {LOC0y:F0}, {LOC1x:F0}, {LOC1y:F0}\"";
+        }
+
+        public void CalcAvailableRect()
+        {
+            double worldWidth = LOC1x - LOC0x;
+            double worldHeight = LOC1y - LOC0y;
+            double arx0 = (crosshairAX * worldWidth / imageWidth) + LOC0x;
+            double ary0 = (crosshairAY * worldHeight / imageHeight) + LOC0y;
+            double arx1 = (crosshairBX * worldWidth / imageWidth) + LOC0x;
+            double ary1 = (crosshairBY * worldHeight / imageHeight) + LOC0y;
+            availableRect = $"availablerect=\"{arx0:F0},{ary0:F0},{arx1:F0},{ary1:F0}\"";
         }
 
         public void FixAspectForNewX()

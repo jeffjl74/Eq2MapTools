@@ -65,6 +65,7 @@
             menuButtonCopyZonerect = new MenuButton();
             contextMenuStripCopy = new ContextMenuStrip(components);
             includeElevationsToolStripMenuItem = new ToolStripMenuItem();
+            includeAvailablerectToolStripMenuItem = new ToolStripMenuItem();
             mapStyleEntryToolStripMenuItem = new ToolStripMenuItem();
             label22 = new Label();
             label16 = new Label();
@@ -115,7 +116,7 @@
             comboBoxMapStyles = new ComboBox();
             buttonMapLocCalc = new Button();
             textBoxMapLocation = new TextBox();
-            label32 = new Label();
+            labelMapResult = new Label();
             label29 = new Label();
             buttonPasteMapSize = new Button();
             checkBoxCustomMapLocMapSize = new CheckBox();
@@ -127,8 +128,10 @@
             buttonPasteZoneRect = new Button();
             textBoxMapLocZoneRect = new TextBox();
             label25 = new Label();
-            groupBox3 = new GroupBox();
+            groupBoxCoord = new GroupBox();
+            radioButtonMapLoc = new RadioButton();
             buttonPasteLoc = new Button();
+            radioButtonGameLoc = new RadioButton();
             label30 = new Label();
             textBoxMapLocY = new TextBox();
             label31 = new Label();
@@ -159,7 +162,7 @@
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             tabPageMapLoc.SuspendLayout();
-            groupBox3.SuspendLayout();
+            groupBoxCoord.SuspendLayout();
             tabPageLines.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)lineIndexBindingSource).BeginInit();
@@ -590,22 +593,29 @@
             // 
             // contextMenuStripCopy
             // 
-            contextMenuStripCopy.Items.AddRange(new ToolStripItem[] { includeElevationsToolStripMenuItem, mapStyleEntryToolStripMenuItem });
+            contextMenuStripCopy.Items.AddRange(new ToolStripItem[] { includeElevationsToolStripMenuItem, includeAvailablerectToolStripMenuItem, mapStyleEntryToolStripMenuItem });
             contextMenuStripCopy.Name = "contextMenuStrip1";
-            contextMenuStripCopy.Size = new Size(170, 48);
+            contextMenuStripCopy.Size = new Size(183, 70);
             contextMenuStripCopy.Opening += contextMenuStripCopy_Opening;
             // 
             // includeElevationsToolStripMenuItem
             // 
             includeElevationsToolStripMenuItem.Name = "includeElevationsToolStripMenuItem";
-            includeElevationsToolStripMenuItem.Size = new Size(169, 22);
+            includeElevationsToolStripMenuItem.Size = new Size(182, 22);
             includeElevationsToolStripMenuItem.Text = "Include elevations";
             includeElevationsToolStripMenuItem.Click += includeElevationsToolStripMenuItem_Click;
+            // 
+            // includeAvailablerectToolStripMenuItem
+            // 
+            includeAvailablerectToolStripMenuItem.Name = "includeAvailablerectToolStripMenuItem";
+            includeAvailablerectToolStripMenuItem.Size = new Size(182, 22);
+            includeAvailablerectToolStripMenuItem.Text = "Include availablerect";
+            includeAvailablerectToolStripMenuItem.Click += includeAvailablerectToolStripMenuItem_Click;
             // 
             // mapStyleEntryToolStripMenuItem
             // 
             mapStyleEntryToolStripMenuItem.Name = "mapStyleEntryToolStripMenuItem";
-            mapStyleEntryToolStripMenuItem.Size = new Size(169, 22);
+            mapStyleEntryToolStripMenuItem.Size = new Size(182, 22);
             mapStyleEntryToolStripMenuItem.Text = "MapStyles entry";
             mapStyleEntryToolStripMenuItem.Click += mapStyleEntryToolStripMenuItem_Click;
             // 
@@ -1065,7 +1075,7 @@
             tabPageMapLoc.Controls.Add(comboBoxMapStyles);
             tabPageMapLoc.Controls.Add(buttonMapLocCalc);
             tabPageMapLoc.Controls.Add(textBoxMapLocation);
-            tabPageMapLoc.Controls.Add(label32);
+            tabPageMapLoc.Controls.Add(labelMapResult);
             tabPageMapLoc.Controls.Add(label29);
             tabPageMapLoc.Controls.Add(buttonPasteMapSize);
             tabPageMapLoc.Controls.Add(checkBoxCustomMapLocMapSize);
@@ -1077,7 +1087,7 @@
             tabPageMapLoc.Controls.Add(buttonPasteZoneRect);
             tabPageMapLoc.Controls.Add(textBoxMapLocZoneRect);
             tabPageMapLoc.Controls.Add(label25);
-            tabPageMapLoc.Controls.Add(groupBox3);
+            tabPageMapLoc.Controls.Add(groupBoxCoord);
             tabPageMapLoc.Location = new Point(4, 24);
             tabPageMapLoc.Name = "tabPageMapLoc";
             tabPageMapLoc.Padding = new Padding(3);
@@ -1090,18 +1100,17 @@
             label34.AutoSize = true;
             label34.Location = new Point(10, 12);
             label34.Name = "label34";
-            label34.Size = new Size(338, 15);
-            label34.TabIndex = 19;
-            label34.Text = "Convert an in-game /loc to map coordinates using a zone rect.";
+            label34.Size = new Size(379, 15);
+            label34.TabIndex = 0;
+            label34.Text = "Convert between in-game /loc and map coordinates using a zone rect.";
             // 
             // checkBoxLoadMapstyles
             // 
-            checkBoxLoadMapstyles.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             checkBoxLoadMapstyles.AutoSize = true;
-            checkBoxLoadMapstyles.Location = new Point(352, 211);
+            checkBoxLoadMapstyles.Location = new Point(10, 224);
             checkBoxLoadMapstyles.Name = "checkBoxLoadMapstyles";
             checkBoxLoadMapstyles.Size = new Size(105, 19);
-            checkBoxLoadMapstyles.TabIndex = 7;
+            checkBoxLoadMapstyles.TabIndex = 6;
             checkBoxLoadMapstyles.Text = "Load at startup";
             checkBoxLoadMapstyles.UseVisualStyleBackColor = true;
             // 
@@ -1110,10 +1119,10 @@
             buttonOpenMapStyle.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonOpenMapStyle.AutoSize = true;
             buttonOpenMapStyle.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            buttonOpenMapStyle.Location = new Point(317, 207);
+            buttonOpenMapStyle.Location = new Point(414, 209);
             buttonOpenMapStyle.Name = "buttonOpenMapStyle";
             buttonOpenMapStyle.Size = new Size(26, 25);
-            buttonOpenMapStyle.TabIndex = 6;
+            buttonOpenMapStyle.TabIndex = 8;
             buttonOpenMapStyle.Text = "...";
             toolTip1.SetToolTip(buttonOpenMapStyle, "Browse for a MapStyles.xml file in your EQII UI folder");
             buttonOpenMapStyle.UseVisualStyleBackColor = true;
@@ -1122,10 +1131,10 @@
             // label33
             // 
             label33.AutoSize = true;
-            label33.Location = new Point(32, 212);
+            label33.Location = new Point(34, 206);
             label33.Name = "label33";
             label33.Size = new Size(62, 15);
-            label33.TabIndex = 4;
+            label33.TabIndex = 5;
             label33.Text = "Map Style:";
             toolTip1.SetToolTip(label33, "Get a ZoneRect from a MapStyles file");
             // 
@@ -1135,10 +1144,10 @@
             comboBoxMapStyles.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBoxMapStyles.AutoCompleteSource = AutoCompleteSource.ListItems;
             comboBoxMapStyles.FormattingEnabled = true;
-            comboBoxMapStyles.Location = new Point(100, 209);
+            comboBoxMapStyles.Location = new Point(121, 211);
             comboBoxMapStyles.Name = "comboBoxMapStyles";
-            comboBoxMapStyles.Size = new Size(211, 23);
-            comboBoxMapStyles.TabIndex = 5;
+            comboBoxMapStyles.Size = new Size(287, 23);
+            comboBoxMapStyles.TabIndex = 7;
             comboBoxMapStyles.SelectedIndexChanged += comboBoxMapStyles_SelectedIndexChanged;
             // 
             // buttonMapLocCalc
@@ -1147,7 +1156,7 @@
             buttonMapLocCalc.Location = new Point(193, 424);
             buttonMapLocCalc.Name = "buttonMapLocCalc";
             buttonMapLocCalc.Size = new Size(75, 23);
-            buttonMapLocCalc.TabIndex = 18;
+            buttonMapLocCalc.TabIndex = 19;
             buttonMapLocCalc.Text = "Calculate";
             toolTip1.SetToolTip(buttonMapLocCalc, "Calculate map location");
             buttonMapLocCalc.UseVisualStyleBackColor = true;
@@ -1159,18 +1168,19 @@
             textBoxMapLocation.Location = new Point(186, 358);
             textBoxMapLocation.Name = "textBoxMapLocation";
             textBoxMapLocation.Size = new Size(100, 23);
-            textBoxMapLocation.TabIndex = 17;
+            textBoxMapLocation.TabIndex = 18;
             textBoxMapLocation.TextAlign = HorizontalAlignment.Center;
+            textBoxMapLocation.Enter += textBox_Enter;
             // 
-            // label32
+            // labelMapResult
             // 
-            label32.Anchor = AnchorStyles.Top;
-            label32.AutoSize = true;
-            label32.Location = new Point(100, 361);
-            label32.Name = "label32";
-            label32.Size = new Size(80, 15);
-            label32.TabIndex = 16;
-            label32.Text = "Map Location";
+            labelMapResult.Anchor = AnchorStyles.Top;
+            labelMapResult.AutoSize = true;
+            labelMapResult.Location = new Point(100, 361);
+            labelMapResult.Name = "labelMapResult";
+            labelMapResult.Size = new Size(80, 15);
+            labelMapResult.TabIndex = 17;
+            labelMapResult.Text = "Map Location";
             // 
             // label29
             // 
@@ -1179,7 +1189,7 @@
             label29.Location = new Point(10, 331);
             label29.Name = "label29";
             label29.Size = new Size(448, 2);
-            label29.TabIndex = 15;
+            label29.TabIndex = 16;
             // 
             // buttonPasteMapSize
             // 
@@ -1188,7 +1198,7 @@
             buttonPasteMapSize.Location = new Point(293, 289);
             buttonPasteMapSize.Name = "buttonPasteMapSize";
             buttonPasteMapSize.Size = new Size(26, 25);
-            buttonPasteMapSize.TabIndex = 14;
+            buttonPasteMapSize.TabIndex = 15;
             toolTip1.SetToolTip(buttonPasteMapSize, "Paste from Zone Rect tab");
             buttonPasteMapSize.UseVisualStyleBackColor = true;
             buttonPasteMapSize.Click += buttonPasteMapSize_Click;
@@ -1200,7 +1210,7 @@
             checkBoxCustomMapLocMapSize.Location = new Point(46, 282);
             checkBoxCustomMapLocMapSize.Name = "checkBoxCustomMapLocMapSize";
             checkBoxCustomMapLocMapSize.Size = new Size(107, 19);
-            checkBoxCustomMapLocMapSize.TabIndex = 8;
+            checkBoxCustomMapLocMapSize.TabIndex = 9;
             checkBoxCustomMapLocMapSize.Text = " Enable custom";
             toolTip1.SetToolTip(checkBoxCustomMapLocMapSize, "Check to edit Map Image Size");
             checkBoxCustomMapLocMapSize.UseVisualStyleBackColor = true;
@@ -1213,7 +1223,7 @@
             label26.Location = new Point(226, 271);
             label26.Name = "label26";
             label26.Size = new Size(61, 15);
-            label26.TabIndex = 12;
+            label26.TabIndex = 13;
             label26.Text = "Height (Y)";
             // 
             // label27
@@ -1223,7 +1233,7 @@
             label27.Location = new Point(160, 271);
             label27.Name = "label27";
             label27.Size = new Size(57, 15);
-            label27.TabIndex = 10;
+            label27.TabIndex = 11;
             label27.Text = "Width (X)";
             // 
             // textBoxMapLocHeight
@@ -1233,10 +1243,11 @@
             textBoxMapLocHeight.Name = "textBoxMapLocHeight";
             textBoxMapLocHeight.ReadOnly = true;
             textBoxMapLocHeight.Size = new Size(59, 23);
-            textBoxMapLocHeight.TabIndex = 13;
+            textBoxMapLocHeight.TabIndex = 14;
             textBoxMapLocHeight.Text = "506";
             textBoxMapLocHeight.TextAlign = HorizontalAlignment.Right;
             textBoxMapLocHeight.TextChanged += textBoxMapLoc_TextChanged;
+            textBoxMapLocHeight.Enter += textBox_Enter;
             // 
             // textBoxMapLocWidth
             // 
@@ -1245,10 +1256,11 @@
             textBoxMapLocWidth.Name = "textBoxMapLocWidth";
             textBoxMapLocWidth.ReadOnly = true;
             textBoxMapLocWidth.Size = new Size(59, 23);
-            textBoxMapLocWidth.TabIndex = 11;
+            textBoxMapLocWidth.TabIndex = 12;
             textBoxMapLocWidth.Text = "436";
             textBoxMapLocWidth.TextAlign = HorizontalAlignment.Right;
             textBoxMapLocWidth.TextChanged += textBoxMapLoc_TextChanged;
+            textBoxMapLocWidth.Enter += textBox_Enter;
             // 
             // label28
             // 
@@ -1257,7 +1269,7 @@
             label28.Location = new Point(62, 300);
             label28.Name = "label28";
             label28.Size = new Size(90, 15);
-            label28.TabIndex = 9;
+            label28.TabIndex = 10;
             label28.Text = "Map Image Size";
             toolTip1.SetToolTip(label28, "The final size of the scaled map.");
             // 
@@ -1265,10 +1277,10 @@
             // 
             buttonPasteZoneRect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonPasteZoneRect.Image = (Image)resources.GetObject("buttonPasteZoneRect.Image");
-            buttonPasteZoneRect.Location = new Point(317, 167);
+            buttonPasteZoneRect.Location = new Point(414, 169);
             buttonPasteZoneRect.Name = "buttonPasteZoneRect";
             buttonPasteZoneRect.Size = new Size(26, 25);
-            buttonPasteZoneRect.TabIndex = 3;
+            buttonPasteZoneRect.TabIndex = 4;
             toolTip1.SetToolTip(buttonPasteZoneRect, "Paste from Zone Rect tab");
             buttonPasteZoneRect.UseVisualStyleBackColor = true;
             buttonPasteZoneRect.Click += buttonPasteZoneRect_Click;
@@ -1276,84 +1288,115 @@
             // textBoxMapLocZoneRect
             // 
             textBoxMapLocZoneRect.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxMapLocZoneRect.Location = new Point(100, 168);
+            textBoxMapLocZoneRect.Location = new Point(121, 171);
             textBoxMapLocZoneRect.Name = "textBoxMapLocZoneRect";
-            textBoxMapLocZoneRect.Size = new Size(211, 23);
-            textBoxMapLocZoneRect.TabIndex = 2;
+            textBoxMapLocZoneRect.Size = new Size(287, 23);
+            textBoxMapLocZoneRect.TabIndex = 3;
             textBoxMapLocZoneRect.TextChanged += textBoxMapLoc_TextChanged;
+            textBoxMapLocZoneRect.Enter += textBox_Enter;
             // 
             // label25
             // 
             label25.AutoSize = true;
-            label25.Location = new Point(34, 173);
+            label25.Location = new Point(34, 175);
             label25.Name = "label25";
             label25.Size = new Size(60, 15);
-            label25.TabIndex = 1;
+            label25.TabIndex = 2;
             label25.Text = "ZoneRect:";
             toolTip1.SetToolTip(label25, "Four numbers are required. Any other text is ignored.");
             // 
-            // groupBox3
+            // groupBoxCoord
             // 
-            groupBox3.Anchor = AnchorStyles.Top;
-            groupBox3.Controls.Add(buttonPasteLoc);
-            groupBox3.Controls.Add(label30);
-            groupBox3.Controls.Add(textBoxMapLocY);
-            groupBox3.Controls.Add(label31);
-            groupBox3.Controls.Add(textBoxMapLocX);
-            groupBox3.Location = new Point(142, 37);
-            groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(170, 111);
-            groupBox3.TabIndex = 0;
-            groupBox3.TabStop = false;
-            groupBox3.Text = "In Game /loc coordinates";
-            toolTip1.SetToolTip(groupBox3, "The UL, LR, and Ele points from the SVG file.\r\nThey are displayed at the bottom in the SVG editor.\r\nOr populated automatically when reading the SVG file.");
+            groupBoxCoord.Anchor = AnchorStyles.Top;
+            groupBoxCoord.Controls.Add(radioButtonMapLoc);
+            groupBoxCoord.Controls.Add(buttonPasteLoc);
+            groupBoxCoord.Controls.Add(radioButtonGameLoc);
+            groupBoxCoord.Controls.Add(label30);
+            groupBoxCoord.Controls.Add(textBoxMapLocY);
+            groupBoxCoord.Controls.Add(label31);
+            groupBoxCoord.Controls.Add(textBoxMapLocX);
+            groupBoxCoord.Location = new Point(32, 45);
+            groupBoxCoord.Name = "groupBoxCoord";
+            groupBoxCoord.Size = new Size(380, 89);
+            groupBoxCoord.TabIndex = 1;
+            groupBoxCoord.TabStop = false;
+            groupBoxCoord.Text = "In Game /loc coordinates";
+            toolTip1.SetToolTip(groupBoxCoord, "Coordinate to convert");
+            // 
+            // radioButtonMapLoc
+            // 
+            radioButtonMapLoc.AutoSize = true;
+            radioButtonMapLoc.Location = new Point(12, 51);
+            radioButtonMapLoc.Name = "radioButtonMapLoc";
+            radioButtonMapLoc.Size = new Size(140, 19);
+            radioButtonMapLoc.TabIndex = 1;
+            radioButtonMapLoc.Text = "Input Map coordinate";
+            toolTip1.SetToolTip(radioButtonMapLoc, "Select to convert map location X,Y to an in-game /loc");
+            radioButtonMapLoc.UseVisualStyleBackColor = true;
+            radioButtonMapLoc.CheckedChanged += radioButtonMapLoc_CheckedChanged;
             // 
             // buttonPasteLoc
             // 
-            buttonPasteLoc.Location = new Point(45, 72);
+            buttonPasteLoc.Image = (Image)resources.GetObject("buttonPasteLoc.Image");
+            buttonPasteLoc.Location = new Point(326, 38);
             buttonPasteLoc.Name = "buttonPasteLoc";
-            buttonPasteLoc.Size = new Size(75, 23);
-            buttonPasteLoc.TabIndex = 4;
-            buttonPasteLoc.Text = "Paste";
-            toolTip1.SetToolTip(buttonPasteLoc, "Paste from in-game /loc clipboard");
+            buttonPasteLoc.Size = new Size(26, 25);
+            buttonPasteLoc.TabIndex = 6;
+            toolTip1.SetToolTip(buttonPasteLoc, "Paste the result of an in-game \"/loc clipboard\" command");
             buttonPasteLoc.UseVisualStyleBackColor = true;
             buttonPasteLoc.Click += buttonPasteLoc_Click;
+            // 
+            // radioButtonGameLoc
+            // 
+            radioButtonGameLoc.AutoSize = true;
+            radioButtonGameLoc.Checked = true;
+            radioButtonGameLoc.Location = new Point(12, 26);
+            radioButtonGameLoc.Name = "radioButtonGameLoc";
+            radioButtonGameLoc.Size = new Size(111, 19);
+            radioButtonGameLoc.TabIndex = 0;
+            radioButtonGameLoc.TabStop = true;
+            radioButtonGameLoc.Text = "Input Game /loc";
+            toolTip1.SetToolTip(radioButtonGameLoc, "Select to convert in-game /loc X,Y to a map location");
+            radioButtonGameLoc.UseVisualStyleBackColor = true;
+            radioButtonGameLoc.CheckedChanged += radioButtonGameLoc_CheckedChanged;
             // 
             // label30
             // 
             label30.AutoSize = true;
-            label30.Location = new Point(115, 16);
+            label30.Location = new Point(282, 19);
             label30.Name = "label30";
             label30.Size = new Size(14, 15);
-            label30.TabIndex = 2;
+            label30.TabIndex = 4;
             label30.Text = "Y";
             // 
             // textBoxMapLocY
             // 
-            textBoxMapLocY.Location = new Point(94, 36);
+            textBoxMapLocY.Location = new Point(261, 39);
             textBoxMapLocY.Name = "textBoxMapLocY";
             textBoxMapLocY.Size = new Size(59, 23);
-            textBoxMapLocY.TabIndex = 3;
+            textBoxMapLocY.TabIndex = 5;
             textBoxMapLocY.TextAlign = HorizontalAlignment.Right;
             textBoxMapLocY.TextChanged += textBoxMapLoc_TextChanged;
+            textBoxMapLocY.Enter += textBox_Enter;
             // 
             // label31
             // 
             label31.AutoSize = true;
-            label31.Location = new Point(41, 16);
+            label31.Location = new Point(208, 19);
             label31.Name = "label31";
             label31.Size = new Size(14, 15);
-            label31.TabIndex = 0;
+            label31.TabIndex = 2;
             label31.Text = "X";
             // 
             // textBoxMapLocX
             // 
-            textBoxMapLocX.Location = new Point(20, 36);
+            textBoxMapLocX.Location = new Point(187, 39);
             textBoxMapLocX.Name = "textBoxMapLocX";
             textBoxMapLocX.Size = new Size(59, 23);
-            textBoxMapLocX.TabIndex = 1;
+            textBoxMapLocX.TabIndex = 3;
             textBoxMapLocX.TextAlign = HorizontalAlignment.Right;
             textBoxMapLocX.TextChanged += textBoxMapLoc_TextChanged;
+            textBoxMapLocX.Enter += textBox_Enter;
             // 
             // tabPageLines
             // 
@@ -1497,8 +1540,8 @@
             groupBox1.PerformLayout();
             tabPageMapLoc.ResumeLayout(false);
             tabPageMapLoc.PerformLayout();
-            groupBox3.ResumeLayout(false);
-            groupBox3.PerformLayout();
+            groupBoxCoord.ResumeLayout(false);
+            groupBoxCoord.PerformLayout();
             tabPageLines.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)lineIndexBindingSource).EndInit();
@@ -1594,7 +1637,7 @@
         private TabPage tabPageMapLoc;
         private Button buttonMapLocCalc;
         private TextBox textBoxMapLocation;
-        private Label label32;
+        private Label labelMapResult;
         private Label label29;
         private Button buttonPasteMapSize;
         private CheckBox checkBoxCustomMapLocMapSize;
@@ -1606,7 +1649,7 @@
         private Button buttonPasteZoneRect;
         private TextBox textBoxMapLocZoneRect;
         private Label label25;
-        private GroupBox groupBox3;
+        private GroupBox groupBoxCoord;
         private Button buttonPasteLoc;
         private Label label30;
         private TextBox textBoxMapLocY;
@@ -1630,5 +1673,8 @@
         private Label label35;
         private Button buttonScanDates;
         private ToolStripMenuItem mapStyleEntryToolStripMenuItem;
+        private ToolStripMenuItem includeAvailablerectToolStripMenuItem;
+        private RadioButton radioButtonMapLoc;
+        private RadioButton radioButtonGameLoc;
     }
 }
