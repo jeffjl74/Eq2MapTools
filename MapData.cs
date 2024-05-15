@@ -133,6 +133,8 @@ namespace EQ2MapTools
         public string MaxEl = string.Empty;     // elevation svg string
         public string MinEl = string.Empty;     // elevation svg string
         public string availableRect = string.Empty; // calculated avaialblerect
+        public double[] availableRectArray = new double[4];
+        public double[] zoneRectArray = new double[4];
 
         // intermediate calculations
         private double LOC0x, LOC0y, LOC1x, LOC1y, wdppx, wdppy;
@@ -252,6 +254,7 @@ namespace EQ2MapTools
             LOC0y = ULY - wdppy * (crosshairAY - 0);
             LOC1y = wdppy * (imageHeight - crosshairBY) + LRY;
             zonerect = $"zonerect=\"{LOC0x:F0}, {LOC0y:F0}, {LOC1x:F0}, {LOC1y:F0}\"";
+            zoneRectArray = [ LOC0x, LOC0y, LOC1x, LOC1y];
         }
 
         public void CalcAvailableRect()
@@ -263,6 +266,7 @@ namespace EQ2MapTools
             double arx1 = (crosshairBX * worldWidth / imageWidth) + LOC0x;
             double ary1 = (crosshairBY * worldHeight / imageHeight) + LOC0y;
             availableRect = $"availablerect=\"{arx0:F0},{ary0:F0},{arx1:F0},{ary1:F0}\"";
+            availableRectArray = [arx0, ary0 , arx1, ary1];
         }
 
         public void FixAspectForNewX()

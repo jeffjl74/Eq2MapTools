@@ -133,6 +133,9 @@ namespace EQ2MapTools
 
             // starts up on mapper tab
             toolStripStatusLabel1.Text = mapperTabStatus;
+
+            // box size for default map size
+            drawingBox1.SetOutline(DefaultMapWidth, DefaultMapHeight);
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -684,7 +687,7 @@ namespace EQ2MapTools
                 {
                     ProcessStartInfo startInfo = new ProcessStartInfo(pgmName);
                     startInfo.UseShellExecute = true;
-                    startInfo.Arguments = outputFile;
+                    startInfo.Arguments = $"\"{outputFile}\"";
                     Process.Start(startInfo);
                 }
                 catch (Exception ex)
@@ -818,10 +821,9 @@ namespace EQ2MapTools
         private void CalcZoneRect()
         {
             mapData.CalcZoneRect();
-        }
-
-        private void buttonCopyZoneRect_Click(object sender, EventArgs e)
-        {
+            mapData.CalcAvailableRect();
+            drawingBox1.SetOutline((int)mapData.imageWidth, (int)mapData.imageHeight);
+            drawingBox1.SetAvailaleRect(mapData.zoneRectArray, mapData.availableRectArray);
         }
 
         private void menuButtonCopyZonerect_Click(object sender, EventArgs e)
@@ -1001,7 +1003,10 @@ namespace EQ2MapTools
                     else if ((bool)tb.Tag == false)
                         tb.Tag = true;
                     else
-                        toolStripStatusLabel1.Text = "Ready";
+                    { 
+                        toolStripStatusLabel1.Text = "Ready"; 
+                        drawingBox1.ClearLines();
+                    }
                 }
                 else
                     tb.Tag = false;

@@ -62,6 +62,8 @@
             radioButtonAppendMapper = new RadioButton();
             radioButtonExistingMapper = new RadioButton();
             tabPageZoneRect = new TabPage();
+            label32 = new Label();
+            drawingBox1 = new DrawingBox();
             menuButtonCopyZonerect = new MenuButton();
             contextMenuStripCopy = new ContextMenuStrip(components);
             includeElevationsToolStripMenuItem = new ToolStripMenuItem();
@@ -157,6 +159,7 @@
             groupBoxSvg.SuspendLayout();
             groupBoxMapper.SuspendLayout();
             tabPageZoneRect.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)drawingBox1).BeginInit();
             contextMenuStripCopy.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mapDataBindingSource).BeginInit();
             groupBox2.SuspendLayout();
@@ -546,6 +549,8 @@
             // tabPageZoneRect
             // 
             tabPageZoneRect.BackColor = SystemColors.Control;
+            tabPageZoneRect.Controls.Add(label32);
+            tabPageZoneRect.Controls.Add(drawingBox1);
             tabPageZoneRect.Controls.Add(menuButtonCopyZonerect);
             tabPageZoneRect.Controls.Add(label22);
             tabPageZoneRect.Controls.Add(label16);
@@ -577,6 +582,25 @@
             tabPageZoneRect.Size = new Size(468, 467);
             tabPageZoneRect.TabIndex = 0;
             tabPageZoneRect.Text = "Zone Rect";
+            // 
+            // label32
+            // 
+            label32.AutoSize = true;
+            label32.Location = new Point(314, 202);
+            label32.Name = "label32";
+            label32.Size = new Size(93, 15);
+            label32.TabIndex = 32;
+            label32.Text = "Map Area Usage";
+            toolTip1.SetToolTip(label32, "Hatched box represents the portion of the map utilized by the lines");
+            // 
+            // drawingBox1
+            // 
+            drawingBox1.BorderStyle = BorderStyle.FixedSingle;
+            drawingBox1.Location = new Point(314, 220);
+            drawingBox1.Name = "drawingBox1";
+            drawingBox1.Size = new Size(100, 100);
+            drawingBox1.TabIndex = 31;
+            drawingBox1.TabStop = false;
             // 
             // menuButtonCopyZonerect
             // 
@@ -718,7 +742,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(242, 277);
+            label12.Location = new Point(225, 277);
             label12.Name = "label12";
             label12.Size = new Size(61, 15);
             label12.TabIndex = 12;
@@ -727,7 +751,7 @@
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(176, 277);
+            label13.Location = new Point(159, 277);
             label13.Name = "label13";
             label13.Size = new Size(57, 15);
             label13.TabIndex = 10;
@@ -735,7 +759,7 @@
             // 
             // textBoxScaleHeight
             // 
-            textBoxScaleHeight.Location = new Point(243, 295);
+            textBoxScaleHeight.Location = new Point(226, 295);
             textBoxScaleHeight.Name = "textBoxScaleHeight";
             textBoxScaleHeight.Size = new Size(59, 23);
             textBoxScaleHeight.TabIndex = 13;
@@ -747,7 +771,7 @@
             // 
             // textBoxScaleWidth
             // 
-            textBoxScaleWidth.Location = new Point(174, 295);
+            textBoxScaleWidth.Location = new Point(157, 295);
             textBoxScaleWidth.Name = "textBoxScaleWidth";
             textBoxScaleWidth.Size = new Size(59, 23);
             textBoxScaleWidth.TabIndex = 11;
@@ -760,7 +784,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(97, 298);
+            label11.Location = new Point(80, 298);
             label11.Name = "label11";
             label11.Size = new Size(68, 15);
             label11.TabIndex = 9;
@@ -770,29 +794,29 @@
             // checkBoxCustomMapSize
             // 
             checkBoxCustomMapSize.AutoSize = true;
-            checkBoxCustomMapSize.Location = new Point(62, 225);
+            checkBoxCustomMapSize.Location = new Point(45, 225);
             checkBoxCustomMapSize.Name = "checkBoxCustomMapSize";
             checkBoxCustomMapSize.Size = new Size(104, 19);
             checkBoxCustomMapSize.TabIndex = 3;
             checkBoxCustomMapSize.Text = "Enable custom";
-            toolTip1.SetToolTip(checkBoxCustomMapSize, "Check to edit Map Image Size.\r\nEach dimension should be divisible by 4.");
+            toolTip1.SetToolTip(checkBoxCustomMapSize, "Check to edit Map Image Size.");
             checkBoxCustomMapSize.UseVisualStyleBackColor = true;
             checkBoxCustomMapSize.CheckedChanged += checkBoxCustomMapSize_CheckedChanged;
             // 
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(242, 215);
+            label10.Location = new Point(225, 215);
             label10.Name = "label10";
             label10.Size = new Size(61, 15);
             label10.TabIndex = 7;
             label10.Text = "Height (Y)";
-            toolTip1.SetToolTip(label10, "DDS image height should be (must be?) divisible by 4");
+            toolTip1.SetToolTip(label10, "DDS image height");
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(176, 215);
+            label9.Location = new Point(159, 215);
             label9.Name = "label9";
             label9.Size = new Size(57, 15);
             label9.TabIndex = 5;
@@ -802,21 +826,21 @@
             // textBoxImageHeight
             // 
             textBoxImageHeight.DataBindings.Add(new Binding("Text", mapDataBindingSource, "imageHeight", true, DataSourceUpdateMode.OnPropertyChanged, "double.NaN", "F0"));
-            textBoxImageHeight.Location = new Point(243, 233);
+            textBoxImageHeight.Location = new Point(226, 233);
             textBoxImageHeight.Name = "textBoxImageHeight";
             textBoxImageHeight.ReadOnly = true;
             textBoxImageHeight.Size = new Size(59, 23);
             textBoxImageHeight.TabIndex = 8;
             textBoxImageHeight.Text = "506";
             textBoxImageHeight.TextAlign = HorizontalAlignment.Right;
-            toolTip1.SetToolTip(textBoxImageHeight, "DDS image height should be (must be?) divisible by 4");
+            toolTip1.SetToolTip(textBoxImageHeight, "DDS image height");
             textBoxImageHeight.TextChanged += textBoxZRInput_TextChanged;
             textBoxImageHeight.Enter += textBox_Enter;
             // 
             // textBoxImageWidth
             // 
             textBoxImageWidth.DataBindings.Add(new Binding("Text", mapDataBindingSource, "imageWidth", true, DataSourceUpdateMode.OnPropertyChanged, "double.NaN", "F0"));
-            textBoxImageWidth.Location = new Point(174, 233);
+            textBoxImageWidth.Location = new Point(157, 233);
             textBoxImageWidth.Name = "textBoxImageWidth";
             textBoxImageWidth.ReadOnly = true;
             textBoxImageWidth.Size = new Size(59, 23);
@@ -830,7 +854,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(78, 243);
+            label8.Location = new Point(61, 243);
             label8.Name = "label8";
             label8.Size = new Size(90, 15);
             label8.TabIndex = 4;
@@ -1532,6 +1556,7 @@
             groupBoxMapper.PerformLayout();
             tabPageZoneRect.ResumeLayout(false);
             tabPageZoneRect.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)drawingBox1).EndInit();
             contextMenuStripCopy.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)mapDataBindingSource).EndInit();
             groupBox2.ResumeLayout(false);
@@ -1676,5 +1701,7 @@
         private ToolStripMenuItem includeAvailablerectToolStripMenuItem;
         private RadioButton radioButtonMapLoc;
         private RadioButton radioButtonGameLoc;
+        private DrawingBox drawingBox1;
+        private Label label32;
     }
 }
