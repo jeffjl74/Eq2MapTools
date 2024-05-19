@@ -33,6 +33,8 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tabControl1 = new TabControl();
             tabPageMapper = new TabPage();
+            comboBoxMapName = new ComboBox();
+            comboBoxLogFiles = new ComboBox();
             buttonScanDates = new Button();
             label36 = new Label();
             label35 = new Label();
@@ -49,14 +51,12 @@
             buttonRunMapper = new Button();
             textBoxMapLevel = new TextBox();
             label23 = new Label();
-            textBoxMapName = new TextBox();
             label20 = new Label();
             buttonOutputFolder = new Button();
             textBoxOutputFolder = new TextBox();
             label19 = new Label();
             buttonLogBrowse = new Button();
-            textBoxLogFile = new TextBox();
-            label18 = new Label();
+            labelInputLogFiles = new Label();
             groupBoxMapper = new GroupBox();
             radioButtonBuildMapper = new RadioButton();
             radioButtonAppendMapper = new RadioButton();
@@ -192,6 +192,8 @@
             // tabPageMapper
             // 
             tabPageMapper.BackColor = SystemColors.Control;
+            tabPageMapper.Controls.Add(comboBoxMapName);
+            tabPageMapper.Controls.Add(comboBoxLogFiles);
             tabPageMapper.Controls.Add(buttonScanDates);
             tabPageMapper.Controls.Add(label36);
             tabPageMapper.Controls.Add(label35);
@@ -204,14 +206,12 @@
             tabPageMapper.Controls.Add(buttonRunMapper);
             tabPageMapper.Controls.Add(textBoxMapLevel);
             tabPageMapper.Controls.Add(label23);
-            tabPageMapper.Controls.Add(textBoxMapName);
             tabPageMapper.Controls.Add(label20);
             tabPageMapper.Controls.Add(buttonOutputFolder);
             tabPageMapper.Controls.Add(textBoxOutputFolder);
             tabPageMapper.Controls.Add(label19);
             tabPageMapper.Controls.Add(buttonLogBrowse);
-            tabPageMapper.Controls.Add(textBoxLogFile);
-            tabPageMapper.Controls.Add(label18);
+            tabPageMapper.Controls.Add(labelInputLogFiles);
             tabPageMapper.Controls.Add(groupBoxMapper);
             tabPageMapper.Location = new Point(4, 24);
             tabPageMapper.Name = "tabPageMapper";
@@ -219,6 +219,25 @@
             tabPageMapper.Size = new Size(468, 467);
             tabPageMapper.TabIndex = 3;
             tabPageMapper.Text = "Mapper2";
+            // 
+            // comboBoxMapName
+            // 
+            comboBoxMapName.FormattingEnabled = true;
+            comboBoxMapName.Location = new Point(11, 117);
+            comboBoxMapName.Name = "comboBoxMapName";
+            comboBoxMapName.Size = new Size(417, 23);
+            comboBoxMapName.TabIndex = 7;
+            comboBoxMapName.TextChanged += comboBoxMapName_TextChanged;
+            // 
+            // comboBoxLogFiles
+            // 
+            comboBoxLogFiles.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comboBoxLogFiles.FormattingEnabled = true;
+            comboBoxLogFiles.Location = new Point(11, 26);
+            comboBoxLogFiles.Name = "comboBoxLogFiles";
+            comboBoxLogFiles.Size = new Size(417, 23);
+            comboBoxLogFiles.TabIndex = 1;
+            comboBoxLogFiles.Leave += comboBoxLogFiles_Leave;
             // 
             // buttonScanDates
             // 
@@ -281,11 +300,11 @@
             // 
             buttonFindMapName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             buttonFindMapName.Image = (Image)resources.GetObject("buttonFindMapName.Image");
-            buttonFindMapName.Location = new Point(435, 117);
+            buttonFindMapName.Location = new Point(435, 116);
             buttonFindMapName.Name = "buttonFindMapName";
             buttonFindMapName.Size = new Size(26, 25);
             buttonFindMapName.TabIndex = 8;
-            toolTip1.SetToolTip(buttonFindMapName, "Find map style names in the\r\nentire (not filtered) Input Log File");
+            toolTip1.SetToolTip(buttonFindMapName, "Find and add map style names\r\nin the entire (not filtered)\r\nlist of Input Log Files");
             buttonFindMapName.UseVisualStyleBackColor = true;
             buttonFindMapName.Click += buttonFindMapName_Click;
             // 
@@ -387,7 +406,7 @@
             textBoxMapLevel.Size = new Size(200, 23);
             textBoxMapLevel.TabIndex = 10;
             toolTip1.SetToolTip(textBoxMapLevel, "This field is appended to the Base Map Name\r\nto create the final file name. It can be blank.\r\n");
-            textBoxMapLevel.TextChanged += textBoxMapName_TextChanged;
+            textBoxMapLevel.TextChanged += comboBoxMapName_TextChanged;
             // 
             // label23
             // 
@@ -398,19 +417,6 @@
             label23.TabIndex = 9;
             label23.Text = "Map Level:";
             toolTip1.SetToolTip(label23, "This field is appended to the Base Map Name\r\nto create the final file name. It can be blank.");
-            // 
-            // textBoxMapName
-            // 
-            textBoxMapName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxMapName.ForeColor = Color.Silver;
-            textBoxMapName.Location = new Point(11, 118);
-            textBoxMapName.Name = "textBoxMapName";
-            textBoxMapName.Size = new Size(417, 23);
-            textBoxMapName.TabIndex = 7;
-            textBoxMapName.Text = "e.g. exp20_type_zone_";
-            toolTip1.SetToolTip(textBoxMapName, "Base file name for the .txt and .svg files.\r\n");
-            textBoxMapName.TextChanged += textBoxMapName_TextChanged;
-            textBoxMapName.Enter += textBoxGrey_Enter;
             // 
             // label20
             // 
@@ -466,29 +472,19 @@
             buttonLogBrowse.Size = new Size(26, 25);
             buttonLogBrowse.TabIndex = 2;
             buttonLogBrowse.Text = "...";
-            toolTip1.SetToolTip(buttonLogBrowse, "Browse for game log file to process");
+            toolTip1.SetToolTip(buttonLogBrowse, "Browse for game log files to process");
             buttonLogBrowse.UseVisualStyleBackColor = true;
             buttonLogBrowse.Click += buttonLogBrowse_Click;
             // 
-            // textBoxLogFile
+            // labelInputLogFiles
             // 
-            textBoxLogFile.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxLogFile.Location = new Point(11, 26);
-            textBoxLogFile.Name = "textBoxLogFile";
-            textBoxLogFile.Size = new Size(417, 23);
-            textBoxLogFile.TabIndex = 1;
-            toolTip1.SetToolTip(textBoxLogFile, "EQII generated log file containing the map making emotes.\r\n");
-            textBoxLogFile.TextChanged += textBoxFileInputs_TextChanged;
-            // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Location = new Point(11, 8);
-            label18.Name = "label18";
-            label18.Size = new Size(82, 15);
-            label18.TabIndex = 0;
-            label18.Text = "Input Log File:";
-            toolTip1.SetToolTip(label18, "EQII generated log file containing the map making emotes.");
+            labelInputLogFiles.AutoSize = true;
+            labelInputLogFiles.Location = new Point(11, 8);
+            labelInputLogFiles.Name = "labelInputLogFiles";
+            labelInputLogFiles.Size = new Size(82, 15);
+            labelInputLogFiles.TabIndex = 0;
+            labelInputLogFiles.Text = "Input Log File:";
+            toolTip1.SetToolTip(labelInputLogFiles, "EQII generated log file containing the map making emotes.");
             // 
             // groupBoxMapper
             // 
@@ -512,10 +508,10 @@
             radioButtonBuildMapper.Font = new Font("Segoe UI", 9F);
             radioButtonBuildMapper.Location = new Point(6, 22);
             radioButtonBuildMapper.Name = "radioButtonBuildMapper";
-            radioButtonBuildMapper.Size = new Size(244, 19);
+            radioButtonBuildMapper.Size = new Size(257, 19);
             radioButtonBuildMapper.TabIndex = 0;
             radioButtonBuildMapper.TabStop = true;
-            radioButtonBuildMapper.Text = "Build new mapper file from Input Log File";
+            radioButtonBuildMapper.Text = "Build new mapper file from Input Log File(s)";
             toolTip1.SetToolTip(radioButtonBuildMapper, "Extract relevent lines from the Input Log File into a new mapper file.");
             radioButtonBuildMapper.UseVisualStyleBackColor = true;
             radioButtonBuildMapper.CheckedChanged += radioButton_CheckedChanged;
@@ -526,9 +522,9 @@
             radioButtonAppendMapper.Font = new Font("Segoe UI", 9F);
             radioButtonAppendMapper.Location = new Point(6, 47);
             radioButtonAppendMapper.Name = "radioButtonAppendMapper";
-            radioButtonAppendMapper.Size = new Size(341, 19);
+            radioButtonAppendMapper.Size = new Size(354, 19);
             radioButtonAppendMapper.TabIndex = 1;
-            radioButtonAppendMapper.Text = "Append Input Log File mapping lines to existing mapper file";
+            radioButtonAppendMapper.Text = "Append Input Log File(s) mapping lines to existing mapper file";
             toolTip1.SetToolTip(radioButtonAppendMapper, "Useful if adding lines to an exsting map from a new Input Log File");
             radioButtonAppendMapper.UseVisualStyleBackColor = true;
             radioButtonAppendMapper.CheckedChanged += radioButton_CheckedChanged;
@@ -539,9 +535,9 @@
             radioButtonExistingMapper.Font = new Font("Segoe UI", 9F);
             radioButtonExistingMapper.Location = new Point(6, 72);
             radioButtonExistingMapper.Name = "radioButtonExistingMapper";
-            radioButtonExistingMapper.Size = new Size(319, 19);
+            radioButtonExistingMapper.Size = new Size(332, 19);
             radioButtonExistingMapper.TabIndex = 2;
-            radioButtonExistingMapper.Text = "Use existing mapper file as is (Input Log File is not used)";
+            radioButtonExistingMapper.Text = "Use existing mapper file as is (Input Log Files are not used)";
             toolTip1.SetToolTip(radioButtonExistingMapper, "Useful if you have edited the mapper file by hand and want to keep the changes.");
             radioButtonExistingMapper.UseVisualStyleBackColor = true;
             radioButtonExistingMapper.CheckedChanged += radioButton_CheckedChanged;
@@ -596,6 +592,7 @@
             // drawingBox1
             // 
             drawingBox1.BorderStyle = BorderStyle.FixedSingle;
+            drawingBox1.InitialImage = Properties.Resources.background;
             drawingBox1.Location = new Point(314, 220);
             drawingBox1.Name = "drawingBox1";
             drawingBox1.Size = new Size(100, 100);
@@ -821,7 +818,7 @@
             label9.Size = new Size(57, 15);
             label9.TabIndex = 5;
             label9.Text = "Width (X)";
-            toolTip1.SetToolTip(label9, "DDS image width should be (must be?) divisible by 4");
+            toolTip1.SetToolTip(label9, "DDS image width");
             // 
             // textBoxImageHeight
             // 
@@ -847,7 +844,7 @@
             textBoxImageWidth.TabIndex = 6;
             textBoxImageWidth.Text = "436";
             textBoxImageWidth.TextAlign = HorizontalAlignment.Right;
-            toolTip1.SetToolTip(textBoxImageWidth, "DDS image width should be (must be?) divisible by 4");
+            toolTip1.SetToolTip(textBoxImageWidth, "DDS image width");
             textBoxImageWidth.TextChanged += textBoxZRInput_TextChanged;
             textBoxImageWidth.Enter += textBox_Enter;
             // 
@@ -1148,7 +1145,7 @@
             buttonOpenMapStyle.Size = new Size(26, 25);
             buttonOpenMapStyle.TabIndex = 8;
             buttonOpenMapStyle.Text = "...";
-            toolTip1.SetToolTip(buttonOpenMapStyle, "Browse for a MapStyles.xml file in your EQII UI folder");
+            toolTip1.SetToolTip(buttonOpenMapStyle, "Browse for a MapStyles.xml file\r\nin your EQII UI eq2map2 folder");
             buttonOpenMapStyle.UseVisualStyleBackColor = true;
             buttonOpenMapStyle.Click += buttonOpenMapStyle_Click;
             // 
@@ -1249,6 +1246,7 @@
             label26.Size = new Size(61, 15);
             label26.TabIndex = 13;
             label26.Text = "Height (Y)";
+            toolTip1.SetToolTip(label26, "DDS image height");
             // 
             // label27
             // 
@@ -1259,6 +1257,7 @@
             label27.Size = new Size(57, 15);
             label27.TabIndex = 11;
             label27.Text = "Width (X)";
+            toolTip1.SetToolTip(label27, "DDS image width");
             // 
             // textBoxMapLocHeight
             // 
@@ -1508,6 +1507,7 @@
             // openFileDialogTxt
             // 
             openFileDialogTxt.Filter = "Log files|eq2log_*.txt|All files|*.*";
+            openFileDialogTxt.Multiselect = true;
             // 
             // folderBrowserDialog1
             // 
@@ -1628,12 +1628,10 @@
         private Label label22;
         private TabPage tabPageMapper;
         private Button buttonLogBrowse;
-        private TextBox textBoxLogFile;
-        private Label label18;
+        private Label labelInputLogFiles;
         private OpenFileDialog openFileDialogTxt;
         private TextBox textBoxMapLevel;
         private Label label23;
-        private TextBox textBoxMapName;
         private Label label20;
         private Button buttonOutputFolder;
         private TextBox textBoxOutputFolder;
@@ -1703,5 +1701,7 @@
         private RadioButton radioButtonGameLoc;
         private DrawingBox drawingBox1;
         private Label label32;
+        private ComboBox comboBoxLogFiles;
+        private ComboBox comboBoxMapName;
     }
 }

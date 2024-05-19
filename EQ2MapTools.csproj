@@ -17,12 +17,15 @@
 
   <ItemGroup>
     <Compile Remove="MenuButton.Designer.cs" />
+    <Compile Remove="SortableListView.cs" />
+    <Compile Remove="SortableListView.Designer.cs" />
     <Compile Remove="SvgLine.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="MapData.resx" />
     <EmbeddedResource Remove="MenuButton.resx" />
+    <EmbeddedResource Remove="SortableListView.resx" />
   </ItemGroup>
 
   <ItemGroup>

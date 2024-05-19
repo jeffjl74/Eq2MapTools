@@ -12,17 +12,17 @@ namespace EQ2MapTools
 {
     public partial class Form1 : Form
     {
-
-        MapData mapData = new MapData();        // most of the zone rect calculations
-        Mapper2 mapper2 = new Mapper2();        // most of the Perl script translations
-        LineIndex lineIndex = new LineIndex();  // the line index data
-        MapStyles mapStyles = new MapStyles();  // map sytles combo box data
-        XmlDocument? doc;                       // the svg file
-        bool userChange = false;                // whether a UI element is updated programtically or by the user
+        List<string> logFiles = new List<string>(); // input log file(s)
+        MapData mapData = new MapData();            // most of the zone rect calculations
+        Mapper2 mapper2 = new Mapper2();            // most of the Perl script translations
+        LineIndex lineIndex = new LineIndex();      // the line index data
+        MapStyles mapStyles = new MapStyles();      // map sytles combo box data
+        XmlDocument? doc;                           // the svg file
+        bool userChange = false;                    // whether a UI element is updated programtically or by the user
         public const int DefaultMapWidth = 436;
         public const int DefaultMapHeight = 506;
-        Int64 startUnixSeconds = -1;                   // time filter for the log file
-        Int64 endUnixSeconds = Int64.MaxValue;         // time filter for the log file
+        Int64 startUnixSeconds = -1;                // time filter for the log file
+        Int64 endUnixSeconds = Int64.MaxValue;      // time filter for the log file
 
         // extract the 4 numbers from a zone rect
         Regex reZoneRect = new Regex(@"(?<ulx>[0-9.+-]+)[, ]+(?<uly>[0-9.+-]+)[, ]+(?<lrx>[0-9.+-]+)[, ]+(?<lry>[0-9.+-]+)", RegexOptions.Compiled);
@@ -72,15 +72,38 @@ namespace EQ2MapTools
             tabIndexes.Add("help", tabControl1.TabPages.IndexOfKey("tabPageHelp"));
 
             richTextBox2.Rtf = Properties.Settings.Default.Help;
-            textBoxLogFile.Text = Properties.Settings.Default.LogFile;
-            ScrollToEnd(textBoxLogFile);
+
+            // log file combo box
+            string longestName = string.Empty;
+            string[] logs = Properties.Settings.Default.LogFile.Split("|");
+            foreach (string file in logs)
+            {
+                comboBoxLogFiles.Items.Add(file);
+                logFiles.Add(file);
+                if (file.Length > longestName.Length)
+                    longestName = file;
+            }
+            if (logFiles.Count > 0)
+            {
+                comboBoxLogFiles.SelectedIndex = 0;
+                comboBoxLogFiles.SelectionStart = comboBoxLogFiles.Text.Length;
+                comboBoxLogFiles.SelectionLength = 0;
+                int width = TextRenderer.MeasureText(longestName, comboBoxLogFiles.Font).Width + SystemInformation.VerticalScrollBarWidth;
+                if (comboBoxLogFiles.DropDownWidth < width)
+                    comboBoxLogFiles.DropDownWidth = width;
+            }
+            labelInputLogFiles.Text = string.Format("Input Log File{0} ({1}):", logFiles.Count != 1 ? "s" : "", logFiles.Count);
+
             textBoxOutputFolder.Text = Properties.Settings.Default.OutputFolder;
             ScrollToEnd(textBoxOutputFolder);
+
+            // map name combo box
             if (Properties.Settings.Default.BaseMapName.Length > 0)
             {
-                textBoxMapName.Text = Properties.Settings.Default.BaseMapName;
-                textBoxMapName.ForeColor = Color.Black;
+                comboBoxMapName.Items.Add(Properties.Settings.Default.BaseMapName);
+                comboBoxMapName.SelectedIndex = 0;
             }
+
             if (Properties.Settings.Default.MapLevel.Length > 0)
                 textBoxMapLevel.Text = Properties.Settings.Default.MapLevel;
             if (Properties.Settings.Default.Elevations.Length > 0)
@@ -141,6 +164,8 @@ namespace EQ2MapTools
         private void Form1_Shown(object sender, EventArgs e)
         {
             CheckForProgramUpdate();
+            comboBoxLogFiles.SelectionStart = comboBoxLogFiles.Text.Length;
+            comboBoxLogFiles.SelectionLength = 0;
             userChange = true;
         }
 
@@ -148,9 +173,16 @@ namespace EQ2MapTools
         {
             if (WindowState != FormWindowState.Minimized)
                 Properties.Settings.Default.WindowLoc = this.Location;
-            Properties.Settings.Default.LogFile = textBoxLogFile.Text;
+            StringBuilder sb = new StringBuilder();
+            foreach (string file in logFiles)
+            {
+                if (sb.Length > 0)
+                    sb.Append("|");
+                sb.Append(file);
+            }
+            Properties.Settings.Default.LogFile = sb.ToString();
             Properties.Settings.Default.OutputFolder = textBoxOutputFolder.Text;
-            Properties.Settings.Default.BaseMapName = textBoxMapName.Text;
+            Properties.Settings.Default.BaseMapName = comboBoxMapName.Text;
             Properties.Settings.Default.MapLevel = textBoxMapLevel.Text;
             Properties.Settings.Default.Elevations = textBoxElevations.Text;
             Properties.Settings.Default.SvgViewer1 = textBoxInkscapeName.Text;
@@ -169,9 +201,9 @@ namespace EQ2MapTools
             buttonFindMapName.Enabled = false;
             buttonScanDates.Enabled = false;
             bool logFileExists = false;
-            if (textBoxLogFile.Text.Length > 0)
+            if (comboBoxLogFiles.Text.Length > 0)
             {
-                logFileExists = File.Exists(textBoxLogFile.Text);
+                logFileExists = File.Exists(comboBoxLogFiles.Text);
                 if (logFileExists)
                 {
                     buttonFindMapName.Enabled = true;
@@ -179,12 +211,8 @@ namespace EQ2MapTools
                 }
             }
 
-            bool mapperExists = false;
-            if (textBoxMapName.ForeColor == Color.Black)
-            {
-                string mapperFileName = BuildOutputName("txt");
-                mapperExists = File.Exists(mapperFileName);
-            }
+            string mapperFileName = BuildOutputName("txt");
+            bool mapperExists = File.Exists(mapperFileName);
             if (!mapperExists)
             {
                 radioButtonAppendMapper.Enabled = false;
@@ -200,7 +228,7 @@ namespace EQ2MapTools
             if (Directory.Exists(textBoxOutputFolder.Text))
             {
                 if ((radioButtonBuildMapper.Checked || radioButtonAppendMapper.Checked)
-                    && logFileExists && !string.IsNullOrEmpty(textBoxMapName.Text))
+                    && logFileExists && !string.IsNullOrEmpty(comboBoxMapName.Text))
                 {
                     buttonRunMapper.Enabled = true;
                     mapperTabStatus = ready;
@@ -371,9 +399,9 @@ namespace EQ2MapTools
 
         private void buttonLogBrowse_Click(object sender, EventArgs e)
         {
-            if (textBoxLogFile.Text.Length > 0)
+            if (comboBoxLogFiles.Text.Length > 0)
             {
-                string? path = Path.GetDirectoryName(textBoxLogFile.Text);
+                string? path = Path.GetDirectoryName(comboBoxLogFiles.Text);
                 if (path != null)
                 {
                     openFileDialogTxt.InitialDirectory = path;
@@ -381,9 +409,28 @@ namespace EQ2MapTools
             }
             if (openFileDialogTxt.ShowDialog(this) == DialogResult.OK)
             {
-                textBoxLogFile.Text = openFileDialogTxt.FileName;
-                textBoxLogFile.SelectionStart = textBoxLogFile.TextLength;
-                textBoxLogFile.ScrollToCaret();
+                logFiles.Clear();
+                comboBoxLogFiles.Items.Clear();
+                if (openFileDialogTxt.FileNames.Length > 0)
+                {
+                    foreach (string file in openFileDialogTxt.FileNames)
+                    {
+                        logFiles.Add(file);
+                    }
+                    if(logFiles.Count > 1)
+                    {
+                        FormLogOrder formLogOrder = new FormLogOrder(logFiles);
+                        formLogOrder.ShowDialog(this);
+                    }
+                    foreach (string file in logFiles)
+                    {
+                        comboBoxLogFiles.Items.Add(file);
+                    }
+                    comboBoxLogFiles.SelectedIndex = 0;
+                    comboBoxLogFiles.SelectionStart = comboBoxLogFiles.Text.Length;
+                    comboBoxLogFiles.SelectionLength = 0;
+                }
+                labelInputLogFiles.Text = string.Format("Input Log File{0} ({1}):", logFiles.Count != 1 ? "s" : "", logFiles.Count);
             }
         }
 
@@ -407,29 +454,34 @@ namespace EQ2MapTools
 
         private void buttonFindMapName_Click(object sender, EventArgs e)
         {
-            string fileName = textBoxLogFile.Text;
-            if (fileName.Length > 0 && File.Exists(fileName))
+            if (logFiles.Count > 0)
             {
-                Cursor.Current = Cursors.WaitCursor;
-                Task t3 = new Task(() => GenerateZoneDict(fileName));
-                t3.Start();
-                t3.Wait();
-                Cursor.Current = Cursors.Default;
+                zoneNames.Clear();
+                foreach (string fileName in logFiles)
+                {
+                    if(fileName.Length == 0 || !File.Exists(fileName))
+                        continue;
+
+                    Cursor.Current = Cursors.WaitCursor;
+                    Task t3 = new Task(() => GenerateZoneDict(fileName));
+                    t3.Start();
+                    t3.Wait();
+                    Cursor.Current = Cursors.Default;
+                }
 
                 contextMenuStripStyles.Items.Clear();
                 foreach (string mapName in zoneNames.Keys)
                 {
-                    ToolStripItem item = contextMenuStripStyles.Items.Add(mapName);
-                    item.ToolTipText = "Click to set as Base map name";
-                    item.Click += MapStyleItem_Click;
+                    if (!comboBoxMapName.Items.Contains(mapName))
+                        comboBoxMapName.Items.Add(mapName);
                 }
-                if (contextMenuStripStyles.Items.Count == 0)
+                if (zoneNames.Keys.Count == 0)
                 {
                     contextMenuStripStyles.Items.Add("None found");
+                    Point loc = PointToScreen(comboBoxMapName.Location);
+                    loc.Y += comboBoxMapName.Height * 2;
+                    contextMenuStripStyles.Show(loc);
                 }
-                Point loc = PointToScreen(textBoxMapName.Location);
-                loc.Y += textBoxMapName.Height * 2;
-                contextMenuStripStyles.Show(loc);
             }
         }
 
@@ -438,7 +490,7 @@ namespace EQ2MapTools
             ToolStripItem? item = sender as ToolStripItem;
             if (item != null)
             {
-                textBoxMapName.Text = item.Text;
+                comboBoxMapName.Text = item.Text;
             }
         }
 
@@ -466,34 +518,39 @@ namespace EQ2MapTools
 
         private void buttonScanDates_Click(object sender, EventArgs e)
         {
-            string fileName = textBoxLogFile.Text;
-            if (fileName.Length > 0 && File.Exists(fileName))
+            if(logFiles.Count > 0)
             {
                 Cursor.Current = Cursors.WaitCursor;
                 bool needStart = true;
                 Int64 lineTime;
                 Int64 fileStartTime = -1;
                 Int64 fileEndTime = Int64.MaxValue;
-                // non-exclusive file read
-                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                foreach(string file in logFiles)
                 {
-                    using (StreamReader sr = new StreamReader(fs))
+                    if (file.Length == 0 || !File.Exists(file))
+                        continue;
+
+                    // non-exclusive file read
+                    using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        while (!sr.EndOfStream)
+                        using (StreamReader sr = new StreamReader(fs))
                         {
-                            string? line = sr.ReadLine();
-                            if (line != null)
+                            while (!sr.EndOfStream)
                             {
-                                if (line.Length < 39) // EQII time stamp length
-                                    continue;
-                                if (!Int64.TryParse(line.Substring(1, 10), out lineTime))
-                                    continue;
-                                if (needStart)
+                                string? line = sr.ReadLine();
+                                if (line != null)
                                 {
-                                    needStart = false;
-                                    fileStartTime = lineTime;
+                                    if (line.Length < 39) // EQII time stamp length
+                                        continue;
+                                    if (!Int64.TryParse(line.Substring(1, 10), out lineTime))
+                                        continue;
+                                    if (needStart)
+                                    {
+                                        needStart = false;
+                                        fileStartTime = lineTime;
+                                    }
+                                    fileEndTime = lineTime;
                                 }
-                                fileEndTime = lineTime;
                             }
                         }
                     }
@@ -524,13 +581,19 @@ namespace EQ2MapTools
 
         private void buttonRunMapper_Click(object sender, EventArgs e)
         {
+            if (!InputsOk(!radioButtonExistingMapper.Checked))
+                return;
+
             userChange = false;
             toolStripStatusLabel1.Text = "Running...";
             string didLogFile = string.Empty;
-            if (!radioButtonExistingMapper.Checked)
+            bool append = radioButtonAppendMapper.Checked;
+            if (!append)
             {
+
                 // use a task so the status line updates
-                Task t = new Task(() => GenerateCleanLog());
+                string outputFile = BuildOutputName("txt");
+                Task t = new Task(() => GenerateCleanLog(outputFile, append));
                 t.Start();
                 t.Wait();
                 didLogFile = "Log File -> ";
@@ -560,12 +623,12 @@ namespace EQ2MapTools
             StringBuilder sb = new StringBuilder();
             if (checkLog)
             {
-                if (string.IsNullOrEmpty(textBoxLogFile.Text))
+                if (string.IsNullOrEmpty(comboBoxLogFiles.Text))
                     sb.Append(@"Please choose an EQII log file.\par ");
             }
             if (string.IsNullOrEmpty(textBoxOutputFolder.Text))
                 sb.AppendLine(@"Please choose an output folder.\par ");
-            if (string.IsNullOrEmpty(textBoxMapName.Text) || textBoxMapName.ForeColor != Color.Black)
+            if (string.IsNullOrEmpty(comboBoxMapName.Text))
                 sb.AppendLine(@"Please enter a map name.\par ");
             if (sb.Length > 0)
             {
@@ -577,7 +640,7 @@ namespace EQ2MapTools
 
         private string BuildOutputName(string ext)
         {
-            string mapName = textBoxMapName.Text;
+            string mapName = comboBoxMapName.Text;
             if (!string.IsNullOrEmpty(mapName))
             {
                 if (!string.IsNullOrEmpty(textBoxMapLevel.Text))
@@ -592,13 +655,12 @@ namespace EQ2MapTools
             return string.Empty;
         }
 
-        private void GenerateCleanLog()
+        private void GenerateCleanLog(string outputFile, bool append)
         {
-            if (InputsOk(true))
+            for (int i = 0; i < logFiles.Count; i++)
             {
-                string inputFile = textBoxLogFile.Text;
-                string outputFile = BuildOutputName("txt");
-                Mapper2.GenerateCleanLog(inputFile, outputFile, radioButtonAppendMapper.Checked, startUnixSeconds, endUnixSeconds);
+                Mapper2.GenerateCleanLog(logFiles[i], outputFile, append, startUnixSeconds, endUnixSeconds);
+                append = true;
             }
         }
 
@@ -624,9 +686,15 @@ namespace EQ2MapTools
             t2.Start();
             t2.Wait();
 
+            zoneNames.Clear();
             Task t3 = new Task(() => GenerateZoneDict(inputFile));
             t3.Start();
             t3.Wait();
+            foreach (string mapName in zoneNames.Keys)
+            {
+                if (!comboBoxMapName.Items.Contains(mapName))
+                    comboBoxMapName.Items.Add(mapName);
+            }
 
             lineIndexBindingSource.ResetBindings(false);
 
@@ -648,8 +716,6 @@ namespace EQ2MapTools
 
         private void GenerateZoneDict(string inputFile)
         {
-            zoneNames.Clear();
-
             using (FileStream fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 Match match;
@@ -698,7 +764,7 @@ namespace EQ2MapTools
             }
         }
 
-        private void textBoxMapName_TextChanged(object sender, EventArgs e)
+        private void comboBoxMapName_TextChanged(object sender, EventArgs e)
         {
             string txtPath = BuildOutputName("txt");
             string txtFile = Path.GetFileName(txtPath);
@@ -722,6 +788,12 @@ namespace EQ2MapTools
         {
             FixButtons();
             UpdateStatusLine();
+        }
+
+        private void comboBoxLogFiles_Leave(object sender, EventArgs e)
+        {
+            comboBoxLogFiles.SelectionStart = comboBoxLogFiles.Text.Length;
+            comboBoxLogFiles.SelectionLength = 0;
         }
 
         #endregion Mapper
@@ -868,12 +940,12 @@ namespace EQ2MapTools
             if (mapStyleEntryToolStripMenuItem.Checked)
             {
                 // try to build reasonable Name= and displayname= entries
-                string mapname = textBoxMapName.Text.Trim('_');
+                string mapname = comboBoxMapName.Text.Trim('_');
                 if (textBoxMapLevel.Text.Length > 0)
                     mapname += "_" + textBoxMapLevel.Text;
                 // do we have a zone name for this map name?
                 string? displayname;
-                if (!zoneNames.TryGetValue(textBoxMapName.Text, out displayname))
+                if (!zoneNames.TryGetValue(comboBoxMapName.Text, out displayname))
                     displayname = mapname; // just use the map name
                 if (displayname.StartsWith("exp"))
                 {
@@ -977,16 +1049,6 @@ namespace EQ2MapTools
                 tb.SelectAll();
         }
 
-        private void textBoxGrey_Enter(object sender, EventArgs e)
-        {
-            TextBox? tb = sender as TextBox;
-            if (tb != null && tb.ForeColor != Color.Black)
-            {
-                tb.Text = String.Empty;
-                tb.ForeColor = Color.Black;
-            }
-        }
-
         private void textBoxZRInput_TextChanged(object sender, EventArgs e)
         {
             // When the inputs are set via the Mapper tab,
@@ -1003,8 +1065,8 @@ namespace EQ2MapTools
                     else if ((bool)tb.Tag == false)
                         tb.Tag = true;
                     else
-                    { 
-                        toolStripStatusLabel1.Text = "Ready"; 
+                    {
+                        toolStripStatusLabel1.Text = "Ready";
                         drawingBox1.ClearLines();
                     }
                 }
@@ -1399,7 +1461,7 @@ namespace EQ2MapTools
                 {
                     ProcessStartInfo startInfo = new ProcessStartInfo("Notepad++");
                     startInfo.UseShellExecute = true;
-                    startInfo.Arguments = $"-n{lineNum} {lineIndex.fileName}";
+                    startInfo.Arguments = $"-n{lineNum} \"{lineIndex.fileName}\"";
                     Process.Start(startInfo);
                 }
                 catch (Exception ex)
