@@ -179,7 +179,7 @@ namespace EQ2MapTools
                 {
                     FinishLine();
                 }
-                else if (logLine.Contains("\\/a mapgroup"))
+                else if (logLine.Contains("\\/a mapgroup") && els.Count == 0)
                 {
                     current_group = ++total_groups;
                 }
