@@ -34,6 +34,7 @@
             tabControl1 = new TabControl();
             tabPageMapper = new TabPage();
             comboBoxMapName = new ComboBox();
+            zoneStylesBindingSource = new BindingSource(components);
             comboBoxLogFiles = new ComboBox();
             buttonScanDates = new Button();
             label36 = new Label();
@@ -156,6 +157,7 @@
             openFileDialogXml = new OpenFileDialog();
             tabControl1.SuspendLayout();
             tabPageMapper.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)zoneStylesBindingSource).BeginInit();
             groupBoxSvg.SuspendLayout();
             groupBoxMapper.SuspendLayout();
             tabPageZoneRect.SuspendLayout();
@@ -228,6 +230,10 @@
             comboBoxMapName.Size = new Size(417, 23);
             comboBoxMapName.TabIndex = 7;
             comboBoxMapName.TextChanged += comboBoxMapName_TextChanged;
+            // 
+            // zoneStylesBindingSource
+            // 
+            zoneStylesBindingSource.DataSource = typeof(ZoneStyles);
             // 
             // comboBoxLogFiles
             // 
@@ -1550,6 +1556,7 @@
             tabControl1.ResumeLayout(false);
             tabPageMapper.ResumeLayout(false);
             tabPageMapper.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)zoneStylesBindingSource).EndInit();
             groupBoxSvg.ResumeLayout(false);
             groupBoxSvg.PerformLayout();
             groupBoxMapper.ResumeLayout(false);
@@ -1703,5 +1710,6 @@
         private Label label32;
         private ComboBox comboBoxLogFiles;
         private ComboBox comboBoxMapName;
+        private BindingSource zoneStylesBindingSource;
     }
 }

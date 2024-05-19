@@ -27,8 +27,8 @@ namespace EQ2MapTools
         // extract the 4 numbers from a zone rect
         Regex reZoneRect = new Regex(@"(?<ulx>[0-9.+-]+)[, ]+(?<uly>[0-9.+-]+)[, ]+(?<lrx>[0-9.+-]+)[, ]+(?<lry>[0-9.+-]+)", RegexOptions.Compiled);
 
-        // keep a dictionary of map style name and (hopefully) corresponding zone name
-        Dictionary<string, string> zoneNames = new Dictionary<string, string>();
+        // keep a list of map style name and (hopefully) corresponding zone name
+        ZoneStyles zoneNames = new ZoneStyles();
 
         // MayStyles element format
         // {0} = stylename
@@ -97,11 +97,16 @@ namespace EQ2MapTools
             textBoxOutputFolder.Text = Properties.Settings.Default.OutputFolder;
             ScrollToEnd(textBoxOutputFolder);
 
-            // map name combo box
+            // base map name combo box setup and binding
+            zoneStylesBindingSource.DataSource = zoneNames;
+            comboBoxMapName.DisplayMember = "DisplayName";
+            comboBoxMapName.DataSource = zoneStylesBindingSource;
             if (Properties.Settings.Default.BaseMapName.Length > 0)
             {
-                comboBoxMapName.Items.Add(Properties.Settings.Default.BaseMapName);
-                comboBoxMapName.SelectedIndex = 0;
+                ZoneStyle zs = new ZoneStyle { StyleName = Properties.Settings.Default.BaseMapName, ZoneName = string.Empty };
+                zoneNames.Add(zs);
+                zoneStylesBindingSource.ResetBindings(false);
+                //comboBoxMapName.SelectedIndex = 0;
             }
 
             if (Properties.Settings.Default.MapLevel.Length > 0)
@@ -143,6 +148,7 @@ namespace EQ2MapTools
 
             // individual textbox databindings are set in the designer
             mapDataBindingSource.DataSource = mapData;
+
 
             // map styles binding
             mapStylesBindingSource.DataSource = mapStyles;
@@ -456,7 +462,7 @@ namespace EQ2MapTools
         {
             if (logFiles.Count > 0)
             {
-                zoneNames.Clear();
+                int oldCount = zoneNames.Count;
                 foreach (string fileName in logFiles)
                 {
                     if(fileName.Length == 0 || !File.Exists(fileName))
@@ -469,15 +475,12 @@ namespace EQ2MapTools
                     Cursor.Current = Cursors.Default;
                 }
 
-                contextMenuStripStyles.Items.Clear();
-                foreach (string mapName in zoneNames.Keys)
+                zoneStylesBindingSource.ResetBindings(false);
+
+                // show a delta count of zones
+                if (zoneNames.Count != oldCount)
                 {
-                    if (!comboBoxMapName.Items.Contains(mapName))
-                        comboBoxMapName.Items.Add(mapName);
-                }
-                if (zoneNames.Keys.Count == 0)
-                {
-                    contextMenuStripStyles.Items.Add("None found");
+                    contextMenuStripStyles.Items.Add($"Found {zoneNames.Count - oldCount} new styles");
                     Point loc = PointToScreen(comboBoxMapName.Location);
                     loc.Y += comboBoxMapName.Height * 2;
                     contextMenuStripStyles.Show(loc);
@@ -685,18 +688,12 @@ namespace EQ2MapTools
             Task t2 = new Task(() => GenerateIndex(inputFile));
             t2.Start();
             t2.Wait();
+            lineIndexBindingSource.ResetBindings(false);
 
-            zoneNames.Clear();
             Task t3 = new Task(() => GenerateZoneDict(inputFile));
             t3.Start();
             t3.Wait();
-            foreach (string mapName in zoneNames.Keys)
-            {
-                if (!comboBoxMapName.Items.Contains(mapName))
-                    comboBoxMapName.Items.Add(mapName);
-            }
-
-            lineIndexBindingSource.ResetBindings(false);
+            zoneStylesBindingSource.ResetBindings(false);
 
             if (checkBoxLaunchInkscape.Checked)
                 LaunchProgram(textBoxInkscapeName.Text, outputFile);
@@ -735,8 +732,17 @@ namespace EQ2MapTools
                             else if ((match = Mapper2.reStyle.Match(line)).Success)
                             {
                                 string styleName = match.Groups["style"].Value;
-                                if (!zoneNames.ContainsKey(styleName) && !string.IsNullOrEmpty(zoneName))
-                                    zoneNames.Add(styleName, zoneName);
+                                if (!string.IsNullOrEmpty(zoneName))
+                                {
+                                    ZoneStyle? exists = zoneNames[styleName];
+                                    if (exists != null)
+                                        exists.ZoneName = zoneName;
+                                    else
+                                    {
+                                        ZoneStyle zs = new ZoneStyle { StyleName = styleName, ZoneName = zoneName };
+                                        zoneNames.Add(zs);
+                                    }
+                                }
                             }
                         }
                     }
@@ -940,13 +946,15 @@ namespace EQ2MapTools
             if (mapStyleEntryToolStripMenuItem.Checked)
             {
                 // try to build reasonable Name= and displayname= entries
-                string mapname = comboBoxMapName.Text.Trim('_');
+                string baseName = comboBoxMapName.Text;
+                string mapname = baseName.Trim('_');
                 if (textBoxMapLevel.Text.Length > 0)
                     mapname += "_" + textBoxMapLevel.Text;
                 // do we have a zone name for this map name?
-                string? displayname;
-                if (!zoneNames.TryGetValue(comboBoxMapName.Text, out displayname))
-                    displayname = mapname; // just use the map name
+                string displayname = mapname;
+                ZoneStyle? zs = zoneNames[baseName];
+                if (zs != null)
+                    displayname = zs.ZoneName == null || zs.ZoneName == string.Empty ? mapname : zs.ZoneName;
                 if (displayname.StartsWith("exp"))
                 {
                     // if we didn't have a zone name, let's at least take off the "expXX_"

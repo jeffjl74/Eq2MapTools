@@ -198,6 +198,9 @@ e.g. two numbers will generate three groups (depending on the data):
   <metadata name="lineIndexBindingSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>869, 17</value>
   </metadata>
+  <metadata name="zoneStylesBindingSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>520, 56</value>
+  </metadata>
   <metadata name="contextMenuStripStyles.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>341, 56</value>
   </metadata>
