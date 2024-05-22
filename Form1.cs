@@ -17,6 +17,7 @@ namespace EQ2MapTools
         Mapper2 mapper2 = new Mapper2();            // most of the Perl script translations
         LineIndex lineIndex = new LineIndex();      // the line index data
         MapStyles mapStyles = new MapStyles();      // map sytles combo box data
+        ZoneStyles zoneNames = new ZoneStyles();    // map style & corresponding zone name
         XmlDocument? doc;                           // the svg file
         bool userChange = false;                    // whether a UI element is updated programtically or by the user
         public const int DefaultMapWidth = 436;
@@ -26,9 +27,6 @@ namespace EQ2MapTools
 
         // extract the 4 numbers from a zone rect
         Regex reZoneRect = new Regex(@"(?<ulx>[0-9.+-]+)[, ]+(?<uly>[0-9.+-]+)[, ]+(?<lrx>[0-9.+-]+)[, ]+(?<lry>[0-9.+-]+)", RegexOptions.Compiled);
-
-        // keep a list of map style name and (hopefully) corresponding zone name
-        ZoneStyles zoneNames = new ZoneStyles();
 
         // MayStyles element format
         // {0} = stylename
@@ -97,17 +95,6 @@ namespace EQ2MapTools
             textBoxOutputFolder.Text = Properties.Settings.Default.OutputFolder;
             ScrollToEnd(textBoxOutputFolder);
 
-            // base map name combo box setup and binding
-            zoneStylesBindingSource.DataSource = zoneNames;
-            comboBoxMapName.DisplayMember = "DisplayName";
-            comboBoxMapName.DataSource = zoneStylesBindingSource;
-            if (Properties.Settings.Default.BaseMapName.Length > 0)
-            {
-                ZoneStyle zs = new ZoneStyle { StyleName = Properties.Settings.Default.BaseMapName, ZoneName = string.Empty };
-                zoneNames.Add(zs);
-                zoneStylesBindingSource.ResetBindings(false);
-                //comboBoxMapName.SelectedIndex = 0;
-            }
 
             if (Properties.Settings.Default.MapLevel.Length > 0)
                 textBoxMapLevel.Text = Properties.Settings.Default.MapLevel;
@@ -149,6 +136,19 @@ namespace EQ2MapTools
             // individual textbox databindings are set in the designer
             mapDataBindingSource.DataSource = mapData;
 
+            // base map name combo box setup and binding
+            zoneStylesBindingSource.DataSource = zoneNames;
+            comboBoxMapName.DisplayMember = "DisplayName";
+            comboBoxMapName.DataSource = zoneStylesBindingSource;
+            if (Properties.Settings.Default.BaseMapName.Length > 0)
+            {
+                comboBoxMapName.Text = Properties.Settings.Default.BaseMapName; //trigger groupbox label updates
+                ZoneStyle zs = new ZoneStyle { StyleName = Properties.Settings.Default.BaseMapName, ZoneName = string.Empty };
+                zoneNames.Add(zs);
+                zoneStylesBindingSource.ResetBindings(false);
+            }
+            else
+                FixButtons();
 
             // map styles binding
             mapStylesBindingSource.DataSource = mapStyles;
@@ -157,8 +157,6 @@ namespace EQ2MapTools
 
             // line index binding
             lineIndexBindingSource.DataSource = lineIndex;
-
-            FixButtons();
 
             // starts up on mapper tab
             toolStripStatusLabel1.Text = mapperTabStatus;
@@ -423,7 +421,7 @@ namespace EQ2MapTools
                     {
                         logFiles.Add(file);
                     }
-                    if(logFiles.Count > 1)
+                    if (logFiles.Count > 1)
                     {
                         FormLogOrder formLogOrder = new FormLogOrder(logFiles);
                         formLogOrder.ShowDialog(this);
@@ -458,6 +456,20 @@ namespace EQ2MapTools
             }
         }
 
+        private void comboBoxMapName_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                ZoneStyle zs = new ZoneStyle { StyleName = comboBoxMapName.Text, ZoneName = string.Empty };
+                if (!zoneNames.Contains(zs))
+                {
+                    int index = zoneStylesBindingSource.Add(zs);
+                    comboBoxMapName.SelectedIndex = index;
+                }
+                e.Handled = true;
+            }
+        }
+
         private void buttonFindMapName_Click(object sender, EventArgs e)
         {
             if (logFiles.Count > 0)
@@ -465,7 +477,7 @@ namespace EQ2MapTools
                 int oldCount = zoneNames.Count;
                 foreach (string fileName in logFiles)
                 {
-                    if(fileName.Length == 0 || !File.Exists(fileName))
+                    if (fileName.Length == 0 || !File.Exists(fileName))
                         continue;
 
                     Cursor.Current = Cursors.WaitCursor;
@@ -485,15 +497,6 @@ namespace EQ2MapTools
                     loc.Y += comboBoxMapName.Height * 2;
                     contextMenuStripStyles.Show(loc);
                 }
-            }
-        }
-
-        private void MapStyleItem_Click(object? sender, EventArgs e)
-        {
-            ToolStripItem? item = sender as ToolStripItem;
-            if (item != null)
-            {
-                comboBoxMapName.Text = item.Text;
             }
         }
 
@@ -521,14 +524,14 @@ namespace EQ2MapTools
 
         private void buttonScanDates_Click(object sender, EventArgs e)
         {
-            if(logFiles.Count > 0)
+            if (logFiles.Count > 0)
             {
                 Cursor.Current = Cursors.WaitCursor;
                 bool needStart = true;
                 Int64 lineTime;
                 Int64 fileStartTime = -1;
                 Int64 fileEndTime = Int64.MaxValue;
-                foreach(string file in logFiles)
+                foreach (string file in logFiles)
                 {
                     if (file.Length == 0 || !File.Exists(file))
                         continue;
@@ -591,9 +594,8 @@ namespace EQ2MapTools
             toolStripStatusLabel1.Text = "Running...";
             string didLogFile = string.Empty;
             bool append = radioButtonAppendMapper.Checked;
-            if (!append)
+            if (append || radioButtonBuildMapper.Checked)
             {
-
                 // use a task so the status line updates
                 string outputFile = BuildOutputName("txt");
                 Task t = new Task(() => GenerateCleanLog(outputFile, append));
@@ -681,13 +683,20 @@ namespace EQ2MapTools
             // but we need them to finish before we continue
             Cursor.Current = Cursors.WaitCursor;
             mapper2 = new Mapper2();
-            Task t1 = new Task(() => mapper2.GenerateSvg(inputFile, outputFile, textBoxElevations.Text));
+            Task t1 = new Task(() => mapper2.GenerateSvg(inputFile, outputFile, textBoxElevations.Text, checkBoxMakeFiles.Checked));
             t1.Start();
             t1.Wait();
 
-            Task t2 = new Task(() => GenerateIndex(inputFile));
-            t2.Start();
-            t2.Wait();
+            // can't do an index if the mapper rearranges lines for elevation groups
+            // (mapper would need rework to support re-ordered lines)
+            if (string.IsNullOrEmpty(textBoxElevations.Text))
+            {
+                Task t2 = new Task(() => GenerateIndex(inputFile));
+                t2.Start();
+                t2.Wait();
+            }
+            else
+                lineIndex.Clear();
             lineIndexBindingSource.ResetBindings(false);
 
             Task t3 = new Task(() => GenerateZoneDict(inputFile));
@@ -696,16 +705,25 @@ namespace EQ2MapTools
             zoneStylesBindingSource.ResetBindings(false);
 
             if (checkBoxLaunchInkscape.Checked)
-                LaunchProgram(textBoxInkscapeName.Text, outputFile);
+            {
+                foreach (string fname in mapper2.svgFileNames)
+                    LaunchProgram(textBoxInkscapeName.Text, fname);
+            }
 
             if (checkBoxLaunchDefault.Checked)
-                LaunchProgram(textBoxDefaultSvgName.Text, outputFile);
+            {
+                foreach (string fname in mapper2.svgFileNames)
+                    LaunchProgram(textBoxDefaultSvgName.Text, fname);
+            }
 
-            userChange = false;
-            textBoxFileName.Text = outputFile;
-            ScrollToEnd(textBoxFileName);
-            ZoneRectFromSvg(outputFile);
-            userChange = true;
+            if (mapper2.svgFileNames.Count > 0)
+            {
+                userChange = false;
+                textBoxFileName.Text = mapper2.svgFileNames[0];
+                ScrollToEnd(textBoxFileName);
+                ZoneRectFromSvg(mapper2.svgFileNames[0]);
+                userChange = true;
+            }
 
             Cursor.Current = Cursors.Default;
 
@@ -1414,10 +1432,6 @@ namespace EQ2MapTools
         {
             lineIndex.Clear();
             lineIndex.fileName = inputFile;
-
-            // can't do an index if the mapper rearranges lines for elevation groups
-            // (mapper would need rework to support re-ordered lines)
-            if (!string.IsNullOrEmpty(textBoxElevations.Text)) return;
 
             using (FileStream fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {

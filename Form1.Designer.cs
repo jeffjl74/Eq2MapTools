@@ -33,8 +33,8 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tabControl1 = new TabControl();
             tabPageMapper = new TabPage();
+            checkBoxMakeFiles = new CheckBox();
             comboBoxMapName = new ComboBox();
-            zoneStylesBindingSource = new BindingSource(components);
             comboBoxLogFiles = new ComboBox();
             buttonScanDates = new Button();
             label36 = new Label();
@@ -146,6 +146,7 @@
             lineIndexBindingSource = new BindingSource(components);
             tabPageHelp = new TabPage();
             richTextBox2 = new RichTextBox();
+            zoneStylesBindingSource = new BindingSource(components);
             contextMenuStripStyles = new ContextMenuStrip(components);
             mapStylesBindingSource = new BindingSource(components);
             openFileDialogSvg = new OpenFileDialog();
@@ -157,7 +158,6 @@
             openFileDialogXml = new OpenFileDialog();
             tabControl1.SuspendLayout();
             tabPageMapper.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)zoneStylesBindingSource).BeginInit();
             groupBoxSvg.SuspendLayout();
             groupBoxMapper.SuspendLayout();
             tabPageZoneRect.SuspendLayout();
@@ -172,6 +172,7 @@
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)lineIndexBindingSource).BeginInit();
             tabPageHelp.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)zoneStylesBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)mapStylesBindingSource).BeginInit();
             statusStrip1.SuspendLayout();
             SuspendLayout();
@@ -194,6 +195,7 @@
             // tabPageMapper
             // 
             tabPageMapper.BackColor = SystemColors.Control;
+            tabPageMapper.Controls.Add(checkBoxMakeFiles);
             tabPageMapper.Controls.Add(comboBoxMapName);
             tabPageMapper.Controls.Add(comboBoxLogFiles);
             tabPageMapper.Controls.Add(buttonScanDates);
@@ -222,6 +224,17 @@
             tabPageMapper.TabIndex = 3;
             tabPageMapper.Text = "Mapper2";
             // 
+            // checkBoxMakeFiles
+            // 
+            checkBoxMakeFiles.AutoSize = true;
+            checkBoxMakeFiles.Location = new Point(365, 166);
+            checkBoxMakeFiles.Name = "checkBoxMakeFiles";
+            checkBoxMakeFiles.Size = new Size(95, 19);
+            checkBoxMakeFiles.TabIndex = 21;
+            checkBoxMakeFiles.Text = "Separate files";
+            toolTip1.SetToolTip(checkBoxMakeFiles, "Check to create an SVG file for each elevation group.\r\nFile names are increments of the Map Level.\r\nZone Rect will be calculated for the first file.");
+            checkBoxMakeFiles.UseVisualStyleBackColor = true;
+            // 
             // comboBoxMapName
             // 
             comboBoxMapName.FormattingEnabled = true;
@@ -229,11 +242,9 @@
             comboBoxMapName.Name = "comboBoxMapName";
             comboBoxMapName.Size = new Size(417, 23);
             comboBoxMapName.TabIndex = 7;
+            toolTip1.SetToolTip(comboBoxMapName, "Base file name for the output files.\r\nUsing a game map style results in a better mapstyles entry.");
             comboBoxMapName.TextChanged += comboBoxMapName_TextChanged;
-            // 
-            // zoneStylesBindingSource
-            // 
-            zoneStylesBindingSource.DataSource = typeof(ZoneStyles);
+            comboBoxMapName.KeyPress += comboBoxMapName_KeyPress;
             // 
             // comboBoxLogFiles
             // 
@@ -389,7 +400,7 @@
             textBoxElevations.ForeColor = SystemColors.ControlText;
             textBoxElevations.Location = new Point(228, 164);
             textBoxElevations.Name = "textBoxElevations";
-            textBoxElevations.Size = new Size(200, 23);
+            textBoxElevations.Size = new Size(131, 23);
             textBoxElevations.TabIndex = 12;
             toolTip1.SetToolTip(textBoxElevations, resources.GetString("textBoxElevations.ToolTip"));
             // 
@@ -1497,6 +1508,10 @@
             richTextBox2.Text = "";
             richTextBox2.LinkClicked += richTextBox2_LinkClicked;
             // 
+            // zoneStylesBindingSource
+            // 
+            zoneStylesBindingSource.DataSource = typeof(ZoneStyles);
+            // 
             // contextMenuStripStyles
             // 
             contextMenuStripStyles.Name = "contextMenuStripStyles";
@@ -1556,7 +1571,6 @@
             tabControl1.ResumeLayout(false);
             tabPageMapper.ResumeLayout(false);
             tabPageMapper.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)zoneStylesBindingSource).EndInit();
             groupBoxSvg.ResumeLayout(false);
             groupBoxSvg.PerformLayout();
             groupBoxMapper.ResumeLayout(false);
@@ -1578,6 +1592,7 @@
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)lineIndexBindingSource).EndInit();
             tabPageHelp.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)zoneStylesBindingSource).EndInit();
             ((System.ComponentModel.ISupportInitialize)mapStylesBindingSource).EndInit();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
@@ -1711,5 +1726,6 @@
         private ComboBox comboBoxLogFiles;
         private ComboBox comboBoxMapName;
         private BindingSource zoneStylesBindingSource;
+        private CheckBox checkBoxMakeFiles;
     }
 }
