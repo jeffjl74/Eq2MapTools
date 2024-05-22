@@ -51,5 +51,8 @@ This project's home page with additional notes and help is here: {{\field{\*\fld
     <Setting Name="AutoLoadStyles" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="SeparateFiles" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

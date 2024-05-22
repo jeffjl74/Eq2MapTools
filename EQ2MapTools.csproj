@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="MenuButton.cs" />
     <Compile Remove="MenuButton.Designer.cs" />
     <Compile Remove="SortableListView.cs" />
     <Compile Remove="SortableListView.Designer.cs" />

@@ -63,21 +63,19 @@
             radioButtonAppendMapper = new RadioButton();
             radioButtonExistingMapper = new RadioButton();
             tabPageZoneRect = new TabPage();
+            buttonCopyZonerect = new Button();
+            checkBoxInclImagestyle = new CheckBox();
+            checkBoxInclAvailablerect = new CheckBox();
+            checkBoxInclElevations = new CheckBox();
             label32 = new Label();
             drawingBox1 = new DrawingBox();
-            menuButtonCopyZonerect = new MenuButton();
-            contextMenuStripCopy = new ContextMenuStrip(components);
-            includeElevationsToolStripMenuItem = new ToolStripMenuItem();
-            includeAvailablerectToolStripMenuItem = new ToolStripMenuItem();
-            mapStyleEntryToolStripMenuItem = new ToolStripMenuItem();
             label22 = new Label();
             label16 = new Label();
-            textBoxFileName = new TextBox();
+            textBoxZoneRectSvgFileName = new TextBox();
             label17 = new Label();
             buttonCalculate = new Button();
             buttonOpenSVG = new Button();
             textBoxZoneRect = new TextBox();
-            mapDataBindingSource = new BindingSource(components);
             label15 = new Label();
             label14 = new Label();
             label12 = new Label();
@@ -89,6 +87,7 @@
             label10 = new Label();
             label9 = new Label();
             textBoxImageHeight = new TextBox();
+            mapDataBindingSource = new BindingSource(components);
             textBoxImageWidth = new TextBox();
             label8 = new Label();
             groupBox2 = new GroupBox();
@@ -162,7 +161,6 @@
             groupBoxMapper.SuspendLayout();
             tabPageZoneRect.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)drawingBox1).BeginInit();
-            contextMenuStripCopy.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mapDataBindingSource).BeginInit();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -562,12 +560,15 @@
             // tabPageZoneRect
             // 
             tabPageZoneRect.BackColor = SystemColors.Control;
+            tabPageZoneRect.Controls.Add(buttonCopyZonerect);
+            tabPageZoneRect.Controls.Add(checkBoxInclImagestyle);
+            tabPageZoneRect.Controls.Add(checkBoxInclAvailablerect);
+            tabPageZoneRect.Controls.Add(checkBoxInclElevations);
             tabPageZoneRect.Controls.Add(label32);
             tabPageZoneRect.Controls.Add(drawingBox1);
-            tabPageZoneRect.Controls.Add(menuButtonCopyZonerect);
             tabPageZoneRect.Controls.Add(label22);
             tabPageZoneRect.Controls.Add(label16);
-            tabPageZoneRect.Controls.Add(textBoxFileName);
+            tabPageZoneRect.Controls.Add(textBoxZoneRectSvgFileName);
             tabPageZoneRect.Controls.Add(label17);
             tabPageZoneRect.Controls.Add(buttonCalculate);
             tabPageZoneRect.Controls.Add(buttonOpenSVG);
@@ -596,10 +597,61 @@
             tabPageZoneRect.TabIndex = 0;
             tabPageZoneRect.Text = "Zone Rect";
             // 
+            // buttonCopyZonerect
+            // 
+            buttonCopyZonerect.Anchor = AnchorStyles.Bottom;
+            buttonCopyZonerect.Location = new Point(278, 433);
+            buttonCopyZonerect.Name = "buttonCopyZonerect";
+            buttonCopyZonerect.Size = new Size(81, 23);
+            buttonCopyZonerect.TabIndex = 36;
+            buttonCopyZonerect.Text = "Copy";
+            toolTip1.SetToolTip(buttonCopyZonerect, "Copy the ZoneRect to the clipboard");
+            buttonCopyZonerect.UseVisualStyleBackColor = true;
+            buttonCopyZonerect.Click += buttonCopyZonerect_Click;
+            // 
+            // checkBoxInclImagestyle
+            // 
+            checkBoxInclImagestyle.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBoxInclImagestyle.AutoSize = true;
+            checkBoxInclImagestyle.Location = new Point(373, 375);
+            checkBoxInclImagestyle.Name = "checkBoxInclImagestyle";
+            checkBoxInclImagestyle.Size = new Size(83, 19);
+            checkBoxInclImagestyle.TabIndex = 35;
+            checkBoxInclImagestyle.Text = "Imagestyle";
+            toolTip1.SetToolTip(checkBoxInclImagestyle, "Generate the \"Imagestye\" XML element and attributes");
+            checkBoxInclImagestyle.UseVisualStyleBackColor = true;
+            checkBoxInclImagestyle.CheckedChanged += checkBoxInclOption_CheckedChanged;
+            // 
+            // checkBoxInclAvailablerect
+            // 
+            checkBoxInclAvailablerect.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBoxInclAvailablerect.AutoSize = true;
+            checkBoxInclAvailablerect.Location = new Point(373, 350);
+            checkBoxInclAvailablerect.Name = "checkBoxInclAvailablerect";
+            checkBoxInclAvailablerect.Size = new Size(92, 19);
+            checkBoxInclAvailablerect.TabIndex = 34;
+            checkBoxInclAvailablerect.Text = "availablerect";
+            toolTip1.SetToolTip(checkBoxInclAvailablerect, "Include the \"availablerect\" attribute");
+            checkBoxInclAvailablerect.UseVisualStyleBackColor = true;
+            checkBoxInclAvailablerect.CheckedChanged += checkBoxInclOption_CheckedChanged;
+            // 
+            // checkBoxInclElevations
+            // 
+            checkBoxInclElevations.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            checkBoxInclElevations.AutoSize = true;
+            checkBoxInclElevations.Location = new Point(373, 325);
+            checkBoxInclElevations.Name = "checkBoxInclElevations";
+            checkBoxInclElevations.Size = new Size(79, 19);
+            checkBoxInclElevations.TabIndex = 33;
+            checkBoxInclElevations.Text = "elevations";
+            toolTip1.SetToolTip(checkBoxInclElevations, "Inclue the \"heightmax\" and \"heightmin\" attributes");
+            checkBoxInclElevations.UseVisualStyleBackColor = true;
+            checkBoxInclElevations.CheckedChanged += checkBoxInclOption_CheckedChanged;
+            // 
             // label32
             // 
             label32.AutoSize = true;
-            label32.Location = new Point(314, 202);
+            label32.Location = new Point(314, 186);
             label32.Name = "label32";
             label32.Size = new Size(93, 15);
             label32.TabIndex = 32;
@@ -610,57 +662,16 @@
             // 
             drawingBox1.BorderStyle = BorderStyle.FixedSingle;
             drawingBox1.InitialImage = Properties.Resources.background;
-            drawingBox1.Location = new Point(314, 220);
+            drawingBox1.Location = new Point(314, 204);
             drawingBox1.Name = "drawingBox1";
             drawingBox1.Size = new Size(100, 100);
             drawingBox1.TabIndex = 31;
             drawingBox1.TabStop = false;
             // 
-            // menuButtonCopyZonerect
-            // 
-            menuButtonCopyZonerect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            menuButtonCopyZonerect.Location = new Point(385, 350);
-            menuButtonCopyZonerect.Menu = contextMenuStripCopy;
-            menuButtonCopyZonerect.Name = "menuButtonCopyZonerect";
-            menuButtonCopyZonerect.Size = new Size(75, 23);
-            menuButtonCopyZonerect.TabIndex = 30;
-            menuButtonCopyZonerect.Text = "Copy     ";
-            toolTip1.SetToolTip(menuButtonCopyZonerect, "Copy zonerect, and optionally the elevations\r\nand/or the entire ImageStyle element to the clipboard");
-            menuButtonCopyZonerect.UseVisualStyleBackColor = true;
-            menuButtonCopyZonerect.Click += menuButtonCopyZonerect_Click;
-            // 
-            // contextMenuStripCopy
-            // 
-            contextMenuStripCopy.Items.AddRange(new ToolStripItem[] { includeElevationsToolStripMenuItem, includeAvailablerectToolStripMenuItem, mapStyleEntryToolStripMenuItem });
-            contextMenuStripCopy.Name = "contextMenuStrip1";
-            contextMenuStripCopy.Size = new Size(183, 70);
-            contextMenuStripCopy.Opening += contextMenuStripCopy_Opening;
-            // 
-            // includeElevationsToolStripMenuItem
-            // 
-            includeElevationsToolStripMenuItem.Name = "includeElevationsToolStripMenuItem";
-            includeElevationsToolStripMenuItem.Size = new Size(182, 22);
-            includeElevationsToolStripMenuItem.Text = "Include elevations";
-            includeElevationsToolStripMenuItem.Click += includeElevationsToolStripMenuItem_Click;
-            // 
-            // includeAvailablerectToolStripMenuItem
-            // 
-            includeAvailablerectToolStripMenuItem.Name = "includeAvailablerectToolStripMenuItem";
-            includeAvailablerectToolStripMenuItem.Size = new Size(182, 22);
-            includeAvailablerectToolStripMenuItem.Text = "Include availablerect";
-            includeAvailablerectToolStripMenuItem.Click += includeAvailablerectToolStripMenuItem_Click;
-            // 
-            // mapStyleEntryToolStripMenuItem
-            // 
-            mapStyleEntryToolStripMenuItem.Name = "mapStyleEntryToolStripMenuItem";
-            mapStyleEntryToolStripMenuItem.Size = new Size(182, 22);
-            mapStyleEntryToolStripMenuItem.Text = "MapStyles entry";
-            mapStyleEntryToolStripMenuItem.Click += mapStyleEntryToolStripMenuItem_Click;
-            // 
             // label22
             // 
             label22.AutoSize = true;
-            label22.Location = new Point(21, 175);
+            label22.Location = new Point(21, 159);
             label22.Name = "label22";
             label22.Size = new Size(28, 15);
             label22.TabIndex = 29;
@@ -678,18 +689,18 @@
             // 
             // textBoxFileName
             // 
-            textBoxFileName.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxFileName.Location = new Point(79, 394);
-            textBoxFileName.Name = "textBoxFileName";
-            textBoxFileName.ReadOnly = true;
-            textBoxFileName.Size = new Size(381, 23);
-            textBoxFileName.TabIndex = 20;
+            textBoxZoneRectSvgFileName.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            textBoxZoneRectSvgFileName.Location = new Point(76, 401);
+            textBoxZoneRectSvgFileName.Name = "textBoxFileName";
+            textBoxZoneRectSvgFileName.ReadOnly = true;
+            textBoxZoneRectSvgFileName.Size = new Size(381, 23);
+            textBoxZoneRectSvgFileName.TabIndex = 20;
             // 
             // label17
             // 
             label17.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label17.AutoSize = true;
-            label17.Location = new Point(18, 397);
+            label17.Location = new Point(18, 404);
             label17.Name = "label17";
             label17.Size = new Size(52, 15);
             label17.TabIndex = 19;
@@ -699,7 +710,7 @@
             // buttonCalculate
             // 
             buttonCalculate.Anchor = AnchorStyles.Bottom;
-            buttonCalculate.Location = new Point(257, 433);
+            buttonCalculate.Location = new Point(197, 433);
             buttonCalculate.Name = "buttonCalculate";
             buttonCalculate.Size = new Size(75, 23);
             buttonCalculate.TabIndex = 22;
@@ -711,7 +722,7 @@
             // buttonOpenSVG
             // 
             buttonOpenSVG.Anchor = AnchorStyles.Bottom;
-            buttonOpenSVG.Location = new Point(153, 433);
+            buttonOpenSVG.Location = new Point(110, 433);
             buttonOpenSVG.Name = "buttonOpenSVG";
             buttonOpenSVG.Size = new Size(81, 23);
             buttonOpenSVG.TabIndex = 21;
@@ -723,15 +734,13 @@
             // textBoxZoneRect
             // 
             textBoxZoneRect.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            textBoxZoneRect.DataBindings.Add(new Binding("Text", mapDataBindingSource, "zonerect", true, DataSourceUpdateMode.OnPropertyChanged));
-            textBoxZoneRect.Location = new Point(79, 350);
+            textBoxZoneRect.Location = new Point(76, 326);
+            textBoxZoneRect.Multiline = true;
             textBoxZoneRect.Name = "textBoxZoneRect";
-            textBoxZoneRect.Size = new Size(296, 23);
+            textBoxZoneRect.ScrollBars = ScrollBars.Horizontal;
+            textBoxZoneRect.Size = new Size(290, 69);
             textBoxZoneRect.TabIndex = 16;
-            // 
-            // mapDataBindingSource
-            // 
-            mapDataBindingSource.DataSource = typeof(MapData);
+            textBoxZoneRect.WordWrap = false;
             // 
             // label15
             // 
@@ -748,7 +757,7 @@
             // 
             label14.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label14.BorderStyle = BorderStyle.Fixed3D;
-            label14.Location = new Point(12, 331);
+            label14.Location = new Point(12, 315);
             label14.Name = "label14";
             label14.Size = new Size(448, 2);
             label14.TabIndex = 14;
@@ -756,7 +765,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(225, 277);
+            label12.Location = new Point(225, 261);
             label12.Name = "label12";
             label12.Size = new Size(61, 15);
             label12.TabIndex = 12;
@@ -765,7 +774,7 @@
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(159, 277);
+            label13.Location = new Point(159, 261);
             label13.Name = "label13";
             label13.Size = new Size(57, 15);
             label13.TabIndex = 10;
@@ -773,7 +782,7 @@
             // 
             // textBoxScaleHeight
             // 
-            textBoxScaleHeight.Location = new Point(226, 295);
+            textBoxScaleHeight.Location = new Point(226, 279);
             textBoxScaleHeight.Name = "textBoxScaleHeight";
             textBoxScaleHeight.Size = new Size(59, 23);
             textBoxScaleHeight.TabIndex = 13;
@@ -785,7 +794,7 @@
             // 
             // textBoxScaleWidth
             // 
-            textBoxScaleWidth.Location = new Point(157, 295);
+            textBoxScaleWidth.Location = new Point(157, 279);
             textBoxScaleWidth.Name = "textBoxScaleWidth";
             textBoxScaleWidth.Size = new Size(59, 23);
             textBoxScaleWidth.TabIndex = 11;
@@ -798,7 +807,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(80, 298);
+            label11.Location = new Point(80, 282);
             label11.Name = "label11";
             label11.Size = new Size(68, 15);
             label11.TabIndex = 9;
@@ -808,7 +817,7 @@
             // checkBoxCustomMapSize
             // 
             checkBoxCustomMapSize.AutoSize = true;
-            checkBoxCustomMapSize.Location = new Point(45, 225);
+            checkBoxCustomMapSize.Location = new Point(45, 209);
             checkBoxCustomMapSize.Name = "checkBoxCustomMapSize";
             checkBoxCustomMapSize.Size = new Size(104, 19);
             checkBoxCustomMapSize.TabIndex = 3;
@@ -820,7 +829,7 @@
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(225, 215);
+            label10.Location = new Point(225, 199);
             label10.Name = "label10";
             label10.Size = new Size(61, 15);
             label10.TabIndex = 7;
@@ -830,7 +839,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(159, 215);
+            label9.Location = new Point(159, 199);
             label9.Name = "label9";
             label9.Size = new Size(57, 15);
             label9.TabIndex = 5;
@@ -840,7 +849,7 @@
             // textBoxImageHeight
             // 
             textBoxImageHeight.DataBindings.Add(new Binding("Text", mapDataBindingSource, "imageHeight", true, DataSourceUpdateMode.OnPropertyChanged, "double.NaN", "F0"));
-            textBoxImageHeight.Location = new Point(226, 233);
+            textBoxImageHeight.Location = new Point(226, 217);
             textBoxImageHeight.Name = "textBoxImageHeight";
             textBoxImageHeight.ReadOnly = true;
             textBoxImageHeight.Size = new Size(59, 23);
@@ -851,10 +860,14 @@
             textBoxImageHeight.TextChanged += textBoxZRInput_TextChanged;
             textBoxImageHeight.Enter += textBox_Enter;
             // 
+            // mapDataBindingSource
+            // 
+            mapDataBindingSource.DataSource = typeof(MapData);
+            // 
             // textBoxImageWidth
             // 
             textBoxImageWidth.DataBindings.Add(new Binding("Text", mapDataBindingSource, "imageWidth", true, DataSourceUpdateMode.OnPropertyChanged, "double.NaN", "F0"));
-            textBoxImageWidth.Location = new Point(157, 233);
+            textBoxImageWidth.Location = new Point(157, 217);
             textBoxImageWidth.Name = "textBoxImageWidth";
             textBoxImageWidth.ReadOnly = true;
             textBoxImageWidth.Size = new Size(59, 23);
@@ -868,7 +881,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(61, 243);
+            label8.Location = new Point(61, 227);
             label8.Name = "label8";
             label8.Size = new Size(90, 15);
             label8.TabIndex = 4;
@@ -883,7 +896,7 @@
             groupBox2.Controls.Add(textBoxMapBX);
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(textBoxMapAX);
-            groupBox2.Location = new Point(256, 62);
+            groupBox2.Location = new Point(256, 46);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(177, 105);
             groupBox2.TabIndex = 2;
@@ -960,7 +973,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(10, 130);
+            label2.Location = new Point(10, 114);
             label2.Name = "label2";
             label2.Size = new Size(45, 15);
             label2.TabIndex = 2;
@@ -970,7 +983,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(9, 103);
+            label1.Location = new Point(9, 87);
             label1.Name = "label1";
             label1.Size = new Size(46, 15);
             label1.TabIndex = 1;
@@ -989,7 +1002,7 @@
             groupBox1.Controls.Add(textBoxGameBX);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(textBoxGameAX);
-            groupBox1.Location = new Point(59, 62);
+            groupBox1.Location = new Point(59, 46);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(178, 139);
             groupBox1.TabIndex = 1;
@@ -1578,7 +1591,6 @@
             tabPageZoneRect.ResumeLayout(false);
             tabPageZoneRect.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)drawingBox1).EndInit();
-            contextMenuStripCopy.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)mapDataBindingSource).EndInit();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
@@ -1638,7 +1650,7 @@
         private TextBox textBoxGameAX;
         private OpenFileDialog openFileDialogSvg;
         private ToolTip toolTip1;
-        private TextBox textBoxFileName;
+        private TextBox textBoxZoneRectSvgFileName;
         private Label label17;
         private Label label16;
         private TabPage tabPageHelp;
@@ -1707,9 +1719,6 @@
         private OpenFileDialog openFileDialogXml;
         private CheckBox checkBoxLoadMapstyles;
         private Label label34;
-        private MenuButton menuButtonCopyZonerect;
-        private ContextMenuStrip contextMenuStripCopy;
-        private ToolStripMenuItem includeElevationsToolStripMenuItem;
         private Button buttonFindMapName;
         private ContextMenuStrip contextMenuStripStyles;
         private DateTimePicker dateTimePickerStart;
@@ -1717,8 +1726,6 @@
         private Label label36;
         private Label label35;
         private Button buttonScanDates;
-        private ToolStripMenuItem mapStyleEntryToolStripMenuItem;
-        private ToolStripMenuItem includeAvailablerectToolStripMenuItem;
         private RadioButton radioButtonMapLoc;
         private RadioButton radioButtonGameLoc;
         private DrawingBox drawingBox1;
@@ -1727,5 +1734,9 @@
         private ComboBox comboBoxMapName;
         private BindingSource zoneStylesBindingSource;
         private CheckBox checkBoxMakeFiles;
+        private CheckBox checkBoxInclAvailablerect;
+        private CheckBox checkBoxInclElevations;
+        private CheckBox checkBoxInclImagestyle;
+        private Button buttonCopyZonerect;
     }
 }

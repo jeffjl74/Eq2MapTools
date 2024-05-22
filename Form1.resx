@@ -162,9 +162,6 @@ e.g. two numbers will generate three groups (depending on the data):
 (the program first sorts the numbers from lowest to highest)
 </value>
   </data>
-  <metadata name="contextMenuStripCopy.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>171, 56</value>
-  </metadata>
   <metadata name="mapDataBindingSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>689, 17</value>
   </metadata>

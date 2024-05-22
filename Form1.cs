@@ -100,6 +100,7 @@ namespace EQ2MapTools
                 textBoxMapLevel.Text = Properties.Settings.Default.MapLevel;
             if (Properties.Settings.Default.Elevations.Length > 0)
                 textBoxElevations.Text = Properties.Settings.Default.Elevations;
+            checkBoxMakeFiles.Checked = Properties.Settings.Default.SeparateFiles;
             if (Properties.Settings.Default.SvgViewer1.Length > 0)
                 textBoxInkscapeName.Text = Properties.Settings.Default.SvgViewer1;
             if (Properties.Settings.Default.SvgViewer2.Length > 0)
@@ -189,6 +190,7 @@ namespace EQ2MapTools
             Properties.Settings.Default.BaseMapName = comboBoxMapName.Text;
             Properties.Settings.Default.MapLevel = textBoxMapLevel.Text;
             Properties.Settings.Default.Elevations = textBoxElevations.Text;
+            Properties.Settings.Default.SeparateFiles = checkBoxMakeFiles.Checked;
             Properties.Settings.Default.SvgViewer1 = textBoxInkscapeName.Text;
             Properties.Settings.Default.SvgViewer2 = textBoxDefaultSvgName.Text;
             if (!string.IsNullOrEmpty(openFileDialogXml.FileName))
@@ -719,8 +721,8 @@ namespace EQ2MapTools
             if (mapper2.svgFileNames.Count > 0)
             {
                 userChange = false;
-                textBoxFileName.Text = mapper2.svgFileNames[0];
-                ScrollToEnd(textBoxFileName);
+                textBoxZoneRectSvgFileName.Text = mapper2.svgFileNames[0];
+                ScrollToEnd(textBoxZoneRectSvgFileName);
                 ZoneRectFromSvg(mapper2.svgFileNames[0]);
                 userChange = true;
             }
@@ -898,8 +900,8 @@ namespace EQ2MapTools
             if (openFileDialogSvg.ShowDialog(this) == DialogResult.OK)
             {
                 userChange = false;
-                textBoxFileName.Text = openFileDialogSvg.FileName;
-                ScrollToEnd(textBoxFileName);
+                textBoxZoneRectSvgFileName.Text = openFileDialogSvg.FileName;
+                ScrollToEnd(textBoxZoneRectSvgFileName);
                 ZoneRectFromSvg(openFileDialogSvg.FileName);
                 zonerectTabStatus = $"SVG file calculated @ {DateTime.Now.ToShortTimeString()}";
                 toolStripStatusLabel1.Text = zonerectTabStatus;
@@ -918,34 +920,20 @@ namespace EQ2MapTools
         {
             mapData.CalcZoneRect();
             mapData.CalcAvailableRect();
+            textBoxZoneRect.Text = BuildImageStyle();
             drawingBox1.SetOutline((int)mapData.imageWidth, (int)mapData.imageHeight);
             drawingBox1.SetAvailaleRect(mapData.zoneRectArray, mapData.availableRectArray);
-        }
-
-        private void menuButtonCopyZonerect_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(mapData.zonerect))
-                SimpleMessageBox.Show(this, "Calculate a zonerect first.");
-            else
-            {
-                try
-                {
-                    Clipboard.SetText(BuildImageStyle());
-                }
-                catch (Exception)
-                {
-                    SimpleMessageBox.Show(this, "Clipboard copy failed. Please try again.");
-                }
-            }
         }
 
         private string BuildImageStyle()
         {
             // start with just the zonerect
             string result = mapData.zonerect;
+            if(string.IsNullOrEmpty(result))
+                return result;
 
             string availablerect = string.Empty;
-            if (includeAvailablerectToolStripMenuItem.Checked)
+            if (checkBoxInclAvailablerect.Checked)
             {
                 mapData.CalcAvailableRect();
                 availablerect = " " + mapData.availableRect;
@@ -954,19 +942,26 @@ namespace EQ2MapTools
 
             string heightmin = string.Empty;
             string heightmax = string.Empty;
-            if (!string.IsNullOrEmpty(textBoxMaxEl.Text) && includeElevationsToolStripMenuItem.Checked)
+            if (!string.IsNullOrEmpty(textBoxMaxEl.Text) && checkBoxInclElevations.Checked)
                 heightmax = $" heightmax=\"{textBoxMaxEl.Text}\"";
-            if (!string.IsNullOrEmpty(textBoxMinEl.Text) && includeElevationsToolStripMenuItem.Checked)
-                heightmin = $" heightmin=\"{textBoxMinEl.Text}\"";
-            result += heightmin;
+            if (!string.IsNullOrEmpty(textBoxMinEl.Text) && checkBoxInclElevations.Checked)
+                heightmin = $" heightmin=\"{textBoxMinEl.Text}\""; result += heightmin;
             result += heightmax;
 
-            if (mapStyleEntryToolStripMenuItem.Checked)
+            if (checkBoxInclImagestyle.Checked)
             {
                 // try to build reasonable Name= and displayname= entries
                 string baseName = comboBoxMapName.Text;
                 string mapname = baseName.Trim('_');
-                if (textBoxMapLevel.Text.Length > 0)
+                // best if we can get the name from this tab instead of the Mapper tab
+                // in case we did an [Open SVG...] 
+                Match match = Mapper2.reSvgName.Match(textBoxZoneRectSvgFileName.Text);
+                if(match.Success)
+                {
+                    mapname = Path.GetFileName(match.Groups["name"].Value);
+                    mapname += "_" + match.Groups["index"].Value;
+                }
+                else if (textBoxMapLevel.Text.Length > 0)
                     mapname += "_" + textBoxMapLevel.Text;
                 // do we have a zone name for this map name?
                 string displayname = mapname;
@@ -996,53 +991,26 @@ namespace EQ2MapTools
             return result;
         }
 
-        private void contextMenuStripCopy_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        private void checkBoxInclOption_CheckedChanged(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBoxZoneRect.Text))
-            {
-                mapStyleEntryToolStripMenuItem.Enabled = true;
-                includeAvailablerectToolStripMenuItem.Enabled = true;
-
-                if (!string.IsNullOrEmpty(textBoxMinEl.Text)
-                    && !string.IsNullOrEmpty(textBoxMaxEl.Text))
-                    includeElevationsToolStripMenuItem.Enabled = true;
-                else
-                    includeElevationsToolStripMenuItem.Enabled = false;
-            }
-            else
-            {
-                mapStyleEntryToolStripMenuItem.Enabled = false;
-                includeElevationsToolStripMenuItem.Enabled = false;
-                includeAvailablerectToolStripMenuItem.Enabled = false;
-            }
+            textBoxZoneRect.Text = BuildImageStyle();
         }
 
-        private void includeElevationsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void buttonCopyZonerect_Click(object sender, EventArgs e)
         {
-            if (includeElevationsToolStripMenuItem.Checked)
-            {
-                includeElevationsToolStripMenuItem.Checked = false;
-            }
+            if (string.IsNullOrEmpty(mapData.zonerect))
+                SimpleMessageBox.Show(this, "Calculate a zonerect first.");
             else
             {
-                includeElevationsToolStripMenuItem.Checked = true;
+                try
+                {
+                    Clipboard.SetText(textBoxZoneRect.Text);
+                }
+                catch (Exception)
+                {
+                    SimpleMessageBox.Show(this, "Clipboard copy failed. Please try again.");
+                }
             }
-        }
-
-        private void includeAvailablerectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (includeAvailablerectToolStripMenuItem.Checked)
-                includeAvailablerectToolStripMenuItem.Checked = false;
-            else
-                includeAvailablerectToolStripMenuItem.Checked = true;
-        }
-
-        private void mapStyleEntryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (mapStyleEntryToolStripMenuItem.Checked)
-                mapStyleEntryToolStripMenuItem.Checked = false;
-            else
-                mapStyleEntryToolStripMenuItem.Checked = true;
         }
 
         private void ScrollToEnd(TextBox tb)

@@ -170,5 +170,17 @@ This project's home page with additional notes and help is here: {{\field{\*\fld
                 this["AutoLoadStyles"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SeparateFiles {
+            get {
+                return ((bool)(this["SeparateFiles"]));
+            }
+            set {
+                this["SeparateFiles"] = value;
+            }
+        }
     }
 }

@@ -10,9 +10,9 @@ namespace EQ2MapTools
         public static readonly Regex reLoc = new Regex(@"Your location is (?<lon>[0-9,.+-]+), (?<alt>[0-9,.+-]+), (?<lat>[0-9,.+-]+).  Your");
         public static readonly Regex reStyle = new Regex("Map style name: (?<style>.+)", RegexOptions.Compiled);
         public static readonly Regex reZoned = new Regex(@"] You have entered (?<zone>.+)\.$", RegexOptions.Compiled);
+        public static readonly Regex reSvgName = new Regex(@"(?<name>.+)_(?<index>\d+)\.svg", RegexOptions.Compiled);
         static readonly Regex reColor = new Regex(@"\\/a color (\w+)", RegexOptions.Compiled);
         static readonly Regex reColorBlack = new Regex(@"\\/a color\.$", RegexOptions.Compiled);
-        static readonly Regex reSvgName = new Regex(@"(?<name>.+)_(?<index>\d+)\.svg", RegexOptions.Compiled);
 
         static string version = "2.0";
 
