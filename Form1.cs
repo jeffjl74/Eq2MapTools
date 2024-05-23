@@ -24,6 +24,7 @@ namespace EQ2MapTools
         public const int DefaultMapHeight = 506;
         Int64 startUnixSeconds = -1;                // time filter for the log file
         Int64 endUnixSeconds = Int64.MaxValue;      // time filter for the log file
+        int addedZones;                             // new zones found in a log file scan
 
         // extract the 4 numbers from a zone rect
         Regex reZoneRect = new Regex(@"(?<ulx>[0-9.+-]+)[, ]+(?<uly>[0-9.+-]+)[, ]+(?<lrx>[0-9.+-]+)[, ]+(?<lry>[0-9.+-]+)", RegexOptions.Compiled);
@@ -69,6 +70,21 @@ namespace EQ2MapTools
             tabIndexes.Add("index", tabControl1.TabPages.IndexOfKey("tabPageLines"));
             tabIndexes.Add("help", tabControl1.TabPages.IndexOfKey("tabPageHelp"));
 
+            if (Properties.Settings.Default.WindowLoc != Point.Empty)
+            {
+                Point clientPt = Properties.Settings.Default.WindowLoc;
+                //make sure it fits on screen
+                if (clientPt.X < 0)
+                    clientPt.X = 0;
+                if (clientPt.X + this.Size.Width > SystemInformation.VirtualScreen.Right)
+                    clientPt.X = SystemInformation.VirtualScreen.Right - this.Size.Width;
+                if (clientPt.Y < 0)
+                    clientPt.Y = 0;
+                if (clientPt.Y + this.Size.Height > SystemInformation.WorkingArea.Bottom)
+                    clientPt.Y = SystemInformation.WorkingArea.Bottom - this.Size.Height;
+                this.Location = clientPt;
+            }
+
             richTextBox2.Rtf = Properties.Settings.Default.Help;
 
             // log file combo box
@@ -95,7 +111,6 @@ namespace EQ2MapTools
             textBoxOutputFolder.Text = Properties.Settings.Default.OutputFolder;
             ScrollToEnd(textBoxOutputFolder);
 
-
             if (Properties.Settings.Default.MapLevel.Length > 0)
                 textBoxMapLevel.Text = Properties.Settings.Default.MapLevel;
             if (Properties.Settings.Default.Elevations.Length > 0)
@@ -118,21 +133,6 @@ namespace EQ2MapTools
                 OpenMapStyles(Properties.Settings.Default.MapStyleFile);
             }
             checkBoxLoadMapstyles.Checked = Properties.Settings.Default.AutoLoadStyles;
-
-            if (Properties.Settings.Default.WindowLoc != Point.Empty)
-            {
-                Point clientPt = Properties.Settings.Default.WindowLoc;
-                //make sure it fits on screen
-                if (clientPt.X < 0)
-                    clientPt.X = 0;
-                if (clientPt.X + this.Size.Width > SystemInformation.VirtualScreen.Right)
-                    clientPt.X = SystemInformation.VirtualScreen.Right - this.Size.Width;
-                if (clientPt.Y < 0)
-                    clientPt.Y = 0;
-                if (clientPt.Y + this.Size.Height > SystemInformation.WorkingArea.Bottom)
-                    clientPt.Y = SystemInformation.WorkingArea.Bottom - this.Size.Height;
-                this.Location = clientPt;
-            }
 
             // individual textbox databindings are set in the designer
             mapDataBindingSource.DataSource = mapData;
@@ -215,6 +215,14 @@ namespace EQ2MapTools
                     buttonFindMapName.Enabled = true;
                     buttonScanDates.Enabled = true;
                 }
+            }
+
+            if (textBoxElevations.Text.Length > 0)
+                checkBoxMakeFiles.Enabled = true;
+            else
+            {
+                checkBoxMakeFiles.Enabled = false;
+                checkBoxMakeFiles.Checked = false;
             }
 
             string mapperFileName = BuildOutputName("txt");
@@ -492,13 +500,14 @@ namespace EQ2MapTools
                 zoneStylesBindingSource.ResetBindings(false);
 
                 // show a delta count of zones
-                if (zoneNames.Count != oldCount)
-                {
-                    contextMenuStripStyles.Items.Add($"Found {zoneNames.Count - oldCount} new styles");
-                    Point loc = PointToScreen(comboBoxMapName.Location);
-                    loc.Y += comboBoxMapName.Height * 2;
-                    contextMenuStripStyles.Show(loc);
-                }
+                contextMenuStripStyles.Items.Clear();
+                if (addedZones > 0)
+                    contextMenuStripStyles.Items.Add($"Found {addedZones} new styles/zones");
+                else
+                    contextMenuStripStyles.Items.Add($"No new styles/zones found");
+                Point loc = PointToScreen(comboBoxMapName.Location);
+                loc.Y += comboBoxMapName.Height * 2;
+                contextMenuStripStyles.Show(loc);
             }
         }
 
@@ -616,7 +625,8 @@ namespace EQ2MapTools
             }
             else
             {
-                mapperTabStatus = $"Ran: {didLogFile}Mapper file -> SVG -> Zone Rect @ {DateTime.Now.ToShortTimeString()}";
+                string svgCount = mapper2.svgFileNames.Count > 1 ? $"SVG ({mapper2.svgFileNames.Count})" : "SVG";
+                mapperTabStatus = $"Ran: {didLogFile}Mapper file -> {svgCount} -> Zone Rect @ {DateTime.Now.ToShortTimeString()}";
                 zonerectTabStatus = mapperTabStatus;
                 toolStripStatusLabel1.Text = mapperTabStatus;
                 indexTabStatus = "Elevation sorting disables index.";
@@ -733,6 +743,7 @@ namespace EQ2MapTools
 
         private void GenerateZoneDict(string inputFile)
         {
+            addedZones = 0;
             using (FileStream fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 Match match;
@@ -756,11 +767,18 @@ namespace EQ2MapTools
                                 {
                                     ZoneStyle? exists = zoneNames[styleName];
                                     if (exists != null)
-                                        exists.ZoneName = zoneName;
+                                    {
+                                        if (exists.ZoneName != zoneName)
+                                        {
+                                            exists.ZoneName = zoneName;
+                                            addedZones++;
+                                        }
+                                    }
                                     else
                                     {
                                         ZoneStyle zs = new ZoneStyle { StyleName = styleName, ZoneName = zoneName };
                                         zoneNames.Add(zs);
+                                        addedZones++;
                                     }
                                 }
                             }
@@ -808,6 +826,11 @@ namespace EQ2MapTools
         {
             FixButtons();
             UpdateStatusLine();
+        }
+
+        private void textBoxElevations_TextChanged(object sender, EventArgs e)
+        {
+            FixButtons();
         }
 
         private void radioButton_CheckedChanged(object sender, EventArgs e)
@@ -929,7 +952,7 @@ namespace EQ2MapTools
         {
             // start with just the zonerect
             string result = mapData.zonerect;
-            if(string.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result))
                 return result;
 
             string availablerect = string.Empty;
@@ -956,7 +979,7 @@ namespace EQ2MapTools
                 // best if we can get the name from this tab instead of the Mapper tab
                 // in case we did an [Open SVG...] 
                 Match match = Mapper2.reSvgName.Match(textBoxZoneRectSvgFileName.Text);
-                if(match.Success)
+                if (match.Success)
                 {
                     mapname = Path.GetFileName(match.Groups["name"].Value);
                     mapname += "_" + match.Groups["index"].Value;

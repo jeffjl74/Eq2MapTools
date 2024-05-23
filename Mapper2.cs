@@ -195,7 +195,8 @@ namespace EQ2MapTools
         {
             // get any elevation breaks
             slices = new List<double>();
-            List<string> els = elevations.Split(" ").ToList();
+            char[] separators = new char[] { ' ', ',' };
+            List<string> els = elevations.Split(separators, StringSplitOptions.RemoveEmptyEntries).ToList();
             if (els.Count > 0)
             {
                 foreach (string slice in els)

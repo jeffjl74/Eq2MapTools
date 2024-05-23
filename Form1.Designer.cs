@@ -228,7 +228,7 @@
             checkBoxMakeFiles.Location = new Point(365, 166);
             checkBoxMakeFiles.Name = "checkBoxMakeFiles";
             checkBoxMakeFiles.Size = new Size(95, 19);
-            checkBoxMakeFiles.TabIndex = 21;
+            checkBoxMakeFiles.TabIndex = 13;
             checkBoxMakeFiles.Text = "Separate files";
             toolTip1.SetToolTip(checkBoxMakeFiles, "Check to create an SVG file for each elevation group.\r\nFile names are increments of the Map Level.\r\nZone Rect will be calculated for the first file.");
             checkBoxMakeFiles.UseVisualStyleBackColor = true;
@@ -261,7 +261,7 @@
             buttonScanDates.Location = new Point(435, 208);
             buttonScanDates.Name = "buttonScanDates";
             buttonScanDates.Size = new Size(26, 25);
-            buttonScanDates.TabIndex = 17;
+            buttonScanDates.TabIndex = 18;
             toolTip1.SetToolTip(buttonScanDates, "Scan the Input Log File for its start and end times");
             buttonScanDates.UseVisualStyleBackColor = true;
             buttonScanDates.Click += buttonScanDates_Click;
@@ -272,7 +272,7 @@
             label36.Location = new Point(228, 192);
             label36.Name = "label36";
             label36.Size = new Size(111, 15);
-            label36.TabIndex = 15;
+            label36.TabIndex = 16;
             label36.Text = "Log Filter End Time:";
             // 
             // label35
@@ -281,7 +281,7 @@
             label35.Location = new Point(11, 192);
             label35.Name = "label35";
             label35.Size = new Size(115, 15);
-            label35.TabIndex = 13;
+            label35.TabIndex = 14;
             label35.Text = "Log Filter Start Time:";
             // 
             // dateTimePickerEnd
@@ -294,7 +294,7 @@
             dateTimePickerEnd.Name = "dateTimePickerEnd";
             dateTimePickerEnd.ShowCheckBox = true;
             dateTimePickerEnd.Size = new Size(200, 23);
-            dateTimePickerEnd.TabIndex = 16;
+            dateTimePickerEnd.TabIndex = 17;
             toolTip1.SetToolTip(dateTimePickerEnd, "Stop extracting lines newer than this (military) time.");
             dateTimePickerEnd.ValueChanged += dateTimePickerEnd_ValueChanged;
             // 
@@ -307,7 +307,7 @@
             dateTimePickerStart.Name = "dateTimePickerStart";
             dateTimePickerStart.ShowCheckBox = true;
             dateTimePickerStart.Size = new Size(200, 23);
-            dateTimePickerStart.TabIndex = 14;
+            dateTimePickerStart.TabIndex = 15;
             toolTip1.SetToolTip(dateTimePickerStart, "Extract log file lines starting at this (military) time.");
             dateTimePickerStart.ValueChanged += dateTimePickerStart_ValueChanged;
             // 
@@ -334,7 +334,7 @@
             groupBoxSvg.Location = new Point(11, 352);
             groupBoxSvg.Name = "groupBoxSvg";
             groupBoxSvg.Size = new Size(417, 78);
-            groupBoxSvg.TabIndex = 19;
+            groupBoxSvg.TabIndex = 20;
             groupBoxSvg.TabStop = false;
             groupBoxSvg.Text = "SVG file";
             toolTip1.SetToolTip(groupBoxSvg, "Vector file representing the map.");
@@ -401,6 +401,7 @@
             textBoxElevations.Size = new Size(131, 23);
             textBoxElevations.TabIndex = 12;
             toolTip1.SetToolTip(textBoxElevations, resources.GetString("textBoxElevations.ToolTip"));
+            textBoxElevations.TextChanged += textBoxElevations_TextChanged;
             // 
             // buttonRunMapper
             // 
@@ -408,7 +409,7 @@
             buttonRunMapper.Location = new Point(177, 435);
             buttonRunMapper.Name = "buttonRunMapper";
             buttonRunMapper.Size = new Size(114, 25);
-            buttonRunMapper.TabIndex = 20;
+            buttonRunMapper.TabIndex = 21;
             buttonRunMapper.Text = "Run";
             toolTip1.SetToolTip(buttonRunMapper, "Build specified files.");
             buttonRunMapper.UseVisualStyleBackColor = true;
@@ -511,7 +512,7 @@
             groupBoxMapper.Location = new Point(11, 245);
             groupBoxMapper.Name = "groupBoxMapper";
             groupBoxMapper.Size = new Size(417, 98);
-            groupBoxMapper.TabIndex = 18;
+            groupBoxMapper.TabIndex = 19;
             groupBoxMapper.TabStop = false;
             groupBoxMapper.Text = "Mapper file";
             toolTip1.SetToolTip(groupBoxMapper, "File containing just the log lines pertaining to making a map.");
@@ -603,7 +604,7 @@
             buttonCopyZonerect.Location = new Point(278, 433);
             buttonCopyZonerect.Name = "buttonCopyZonerect";
             buttonCopyZonerect.Size = new Size(81, 23);
-            buttonCopyZonerect.TabIndex = 36;
+            buttonCopyZonerect.TabIndex = 27;
             buttonCopyZonerect.Text = "Copy";
             toolTip1.SetToolTip(buttonCopyZonerect, "Copy the ZoneRect to the clipboard");
             buttonCopyZonerect.UseVisualStyleBackColor = true;
@@ -613,11 +614,11 @@
             // 
             checkBoxInclImagestyle.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             checkBoxInclImagestyle.AutoSize = true;
-            checkBoxInclImagestyle.Location = new Point(373, 375);
+            checkBoxInclImagestyle.Location = new Point(372, 375);
             checkBoxInclImagestyle.Name = "checkBoxInclImagestyle";
-            checkBoxInclImagestyle.Size = new Size(83, 19);
-            checkBoxInclImagestyle.TabIndex = 35;
-            checkBoxInclImagestyle.Text = "Imagestyle";
+            checkBoxInclImagestyle.Size = new Size(84, 19);
+            checkBoxInclImagestyle.TabIndex = 22;
+            checkBoxInclImagestyle.Text = "ImageStyle";
             toolTip1.SetToolTip(checkBoxInclImagestyle, "Generate the \"Imagestye\" XML element and attributes");
             checkBoxInclImagestyle.UseVisualStyleBackColor = true;
             checkBoxInclImagestyle.CheckedChanged += checkBoxInclOption_CheckedChanged;
@@ -629,7 +630,7 @@
             checkBoxInclAvailablerect.Location = new Point(373, 350);
             checkBoxInclAvailablerect.Name = "checkBoxInclAvailablerect";
             checkBoxInclAvailablerect.Size = new Size(92, 19);
-            checkBoxInclAvailablerect.TabIndex = 34;
+            checkBoxInclAvailablerect.TabIndex = 21;
             checkBoxInclAvailablerect.Text = "availablerect";
             toolTip1.SetToolTip(checkBoxInclAvailablerect, "Include the \"availablerect\" attribute");
             checkBoxInclAvailablerect.UseVisualStyleBackColor = true;
@@ -642,7 +643,7 @@
             checkBoxInclElevations.Location = new Point(373, 325);
             checkBoxInclElevations.Name = "checkBoxInclElevations";
             checkBoxInclElevations.Size = new Size(79, 19);
-            checkBoxInclElevations.TabIndex = 33;
+            checkBoxInclElevations.TabIndex = 20;
             checkBoxInclElevations.Text = "elevations";
             toolTip1.SetToolTip(checkBoxInclElevations, "Inclue the \"heightmax\" and \"heightmin\" attributes");
             checkBoxInclElevations.UseVisualStyleBackColor = true;
@@ -654,13 +655,12 @@
             label32.Location = new Point(314, 186);
             label32.Name = "label32";
             label32.Size = new Size(93, 15);
-            label32.TabIndex = 32;
+            label32.TabIndex = 16;
             label32.Text = "Map Area Usage";
             toolTip1.SetToolTip(label32, "Hatched box represents the portion of the map utilized by the lines");
             // 
             // drawingBox1
             // 
-            drawingBox1.BorderStyle = BorderStyle.FixedSingle;
             drawingBox1.InitialImage = Properties.Resources.background;
             drawingBox1.Location = new Point(314, 204);
             drawingBox1.Name = "drawingBox1";
@@ -687,14 +687,14 @@
             label16.TabIndex = 0;
             label16.Text = "[Open SVG] collects and calculates all fields. [Calculate] uses displayed settings.\r\nFor more info, see the Help / Description tab.";
             // 
-            // textBoxFileName
+            // textBoxZoneRectSvgFileName
             // 
             textBoxZoneRectSvgFileName.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textBoxZoneRectSvgFileName.Location = new Point(76, 401);
-            textBoxZoneRectSvgFileName.Name = "textBoxFileName";
+            textBoxZoneRectSvgFileName.Name = "textBoxZoneRectSvgFileName";
             textBoxZoneRectSvgFileName.ReadOnly = true;
             textBoxZoneRectSvgFileName.Size = new Size(381, 23);
-            textBoxZoneRectSvgFileName.TabIndex = 20;
+            textBoxZoneRectSvgFileName.TabIndex = 24;
             // 
             // label17
             // 
@@ -703,7 +703,7 @@
             label17.Location = new Point(18, 404);
             label17.Name = "label17";
             label17.Size = new Size(52, 15);
-            label17.TabIndex = 19;
+            label17.TabIndex = 23;
             label17.Text = "SVG File:";
             toolTip1.SetToolTip(label17, "File used to populate the edit boxes.");
             // 
@@ -713,7 +713,7 @@
             buttonCalculate.Location = new Point(197, 433);
             buttonCalculate.Name = "buttonCalculate";
             buttonCalculate.Size = new Size(75, 23);
-            buttonCalculate.TabIndex = 22;
+            buttonCalculate.TabIndex = 26;
             buttonCalculate.Text = "Calculate";
             toolTip1.SetToolTip(buttonCalculate, "Calculate a zone rect from current parameters.");
             buttonCalculate.UseVisualStyleBackColor = true;
@@ -725,7 +725,7 @@
             buttonOpenSVG.Location = new Point(110, 433);
             buttonOpenSVG.Name = "buttonOpenSVG";
             buttonOpenSVG.Size = new Size(81, 23);
-            buttonOpenSVG.TabIndex = 21;
+            buttonOpenSVG.TabIndex = 25;
             buttonOpenSVG.Text = "Open SVG...";
             toolTip1.SetToolTip(buttonOpenSVG, "Open a Mapper2 or Inkscape svg file\r\nto automatically extract and calculate values");
             buttonOpenSVG.UseVisualStyleBackColor = true;
@@ -739,7 +739,7 @@
             textBoxZoneRect.Name = "textBoxZoneRect";
             textBoxZoneRect.ScrollBars = ScrollBars.Horizontal;
             textBoxZoneRect.Size = new Size(290, 69);
-            textBoxZoneRect.TabIndex = 16;
+            textBoxZoneRect.TabIndex = 19;
             textBoxZoneRect.WordWrap = false;
             // 
             // label15
@@ -749,7 +749,7 @@
             label15.Location = new Point(10, 353);
             label15.Name = "label15";
             label15.Size = new Size(60, 15);
-            label15.TabIndex = 15;
+            label15.TabIndex = 18;
             label15.Text = "ZoneRect:";
             toolTip1.SetToolTip(label15, "Parameter for the Map_Styles.xml");
             // 
@@ -760,7 +760,7 @@
             label14.Location = new Point(12, 315);
             label14.Name = "label14";
             label14.Size = new Size(448, 2);
-            label14.TabIndex = 14;
+            label14.TabIndex = 17;
             // 
             // label12
             // 
@@ -768,7 +768,7 @@
             label12.Location = new Point(225, 261);
             label12.Name = "label12";
             label12.Size = new Size(61, 15);
-            label12.TabIndex = 12;
+            label12.TabIndex = 14;
             label12.Text = "Height (Y)";
             // 
             // label13
@@ -777,7 +777,7 @@
             label13.Location = new Point(159, 261);
             label13.Name = "label13";
             label13.Size = new Size(57, 15);
-            label13.TabIndex = 10;
+            label13.TabIndex = 12;
             label13.Text = "Width (X)";
             // 
             // textBoxScaleHeight
@@ -785,7 +785,7 @@
             textBoxScaleHeight.Location = new Point(226, 279);
             textBoxScaleHeight.Name = "textBoxScaleHeight";
             textBoxScaleHeight.Size = new Size(59, 23);
-            textBoxScaleHeight.TabIndex = 13;
+            textBoxScaleHeight.TabIndex = 15;
             textBoxScaleHeight.Text = "506";
             textBoxScaleHeight.TextAlign = HorizontalAlignment.Right;
             toolTip1.SetToolTip(textBoxScaleHeight, "Actual height of the SVG lines image after fitting to the map size");
@@ -797,7 +797,7 @@
             textBoxScaleWidth.Location = new Point(157, 279);
             textBoxScaleWidth.Name = "textBoxScaleWidth";
             textBoxScaleWidth.Size = new Size(59, 23);
-            textBoxScaleWidth.TabIndex = 11;
+            textBoxScaleWidth.TabIndex = 13;
             textBoxScaleWidth.Text = "436";
             textBoxScaleWidth.TextAlign = HorizontalAlignment.Right;
             toolTip1.SetToolTip(textBoxScaleWidth, "Actual width of the SVG lines image after fitting to the map size");
@@ -810,7 +810,7 @@
             label11.Location = new Point(80, 282);
             label11.Name = "label11";
             label11.Size = new Size(68, 15);
-            label11.TabIndex = 9;
+            label11.TabIndex = 11;
             label11.Text = "SVG Render";
             toolTip1.SetToolTip(label11, "Dimensions after the SVG lines have been\r\nscaled to fit the Map Image Size");
             // 
@@ -820,7 +820,7 @@
             checkBoxCustomMapSize.Location = new Point(45, 209);
             checkBoxCustomMapSize.Name = "checkBoxCustomMapSize";
             checkBoxCustomMapSize.Size = new Size(104, 19);
-            checkBoxCustomMapSize.TabIndex = 3;
+            checkBoxCustomMapSize.TabIndex = 5;
             checkBoxCustomMapSize.Text = "Enable custom";
             toolTip1.SetToolTip(checkBoxCustomMapSize, "Check to edit Map Image Size.");
             checkBoxCustomMapSize.UseVisualStyleBackColor = true;
@@ -832,7 +832,7 @@
             label10.Location = new Point(225, 199);
             label10.Name = "label10";
             label10.Size = new Size(61, 15);
-            label10.TabIndex = 7;
+            label10.TabIndex = 9;
             label10.Text = "Height (Y)";
             toolTip1.SetToolTip(label10, "DDS image height");
             // 
@@ -842,7 +842,7 @@
             label9.Location = new Point(159, 199);
             label9.Name = "label9";
             label9.Size = new Size(57, 15);
-            label9.TabIndex = 5;
+            label9.TabIndex = 7;
             label9.Text = "Width (X)";
             toolTip1.SetToolTip(label9, "DDS image width");
             // 
@@ -853,7 +853,7 @@
             textBoxImageHeight.Name = "textBoxImageHeight";
             textBoxImageHeight.ReadOnly = true;
             textBoxImageHeight.Size = new Size(59, 23);
-            textBoxImageHeight.TabIndex = 8;
+            textBoxImageHeight.TabIndex = 10;
             textBoxImageHeight.Text = "506";
             textBoxImageHeight.TextAlign = HorizontalAlignment.Right;
             toolTip1.SetToolTip(textBoxImageHeight, "DDS image height");
@@ -871,7 +871,7 @@
             textBoxImageWidth.Name = "textBoxImageWidth";
             textBoxImageWidth.ReadOnly = true;
             textBoxImageWidth.Size = new Size(59, 23);
-            textBoxImageWidth.TabIndex = 6;
+            textBoxImageWidth.TabIndex = 8;
             textBoxImageWidth.Text = "436";
             textBoxImageWidth.TextAlign = HorizontalAlignment.Right;
             toolTip1.SetToolTip(textBoxImageWidth, "DDS image width");
@@ -884,7 +884,7 @@
             label8.Location = new Point(61, 227);
             label8.Name = "label8";
             label8.Size = new Size(90, 15);
-            label8.TabIndex = 4;
+            label8.TabIndex = 6;
             label8.Text = "Map Image Size";
             toolTip1.SetToolTip(label8, "The final size of the scaled map.");
             // 
@@ -899,7 +899,7 @@
             groupBox2.Location = new Point(256, 46);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(177, 105);
-            groupBox2.TabIndex = 2;
+            groupBox2.TabIndex = 4;
             groupBox2.TabStop = false;
             groupBox2.Text = "Map crosshair coordinates";
             toolTip1.SetToolTip(groupBox2, "The locations of the blue crosshairs\r\nafter the lines have been scaled\r\nto fit the map size.");
@@ -1005,7 +1005,7 @@
             groupBox1.Location = new Point(59, 46);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(178, 139);
-            groupBox1.TabIndex = 1;
+            groupBox1.TabIndex = 3;
             groupBox1.TabStop = false;
             groupBox1.Text = "In Game /loc coordinates";
             toolTip1.SetToolTip(groupBox1, "The UL, LR, and Ele points from the SVG file.\r\nThey are displayed at the bottom in the SVG editor.\r\nOr populated automatically when reading the SVG file.");
