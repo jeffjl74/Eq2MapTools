@@ -84,20 +84,16 @@ namespace EQ2MapTools
         {
             if(Properties.Resources.background != null)
             {
+                // paint the background
                 Image image = new Bitmap(Properties.Resources.background);
                 TextureBrush tb = new TextureBrush(image);
-                // transform 436x506 to our widthxheight
-                float xscale = (float)this.Width / 436f;
-                float yscale = (float)this.Height / 506f;
-                tb.Transform = new Matrix(
-                    xscale,
-                    0.0f,
-                    0.0f,
-                    yscale,
-                    0.0f,
-                    0.0f);
+                // transform the original image to our widthxheight
+                float xscale = (float)this.Width / (float)image.Width;
+                float yscale = (float)this.Height / (float)image.Height;
+                tb.ScaleTransform(xscale, yscale);
                 e.Graphics.FillRectangle(tb, new Rectangle(0, 0, this.Width, this.Height));
             }
+            // paint the lines area
             HatchBrush hb = new HatchBrush(HatchStyle.BackwardDiagonal, Color.Black, Color.Transparent);
             e.Graphics.FillRectangle(hb, linesRect);
         }
