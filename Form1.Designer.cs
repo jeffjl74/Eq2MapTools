@@ -439,9 +439,9 @@
             label20.AutoSize = true;
             label20.Location = new Point(11, 100);
             label20.Name = "label20";
-            label20.Size = new Size(94, 15);
+            label20.Size = new Size(167, 15);
             label20.TabIndex = 6;
-            label20.Text = "Base map name:";
+            label20.Text = "Base map name (Zone Name):";
             toolTip1.SetToolTip(label20, "Base file name for the .txt and .svg files.");
             // 
             // buttonOutputFolder

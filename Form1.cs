@@ -149,6 +149,7 @@ namespace EQ2MapTools
                 ZoneStyle zs = new ZoneStyle { StyleName = style, ZoneName = zone };
                 zoneNames.Add(zs);
                 zoneStylesBindingSource.ResetBindings(false);
+                SetMapNameDropWidth();
             }
             else
                 FixButtons();
@@ -496,6 +497,7 @@ namespace EQ2MapTools
                     Task t3 = new Task(() => GenerateZoneDict(fileName));
                     t3.Start();
                     t3.Wait();
+                    SetMapNameDropWidth();
                     Cursor.Current = Cursors.Default;
                 }
 
@@ -511,6 +513,19 @@ namespace EQ2MapTools
                 loc.Y += comboBoxMapName.Height * 2;
                 contextMenuStripStyles.Show(loc);
             }
+        }
+
+        private void SetMapNameDropWidth()
+        {
+            string longestName = string.Empty;
+            foreach (ZoneStyle zs in zoneNames)
+            {
+                if(zs.ToString().Length > longestName.Length)
+                    longestName = zs.ToString();
+            }
+            int width = TextRenderer.MeasureText(longestName, comboBoxMapName.Font).Width + SystemInformation.VerticalScrollBarWidth;
+            if (comboBoxMapName.DropDownWidth < width)
+                comboBoxMapName.DropDownWidth = width;
         }
 
         private void dateTimePickerStart_ValueChanged(object sender, EventArgs e)
@@ -717,6 +732,7 @@ namespace EQ2MapTools
             t3.Start();
             t3.Wait();
             zoneStylesBindingSource.ResetBindings(false);
+            SetMapNameDropWidth();
 
             if (checkBoxLaunchInkscape.Checked)
             {
@@ -983,7 +999,7 @@ namespace EQ2MapTools
 
             if (checkBoxInclImagestyle.Checked)
             {
-                // try to build reasonable Name= and displayname= entries
+                // see if we can determine the intended Name= and displayname= entries
                 string baseName = ZoneStyles.ParseStyleName(comboBoxMapName.Text);
                 string mapname = baseName.Trim('_');
                 // best if we can get the name from this tab instead of the Mapper tab
@@ -993,6 +1009,14 @@ namespace EQ2MapTools
                 {
                     mapname = Path.GetFileName(match.Groups["name"].Value);
                     mapname += "_" + match.Groups["index"].Value;
+                }
+                else if (textBoxZoneRectSvgFileName.Text.Contains(baseName))
+                {
+                    // it's probably got some extra characters (like "_ink") after the map style name
+                    Regex reSplit = new Regex($"{baseName}(?<level>\\d+).*\\.svg");
+                    match = reSplit.Match(textBoxZoneRectSvgFileName.Text);
+                    if (match.Success)
+                        mapname = baseName + match.Groups["level"].Value;
                 }
                 else if (textBoxMapLevel.Text.Length > 0)
                     mapname += "_" + textBoxMapLevel.Text;
