@@ -144,7 +144,9 @@ namespace EQ2MapTools
             if (Properties.Settings.Default.BaseMapName.Length > 0)
             {
                 comboBoxMapName.Text = Properties.Settings.Default.BaseMapName; //trigger groupbox label updates
-                ZoneStyle zs = new ZoneStyle { StyleName = Properties.Settings.Default.BaseMapName, ZoneName = string.Empty };
+                string style = ZoneStyles.ParseStyleName(Properties.Settings.Default.BaseMapName);
+                string zone = ZoneStyles.ParseZoneName(Properties.Settings.Default.BaseMapName);
+                ZoneStyle zs = new ZoneStyle { StyleName = style, ZoneName = zone };
                 zoneNames.Add(zs);
                 zoneStylesBindingSource.ResetBindings(false);
             }
@@ -484,7 +486,7 @@ namespace EQ2MapTools
         {
             if (logFiles.Count > 0)
             {
-                int oldCount = zoneNames.Count;
+                addedZones = 0;
                 foreach (string fileName in logFiles)
                 {
                     if (fileName.Length == 0 || !File.Exists(fileName))
@@ -657,7 +659,7 @@ namespace EQ2MapTools
 
         private string BuildOutputName(string ext)
         {
-            string mapName = comboBoxMapName.Text;
+            string mapName = ZoneStyles.ParseStyleName(comboBoxMapName.Text);
             if (!string.IsNullOrEmpty(mapName))
             {
                 if (!string.IsNullOrEmpty(textBoxMapLevel.Text))
@@ -743,7 +745,6 @@ namespace EQ2MapTools
 
         private void GenerateZoneDict(string inputFile)
         {
-            addedZones = 0;
             using (FileStream fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 Match match;
@@ -768,14 +769,23 @@ namespace EQ2MapTools
                                     ZoneStyle? exists = zoneNames[styleName];
                                     if (exists != null)
                                     {
-                                        if (exists.ZoneName != zoneName)
+                                        if (string.IsNullOrEmpty(exists.ZoneName))
                                         {
+                                            // didn't know the zone name for this map style until now
                                             exists.ZoneName = zoneName;
+                                            addedZones++;
+                                        }
+                                        else if (!zoneNames.StyleHasZone(styleName, zoneName))
+                                        {
+                                            // same map style, new zone name
+                                            ZoneStyle zs = new ZoneStyle { StyleName = styleName, ZoneName = zoneName };
+                                            zoneNames.Add(zs);
                                             addedZones++;
                                         }
                                     }
                                     else
                                     {
+                                        // never seen this one
                                         ZoneStyle zs = new ZoneStyle { StyleName = styleName, ZoneName = zoneName };
                                         zoneNames.Add(zs);
                                         addedZones++;
@@ -974,7 +984,7 @@ namespace EQ2MapTools
             if (checkBoxInclImagestyle.Checked)
             {
                 // try to build reasonable Name= and displayname= entries
-                string baseName = comboBoxMapName.Text;
+                string baseName = ZoneStyles.ParseStyleName(comboBoxMapName.Text);
                 string mapname = baseName.Trim('_');
                 // best if we can get the name from this tab instead of the Mapper tab
                 // in case we did an [Open SVG...] 
@@ -986,11 +996,12 @@ namespace EQ2MapTools
                 }
                 else if (textBoxMapLevel.Text.Length > 0)
                     mapname += "_" + textBoxMapLevel.Text;
+
                 // do we have a zone name for this map name?
+                string zoneName = ZoneStyles.ParseZoneName(comboBoxMapName.Text);
                 string displayname = mapname;
-                ZoneStyle? zs = zoneNames[baseName];
-                if (zs != null)
-                    displayname = zs.ZoneName == null || zs.ZoneName == string.Empty ? mapname : zs.ZoneName;
+                if (!string.IsNullOrEmpty(zoneName))
+                    displayname = zoneName;
                 if (displayname.StartsWith("exp"))
                 {
                     // if we didn't have a zone name, let's at least take off the "expXX_"
