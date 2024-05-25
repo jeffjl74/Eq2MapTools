@@ -1,3 +1,5 @@
+using EQ2MapTools.Properties;
+using System.Configuration;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
@@ -68,7 +70,17 @@ namespace EQ2MapTools
             tabIndexes.Add("zonerect", tabControl1.TabPages.IndexOfKey("tabPageZoneRect"));
             tabIndexes.Add("maploc", tabControl1.TabPages.IndexOfKey("tabPageMapLoc"));
             tabIndexes.Add("index", tabControl1.TabPages.IndexOfKey("tabPageLines"));
+            tabIndexes.Add("notes", tabControl1.TabPages.IndexOfKey("tabPageNotes"));
             tabIndexes.Add("help", tabControl1.TabPages.IndexOfKey("tabPageHelp"));
+
+            string configPath = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+            if (!File.Exists(configPath))
+            {
+                //Existing user config does not exist, so load settings from previous assembly
+                Settings.Default.Upgrade();
+                Settings.Default.Reload();
+                Settings.Default.Save();
+            }
 
             if (Properties.Settings.Default.WindowLoc != Point.Empty)
             {
@@ -154,6 +166,7 @@ namespace EQ2MapTools
             else
                 FixButtons();
 
+
             // map styles binding
             mapStylesBindingSource.DataSource = mapStyles;
             comboBoxMapStyles.DisplayMember = "DisplayName";
@@ -174,6 +187,7 @@ namespace EQ2MapTools
             CheckForProgramUpdate();
             comboBoxLogFiles.SelectionStart = comboBoxLogFiles.Text.Length;
             comboBoxLogFiles.SelectionLength = 0;
+            LoadNote();
             userChange = true;
         }
 
@@ -199,7 +213,6 @@ namespace EQ2MapTools
             if (!string.IsNullOrEmpty(openFileDialogXml.FileName))
                 Properties.Settings.Default.MapStyleFile = openFileDialogXml.FileName;
             Properties.Settings.Default.AutoLoadStyles = checkBoxLoadMapstyles.Checked;
-
             Properties.Settings.Default.Save();
         }
 
@@ -279,7 +292,10 @@ namespace EQ2MapTools
 
         private void UpdateStatusLine()
         {
-            if (tabControl1.SelectedIndex == tabIndexes["mapper"])
+            if (tabControl1.SelectedIndex == tabIndexes["mapper"]
+                || tabControl1.SelectedIndex == tabIndexes["notes"]
+                || tabControl1.SelectedIndex == tabIndexes["help"]
+               )
             {
                 toolStripStatusLabel1.Text = mapperTabStatus;
             }
@@ -520,7 +536,7 @@ namespace EQ2MapTools
             string longestName = string.Empty;
             foreach (ZoneStyle zs in zoneNames)
             {
-                if(zs.ToString().Length > longestName.Length)
+                if (zs.ToString().Length > longestName.Length)
                     longestName = zs.ToString();
             }
             int width = TextRenderer.MeasureText(longestName, comboBoxMapName.Font).Width + SystemInformation.VerticalScrollBarWidth;
@@ -1521,6 +1537,59 @@ namespace EQ2MapTools
         }
 
         #endregion Line Index
+
+        #region Notes
+
+        private void buttonSaveNote_Click(object sender, EventArgs e)
+        {
+            SaveNote();
+        }
+
+        private void comboBoxMapName_Validated(object sender, EventArgs e)
+        {
+            LoadNote();
+        }
+
+        private void LoadNote()
+        {
+            richTextBoxNote.Text = string.Empty;
+            if (Properties.Settings.Default.Notes != null && !string.IsNullOrEmpty(comboBoxMapName.Text))
+            {
+                // even indexes are the map style name
+                // odd indexes are the note
+                for (int i = 0; i < Properties.Settings.Default.Notes.Count; i += 2)
+                {
+                    if (Properties.Settings.Default.Notes[i] == comboBoxMapName.Text)
+                    {
+                        richTextBoxNote.Text = Properties.Settings.Default.Notes[i + 1];
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void SaveNote()
+        {
+            if (!string.IsNullOrEmpty(richTextBoxNote.Text) && !string.IsNullOrEmpty(comboBoxMapName.Text))
+            {
+                // even indexes are the map style name
+                // odd indexes are the note
+                for (int i = 0; i < Properties.Settings.Default.Notes.Count; i += 2)
+                {
+                    if (Properties.Settings.Default.Notes[i] == comboBoxMapName.Text)
+                    {
+                        Properties.Settings.Default.Notes[i + 1] = richTextBoxNote.Text;
+                        return;
+                    }
+                }
+
+                // new note
+                Properties.Settings.Default.Notes.Add(comboBoxMapName.Text);
+                Properties.Settings.Default.Notes.Add(richTextBoxNote.Text);
+            }
+        }
+
+        #endregion Notes
 
         #region Help
 

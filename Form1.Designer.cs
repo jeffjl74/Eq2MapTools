@@ -30,7 +30,7 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             tabControl1 = new TabControl();
             tabPageMapper = new TabPage();
             checkBoxMakeFiles = new CheckBox();
@@ -143,6 +143,9 @@
             svgIdDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             lineNumberDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             lineIndexBindingSource = new BindingSource(components);
+            tabPageNotes = new TabPage();
+            buttonSaveNote = new Button();
+            richTextBoxNote = new RichTextBox();
             tabPageHelp = new TabPage();
             richTextBox2 = new RichTextBox();
             zoneStylesBindingSource = new BindingSource(components);
@@ -169,6 +172,7 @@
             tabPageLines.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)lineIndexBindingSource).BeginInit();
+            tabPageNotes.SuspendLayout();
             tabPageHelp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)zoneStylesBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)mapStylesBindingSource).BeginInit();
@@ -181,6 +185,7 @@
             tabControl1.Controls.Add(tabPageZoneRect);
             tabControl1.Controls.Add(tabPageMapLoc);
             tabControl1.Controls.Add(tabPageLines);
+            tabControl1.Controls.Add(tabPageNotes);
             tabControl1.Controls.Add(tabPageHelp);
             tabControl1.Dock = DockStyle.Fill;
             tabControl1.Location = new Point(0, 0);
@@ -243,6 +248,7 @@
             toolTip1.SetToolTip(comboBoxMapName, "Base file name for the output files.\r\nUsing a game map style results in a better mapstyles entry.");
             comboBoxMapName.TextChanged += comboBoxMapName_TextChanged;
             comboBoxMapName.KeyPress += comboBoxMapName_KeyPress;
+            comboBoxMapName.Validated += comboBoxMapName_Validated;
             // 
             // comboBoxLogFiles
             // 
@@ -1489,8 +1495,8 @@
             // lineNumberDataGridViewTextBoxColumn
             // 
             lineNumberDataGridViewTextBoxColumn.DataPropertyName = "lineNumber";
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleRight;
-            lineNumberDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight;
+            lineNumberDataGridViewTextBoxColumn.DefaultCellStyle = dataGridViewCellStyle2;
             lineNumberDataGridViewTextBoxColumn.HeaderText = "Line Number";
             lineNumberDataGridViewTextBoxColumn.Name = "lineNumberDataGridViewTextBoxColumn";
             lineNumberDataGridViewTextBoxColumn.ReadOnly = true;
@@ -1499,6 +1505,38 @@
             // lineIndexBindingSource
             // 
             lineIndexBindingSource.DataSource = typeof(LineIndex);
+            // 
+            // tabPageNotes
+            // 
+            tabPageNotes.Controls.Add(buttonSaveNote);
+            tabPageNotes.Controls.Add(richTextBoxNote);
+            tabPageNotes.Location = new Point(4, 24);
+            tabPageNotes.Name = "tabPageNotes";
+            tabPageNotes.Padding = new Padding(3);
+            tabPageNotes.Size = new Size(468, 467);
+            tabPageNotes.TabIndex = 6;
+            tabPageNotes.Text = "Notes";
+            tabPageNotes.UseVisualStyleBackColor = true;
+            // 
+            // buttonSaveNote
+            // 
+            buttonSaveNote.Anchor = AnchorStyles.Bottom;
+            buttonSaveNote.Location = new Point(197, 438);
+            buttonSaveNote.Name = "buttonSaveNote";
+            buttonSaveNote.Size = new Size(75, 23);
+            buttonSaveNote.TabIndex = 1;
+            buttonSaveNote.Text = "Save";
+            buttonSaveNote.UseVisualStyleBackColor = true;
+            buttonSaveNote.Click += buttonSaveNote_Click;
+            // 
+            // richTextBoxNote
+            // 
+            richTextBoxNote.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            richTextBoxNote.Location = new Point(3, 3);
+            richTextBoxNote.Name = "richTextBoxNote";
+            richTextBoxNote.Size = new Size(462, 429);
+            richTextBoxNote.TabIndex = 0;
+            richTextBoxNote.Text = "";
             // 
             // tabPageHelp
             // 
@@ -1603,6 +1641,7 @@
             tabPageLines.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)lineIndexBindingSource).EndInit();
+            tabPageNotes.ResumeLayout(false);
             tabPageHelp.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)zoneStylesBindingSource).EndInit();
             ((System.ComponentModel.ISupportInitialize)mapStylesBindingSource).EndInit();
@@ -1738,5 +1777,8 @@
         private CheckBox checkBoxInclElevations;
         private CheckBox checkBoxInclImagestyle;
         private Button buttonCopyZonerect;
+        private TabPage tabPageNotes;
+        private Button buttonSaveNote;
+        private RichTextBox richTextBoxNote;
     }
 }
