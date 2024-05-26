@@ -57,8 +57,7 @@ The mapper2 and log_cleaner functions are conversions of the original Perl scrip
 The mapper tool adds some extra features:
 * Multiple EQII log files can be processed at once by selecting multiple files in the *Browse for game log files* dialog.
 	* If multiple files are selected, another dialog pops up so that the processing order can be set. To keep from potentially breaking things like line color and mapgroups, you would generally want to process the files in time order, i.e. oldest file first, newest file last.
-* The button at the end of the *Base map name (Zone Name)* box scans the *Input Log Files* for map style names (which are the result of the **/show_map_style_name 1** command) and their associated zone names. If any are found, choosing one from the menu sets the map style as the *Base map name (Zone Name)*. Using a *Base map name (Zone Name)* from the list makes generation of an accurate mapstyles \<ImageStyle\> xml element more likely on the [Zone Rect tab] [Copy Button].
-
+* The button at the end of the *Base map name (Zone Name)* box scans the *Input Log Files* for map style names (which are the result of the **/show_map_style_name 1** command) and their associated zone names. If any are found, choosing one from the menu sets the map style as the *Base map name (Zone Name)*. Using a *Base map name (Zone Name)* from the list makes generation of an accurate mapstyles \<ImageStyle\> xml element more likely on the [Zone Rect tab] [Copy Button].  
 	![button](images/mapstyle-menu.png)
 * When grouping by elevation, checking the *Separate files* checkbox will generate a different SVG file for each elevation group. The file names will derive from incrementing the *Map Level* for each successive elevation group (or starting at "\_0" if *Map Level* is empty or not a number). If processing *Input Log Files*, the program still creates only one *Mapper File*. The automatic zone rect calculation will be for the first file, indicated in the *SVG File:* name on the [Zone Rect Tab]. Zone rects for the other files can be calcualted using the [Open SVG...] button. The number of files generated is shown in the status line, in the above example by the *SVG (3)* indicating three SVG files.
 * Just a portion of the *Input Log Files* can be extracted by using the *Log Filter Start Time* and/or *Log Filter End Time*. The button at the end will scan the current *Input Log Files* for the time range and populate the time pickers. Check the box to activate the filter.
@@ -70,13 +69,13 @@ The mapper tool adds some extra features:
 ## Mapper Commands
 As before, the EQII commands that are saved in the mapper file are:
 
-| Command      | Description |
-| ------------ | ----------- |
-|<nobr>/em start new map line</nobr>| The next /loc is the first point of an Inkscape path. (And the previous /loc is the end point of the previous Inkscape path.)|
-|/loc   | Logs your current location.|
-|<nobr>/em color colorname</nobr>| Sets the line color to the specified colorname for all lines between the previous **/em start new map line** and the next **/em color**. If colorname is omitted, the line color will be black. Acceptable color names are here: https://johndecember.com/html/spec/colorsvg.html|
-|<nobr>/em mapgroup</nobr>| This command immediately increments the group/layer number. The current line, that started with the previous **/em start new map line**, and following lines, will go into the new Inkscape group number.|
-|<span style="white-space: nowrap;">/show_map_style_name 1</span>| Turns on the generation of a log file entry for the internal name of a zone each time you zone somewhere. Logging the map style name helps with the [generation of an accurate mapstyles xml element](#copy-button) on the [Zone Rect Tab].|
+| Command                     | Description              |
+| --------------------------- | ------------------------ |
+|/em start new map line       | The next /loc is the first point of an Inkscape path. (And the previous /loc is the end point of the previous Inkscape path.)|
+|/loc                         | Logs your current location.|
+|/em color colorname          | Sets the line color to the specified colorname for all lines between the previous **/em start new map line** and the next **/em color**. If colorname is omitted, the line color will be black. Acceptable color names are here: https://johndecember.com/html/spec/colorsvg.html|
+|/em mapgroup                 | This command immediately increments the group/layer number. The current line, that started with the previous **/em start new map line**, and following lines, will go into the new Inkscape group number.|
+|/show_map_style_name 1       | Turns on the generation of a log file entry for the internal name of a zone each time you zone somewhere. Logging the map style name helps with the [generation of an accurate mapstyles xml element](#copy-button) on the [Zone Rect Tab].|
 
 
 ## Zone Rect Tab
