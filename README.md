@@ -72,11 +72,11 @@ As before, the EQII commands that are saved in the mapper file are:
 
 | Command      | Description |
 | ------------ | ----------- |
-|/em&nbsp;start&nbsp;new&nbsp;map&nbsp;line| The next /loc is the first point of an Inkscape path. (And the previous /loc is the end point of the previous Inkscape path.)|
+|<nobr>/em start new map line</nobr>| The next /loc is the first point of an Inkscape path. (And the previous /loc is the end point of the previous Inkscape path.)|
 |/loc   | Logs your current location.|
-|/em&nbsp;color&nbsp;colorname| Sets the line color to the specified colorname for all lines between the previous **/em start new map line** and the next **/em color**. If colorname is omitted, the line color will be black. Acceptable color names are here: https://johndecember.com/html/spec/colorsvg.html|
-|/em&nbsp;mapgroup| This command immediately increments the group/layer number. The current line, that started with the previous **/em start new map line**, and following lines, will go into the new Inkscape group number.|
-|/show_map_style_name&nbsp;1| Turns on the generation of a log file entry for the internal name of a zone each time you zone somewhere. Logging the map style name helps with the [generation of an accurate mapstyles xml element](#copy-button) on the [Zone Rect Tab].|
+|<nobr>/em color colorname</nobr>| Sets the line color to the specified colorname for all lines between the previous **/em start new map line** and the next **/em color**. If colorname is omitted, the line color will be black. Acceptable color names are here: https://johndecember.com/html/spec/colorsvg.html|
+|<nobr>/em mapgroup</nobr>| This command immediately increments the group/layer number. The current line, that started with the previous **/em start new map line**, and following lines, will go into the new Inkscape group number.|
+|<span style="white-space: nowrap;">/show_map_style_name 1</span>| Turns on the generation of a log file entry for the internal name of a zone each time you zone somewhere. Logging the map style name helps with the [generation of an accurate mapstyles xml element](#copy-button) on the [Zone Rect Tab].|
 
 
 ## Zone Rect Tab
