@@ -75,7 +75,7 @@ As before, the EQII commands that are saved in the mapper file are:
 |/loc                         | Logs your current location.|
 |/em color colorname          | Sets the line color to the specified colorname for all lines between the previous **/em start new map line** and the next **/em color**. If colorname is omitted, the line color will be black. Acceptable color names are here: https://johndecember.com/html/spec/colorsvg.html|
 |/em mapgroup                 | This command immediately increments the group/layer number. The current line, that started with the previous **/em start new map line**, and following lines, will go into the new Inkscape group number.|
-|/show_map_style_name&nbsp;1<br>       | Turns on the generation of a log file entry for the internal name of a zone each time you zone somewhere. Logging the map style name helps with the [generation of an accurate mapstyles xml element](#copy-button) on the [Zone Rect Tab](#zone-rect-tab).|
+|/show_map_style_name&nbsp;1  | Turns on the generation of a log file entry for the internal name of a zone each time you zone somewhere. Logging the map style name helps with the [generation of an accurate mapstyles xml element](#copy-button) on the [Zone Rect Tab](#zone-rect-tab).|
 
 
 ## Zone Rect Tab
