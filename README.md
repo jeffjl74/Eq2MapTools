@@ -82,7 +82,7 @@ As before, the EQII commands that are saved in the mapper file are:
 ![Zone Rect](images/zonerect.png)
 
 The major difference in the Zone Rect calculator is that this version can read the SVG file to extract and calculate the data for all the boxes. Pressing the [Mapper2 Tab](#mapper2-tab) [Run] button or the [Open SVG...] button automatically calculates a zone rect from the generated SVG file. The [Open SVG...] button can also open an Inkscape-edited Mapper2 file.
-* Note that the SVG file does not contain zone name information. (Ref. [Copy Button](#copy-button)
+* Note that the SVG file does not contain zone name information. (Ref. [Copy Button](#copy-button))
 
 The [Calculate] button is just like Tacoman's [Calculate] button. The information in the edit boxes is used to create the zonerect.
 
@@ -104,10 +104,10 @@ Copying the ZoneRect is also differnt from Tacoman's copy in that the entire XML
 * Adding the "availablerect" attribute, which is calculated to be the rectangle defined by the crosshair coordinates.
 * Generating an entire MapStyles \<ImageStyle\> XML element for pasting into the appropriate MapStyles.xml file. The attributes will typically require some manual edits. For example, for multi-level maps, the "heightmax" and "heighmin" should abut between levels and the values pulled from the SVG file will probably not.
 	* The program attempts to determine the "Name=" and "displayname=" attributes from the mapper file. Success depends on the presence of both the *Map style name:* and *You have entered* log lines in the proper order (zone name followed by map style) in the log file. If these conditions are missing or incorrect, the user must manually fix entries in the xml snippet.
-      * The [Run] button on the [Mapper2 Tab](#mapper2-tab) populates the *Base map name (Zone Name)* drop list from the *Input Log Files*. Choosing a drop list entry usually works.
+      * The [Run] button on the [Mapper2 Tab](#mapper2-tab) populates the *Base map name (Zone Name)* drop list from the *Input Log Files*. Choosing a drop list entry usually works (though you probably want to remove any oh-so-helpful color codes from the zone name).
       * If the drop list does not contain the desired style/zone, but you have a log file that does, you can temporarily browse to different *Input Log Files*, use the *Find and add map styles* button at the end of the *Base map name (Zone Name)* box, then switch back to the log file you want to process.
       * Using the [Open SVG...] button on files associated with the *Base map name (Zone Name)* entry usually works.
-        * For example, if the map style part of the *Base map name (Zone Name)* is "exp20_dun_djinn_palace_02_solo_", opening the second level "exp20_dun_djinn_palace_02_solo_1.svg" or "exp20_dun_djinn_palace_02_solo_1_inkscape.svg" should result in a "Name="exp20_dun_djinn_palace_02_solo_1". ("_inkscape" is just an example and can be any arbitrary characters.)
+        * For example, if the map style part of the *Base map name (Zone Name)* is "exp20_dun_djinn_palace_02_solo_", opening the second level "exp20_dun_djinn_palace_02_solo_1.svg" or "exp20_dun_djinn_palace_02_solo_1_inkscape.svg" should result in a "Name="exp20_dun_djinn_palace_02_solo_1". ("_inkscape" here representing the edited file is just an example and can be any arbitrary characters.)
 	* The "Source=" DDS file name should be reasonable, but may require editing to match whatever name the user assigned to the DDS file.
     * The other entries should be correct according to the Zone Rect tab. The result will be something like this:
 ```xml
