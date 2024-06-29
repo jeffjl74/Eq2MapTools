@@ -10,7 +10,7 @@ This program simplifies and automates several of the tasks required to make the 
 The original tools are described here: https://maps.eq2interface.com/index.php?action=maptutorial&page=2
 
 ## Installation
-To use the program, download the zip file from the [releases](https://github.com/jeffjl74/Eq2MapTools/releases) page and unzip it in your desired folder.
+To use the program, download the EQ2MapTools.zip file from the [releases](https://github.com/jeffjl74/Eq2MapTools/releases) page and unzip it in your desired folder.
 
 The program is one executable but it does depend upon Microsoft's .NET 8 framework library. If this is not already installed on your computer, the first execution of the program will prompt you to download it. The download is automatic but you must run the downloaded file to do the actual installation. After that one time installation, the program should run.
 ## Overview
