@@ -9,6 +9,10 @@ This program simplifies and automates several of the tasks required to make the 
 
 The original tools are described here: https://maps.eq2interface.com/index.php?action=maptutorial&page=2
 
+## Installation
+To use the program, download the zip file from the [releases](https://github.com/jeffjl74/Eq2MapTools/releases) page and unzip it in your desired folder.
+
+The program is one executable but it does depend upon Microsoft's .NET 8 framework library. If this is not already installed on your computer, the first execution of the program will prompt you to download it. The download is automatic but you must run the downloaded file to do the actual installation. After that one time installation, the program should run.
 ## Overview
 Starting a new map generally consists of at least the following steps:
 1. On the [Mapper2 Tab](#mapper2-tab), browse to the appropriate *Input Log File* containing the [Mapper Commands](#mapper-commands).
@@ -156,4 +160,7 @@ The [Mapper2 Tab] *Base map name (Zone Name)* is used as the lookup key to a not
 The note is saved to memory only when you press the [Save] button. 
 
 The notes in memory are saved to disk when the program closes.
+
+## Program Development
+The program was developed using Visual Studio 2022. The project files are included in this repository. The single executable is created using the Build menu `Publish Selection`.
 
